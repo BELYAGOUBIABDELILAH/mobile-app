@@ -127,6 +127,10 @@ const config: Config = {
           '0%': { transform: 'translateX(-50%)' },
           '100%': { transform: 'translateX(0)' },
         },
+        'mega-enter': {
+          '0%': { opacity: '0', transform: 'translateY(-8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -145,6 +149,7 @@ const config: Config = {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         marquee: 'marquee 30s linear infinite',
         'marquee-reverse': 'marquee-reverse 30s linear infinite',
+        'mega-enter': 'mega-enter 150ms ease-out',
       },
     }
   },
