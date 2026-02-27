@@ -1,137 +1,61 @@
 
 
-# Health Content Hub -- Research & Scientific Publications
+# Redesign "Nos Services" Section -- GoodDay-Inspired Layout
 
 ## Overview
 
-A new module enabling providers to publish medical research and articles, creating a professional medical publication platform within CityHealth. The implementation follows the existing Ads module pattern (database tables, service layer, UI components) but with an academic/editorial design direction.
+Replace the current flat grid of service cards with a visually rich, two-zone layout: large feature cards on top (primary services) and an auto-scrolling marquee ticker on the bottom (secondary services), with polished animations and hover effects.
 
-## Database Schema (Lovable Cloud)
+## Changes
 
-### New Tables
+### 1. Rewrite `src/components/homepage/ServicesGrid.tsx`
 
-**1. `research_articles`** -- Main publications table
-- `id` (uuid, PK)
-- `provider_id` (text, NOT NULL) -- Firebase UID of the author
-- `provider_name` (text, NOT NULL)
-- `provider_avatar` (text)
-- `provider_type` (text) -- specialty
-- `provider_city` (text)
-- `title` (text, NOT NULL)
-- `abstract` (text, NOT NULL)
-- `content` (text, NOT NULL) -- Rich text / HTML
-- `category` (text, NOT NULL) -- e.g. cardiology, pediatrics, etc.
-- `tags` (text[], default '{}')
-- `doi` (text, nullable) -- Optional DOI reference
-- `pdf_url` (text, nullable) -- Optional attached PDF
-- `status` (text, default 'pending') -- pending | approved | rejected | suspended
-- `is_featured` (boolean, default false)
-- `is_verified_provider` (boolean, default false)
-- `views_count` (integer, default 0)
-- `reactions_count` (integer, default 0)
-- `saves_count` (integer, default 0)
-- `rejection_reason` (text, nullable)
-- `created_at` (timestamptz, default now())
-- `updated_at` (timestamptz, default now())
+The entire component will be rebuilt with three zones:
 
-**2. `article_reactions`** -- Provider-only reactions
-- `id` (uuid, PK)
-- `article_id` (uuid, FK to research_articles)
-- `user_id` (text, NOT NULL) -- Only providers can react
-- `reaction_type` (text, default 'like') -- For future expansion (insightful, important, etc.)
-- `created_at` (timestamptz, default now())
-- Unique constraint on (article_id, user_id)
+**Heading Block** (centered)
+- Bold title: "Tout ce dont vous avez besoin"
+- Subtitle describing the platform
+- Subtle CTA link to `/search`
+- Fade-in on scroll using framer-motion
 
-**3. `article_saves`** -- Any authenticated user can save
-- `id` (uuid, PK)
-- `article_id` (uuid, FK to research_articles)
-- `user_id` (text, NOT NULL)
-- `created_at` (timestamptz, default now())
-- Unique constraint on (article_id, user_id)
+**Top Row -- Primary Feature Cards** (3 cards in a responsive grid)
+- Services: Recherche (`/search`), Carte Interactive (`/map`), Urgences (`/map/emergency`)
+- Each card: ~280px tall, rounded-[14px], soft shadow
+- Top area (~200px): light neutral background (`bg-muted/20`) with a stylized wireframe/mockup illustration built from Lucide icons and simple shapes (e.g., search bars, map pins, pulse lines)
+- Bottom strip (~60px): white background, icon left + service name right
+- Hover: `translateY(-6px)`, deeper shadow, subtle border accent color
+- Staggered fade-in + slide-up on scroll (~100ms delay between cards)
 
-**4. `article_views`** -- Track views per article
-- `id` (uuid, PK)
-- `article_id` (uuid, FK to research_articles)
-- `viewer_id` (text, nullable) -- nullable for anonymous views
-- `created_at` (timestamptz, default now())
+**Bottom Row -- Secondary Services Marquee**
+- Services: Pharmacies, Laboratoires, Cliniques, Ambulances, Infirmiers, Soins a domicile, Avis & Reviews, Annonces, Generalistes, Specialistes
+- Infinite horizontal auto-scroll (CSS animation, no JS interval)
+- Each item: pill-shaped mini-card with icon + label
+- Pauses on hover (CSS `animation-play-state: paused`)
+- Content duplicated for seamless loop
 
-### RLS Policies
-- All tables: public SELECT (read access for feed)
-- INSERT/DELETE on reactions: open (provider-only check enforced at app level, consistent with existing ads pattern)
-- INSERT/DELETE on saves: open
-- INSERT on views: open
-- INSERT/UPDATE/DELETE on articles: open (provider ownership enforced at app level, matching ads pattern)
+### 2. Add marquee keyframe to `tailwind.config.ts`
 
-### Database Functions & Triggers
-- `update_article_reactions_count()` -- trigger on article_reactions INSERT/DELETE to update reactions_count
-- `update_article_saves_count()` -- trigger on article_saves INSERT/DELETE to update saves_count
+Add a new `marquee` keyframe and animation:
+```
+keyframes: {
+  marquee: {
+    '0%': { transform: 'translateX(0)' },
+    '100%': { transform: 'translateX(-50%)' },
+  }
+}
+animation: {
+  marquee: 'marquee 30s linear infinite',
+}
+```
 
-## File Structure
+### 3. No other files change
 
-### Service Layer
-- **`src/services/researchService.ts`** -- CRUD, queries, engagement (reactions, saves, views), admin moderation. Mirrors `adsService.ts` pattern.
+The component is self-contained. `AntigravityIndex.tsx` already imports `ServicesGrid` -- no routing or page changes needed.
 
-### Pages
-- **`src/pages/ResearchHubPage.tsx`** -- Main hub with search, filters, featured section, article feed
-- **`src/pages/ArticleDetailPage.tsx`** -- Full article reading page with side panel (desktop), reading progress indicator
+## Technical Details
 
-### Components
-- **`src/components/research/ArticleCard.tsx`** -- Card for the feed (title, abstract preview, author block, date, reaction count, save, views)
-- **`src/components/research/ArticleDetailView.tsx`** -- Full article body renderer with structured formatting
-- **`src/components/research/ArticleEditor.tsx`** -- Rich text editor for creating/editing articles (uses existing TipTap dependency)
-- **`src/components/research/FeaturedResearch.tsx`** -- Featured articles carousel/section at top of hub
-- **`src/components/research/ArticleFilters.tsx`** -- Category filter, sort options, search bar
-- **`src/components/research/ProviderArticlesManager.tsx`** -- Provider dashboard tab: list articles, create/edit/delete, view analytics
-- **`src/components/research/ArticleSidePanel.tsx`** -- Desktop side panel with react/save/share actions + reading progress
-
-### Integration Points
-
-**Provider Dashboard** (`ProviderDashboard.tsx`):
-- Add a new tab "Publications" with the `ProviderArticlesManager` component
-- Add a `BookOpen` icon tab trigger alongside existing tabs (Ads, Giving, etc.)
-
-**Citizen Dashboard** (`PatientDashboard.tsx`):
-- Add a "Saved Articles" section linking to saved research articles
-
-**Navigation** (`AntigravityHeader.tsx`):
-- Add "Recherche Medicale" link to the main navigation
-
-**Routing** (`App.tsx`):
-- `/research` -- ResearchHubPage
-- `/research/:articleId` -- ArticleDetailPage
-
-## Key Implementation Details
-
-### Rich Text Editor
-The project already has `@tiptap/react` and `@tiptap/starter-kit` installed. The article editor will use TipTap with extensions for headings (H1-H3), lists, blockquotes (for citations), and basic formatting. This reuses the existing `RichTextEditor` component pattern from provider registration.
-
-### Content Rendering
-Article content stored as HTML from TipTap. Rendered using `dangerouslySetInnerHTML` with DOMPurify sanitization (already installed as a dependency). Prose-optimized CSS for academic reading width (~700px centered).
-
-### PDF Attachment
-Upload to the existing `pdfs` storage bucket. Display as a downloadable section at the bottom of the article.
-
-### Access Control (App-Level)
-- **Publish/Edit/Delete**: Check `profile.userType === 'provider'` before showing editor
-- **React**: Check `profile.userType === 'provider'` before allowing reactions
-- **Save**: Any authenticated user
-- **Read**: Public (no auth required)
-- **Admin moderation**: Check `profile.userType === 'admin'` for approve/reject/feature/remove
-
-### Reading Progress Indicator
-A thin progress bar at the top of the article detail page that fills as the user scrolls through the content. Implemented with a scroll event listener.
-
-### Categories
-Reuse existing provider specialty categories from `providerCategoryConfig.ts` plus general medical research categories (Public Health, Clinical Research, Pharmacology, etc.).
-
-## Implementation Order
-
-1. Create database tables, functions, and triggers via migration
-2. Create `researchService.ts` (CRUD, queries, engagement, admin)
-3. Create UI components (ArticleCard, ArticleEditor, ArticleFilters, FeaturedResearch, ArticleSidePanel, ArticleDetailView, ProviderArticlesManager)
-4. Create ResearchHubPage and ArticleDetailPage
-5. Add routes to App.tsx
-6. Integrate into Provider Dashboard (new "Publications" tab)
-7. Add navigation link in header
-8. Add "Saved Articles" to Citizen Dashboard
+- **Mockup illustrations**: Built purely from Lucide icons + simple div shapes (no images needed). For example, the "Recherche" card shows a search bar wireframe with result lines; "Carte" shows map pin icons on a grid; "Urgences" shows a pulsing heart icon.
+- **Marquee**: Pure CSS animation using duplicated content inside a flex container. The parent has `overflow-hidden`, the inner flex row animates `translateX(-50%)`. On hover, `animation-play-state: paused`.
+- **Responsive**: Top row switches to single column on mobile (`grid-cols-1 md:grid-cols-3`). Marquee stays horizontal but slows down on mobile via a media query or reduced animation duration.
+- **Framer Motion**: Used for scroll-triggered staggered entrance of the top cards and heading. The marquee uses pure CSS for performance.
 
