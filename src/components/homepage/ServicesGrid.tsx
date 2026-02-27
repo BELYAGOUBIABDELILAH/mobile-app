@@ -1,39 +1,45 @@
-import {
-  SearchCheck, MapPinned, Siren, BrainCircuit, MessageSquareHeart, Megaphone,
-  BookOpenCheck, HandHeart, HeartHandshake, PhoneCall, ArrowRight
-} from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import type { LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+
+import donGratuitImg from '@/assets/services/don-gratuit.png';
+import donDeSangImg from '@/assets/services/don-de-sang.png';
+import rechercheImg from '@/assets/services/recherche.png';
+import carteInteractiveImg from '@/assets/services/carte-interactive.png';
+import urgencesImg from '@/assets/services/urgences.png';
+import assistanteIaImg from '@/assets/services/assistante-ia.png';
+import annoncesImg from '@/assets/services/annonces.png';
+import avisIdeesImg from '@/assets/services/avis-idees.png';
+import documentsImg from '@/assets/services/documents.png';
+import contactImg from '@/assets/services/contact.png';
 
 /* ─── Service card data ─── */
 interface ServiceCard {
   title: string;
   description: string;
   route: string;
-  icon: LucideIcon;
+  image: string;
 }
 
 const row1Services: ServiceCard[] = [
-  { title: 'Don Gratuit', description: 'Offrez ou trouvez de l\'aide communautaire gratuite', route: '/citizen/provide', icon: HeartHandshake },
-  { title: 'Don de Sang', description: 'Sauvez des vies en donnant votre sang', route: '/blood-donation', icon: HandHeart },
-  { title: 'Recherche', description: 'Trouvez le bon médecin ou spécialiste', route: '/search', icon: SearchCheck },
-  { title: 'Carte Interactive', description: 'Explorez les établissements autour de vous', route: '/map/providers', icon: MapPinned },
-  { title: 'Urgences', description: 'Accès rapide aux services d\'urgence 24/7', route: '/emergency', icon: Siren },
-  { title: 'Assistante IA', description: 'Évaluez vos symptômes avec l\'IA', route: '/medical-assistant', icon: BrainCircuit },
+  { title: 'Don Gratuit', description: 'Offrez ou trouvez de l\'aide communautaire gratuite', route: '/citizen/provide', image: donGratuitImg },
+  { title: 'Don de Sang', description: 'Sauvez des vies en donnant votre sang', route: '/blood-donation', image: donDeSangImg },
+  { title: 'Recherche', description: 'Trouvez le bon médecin ou spécialiste', route: '/search', image: rechercheImg },
+  { title: 'Carte Interactive', description: 'Explorez les établissements autour de vous', route: '/map/providers', image: carteInteractiveImg },
+  { title: 'Urgences', description: 'Accès rapide aux services d\'urgence 24/7', route: '/emergency', image: urgencesImg },
+  { title: 'Assistante IA', description: 'Évaluez vos symptômes avec l\'IA', route: '/medical-assistant', image: assistanteIaImg },
 ];
 
 const row2Services: ServiceCard[] = [
-  { title: 'Annonces', description: 'Découvrez les offres des professionnels', route: '/annonces', icon: Megaphone },
-  { title: 'Avis & Idées', description: 'Partagez vos retours et suggestions', route: '/community', icon: MessageSquareHeart },
-  { title: 'Documents', description: 'Guides et documentation complète', route: '/docs', icon: BookOpenCheck },
-  { title: 'Contact', description: 'Besoin d\'aide ? Contactez-nous', route: '/contact', icon: PhoneCall },
+  { title: 'Annonces', description: 'Découvrez les offres des professionnels', route: '/annonces', image: annoncesImg },
+  { title: 'Avis & Idées', description: 'Partagez vos retours et suggestions', route: '/community', image: avisIdeesImg },
+  { title: 'Documents', description: 'Guides et documentation complète', route: '/docs', image: documentsImg },
+  { title: 'Contact', description: 'Besoin d\'aide ? Contactez-nous', route: '/contact', image: contactImg },
 ];
 
 /* ─── Single card component ─── */
 const ServiceCardItem = ({ service }: { service: ServiceCard }) => {
   const navigate = useNavigate();
-  const IconComp = service.icon;
 
   const handleClick = () => navigate(service.route);
 
@@ -51,11 +57,14 @@ const ServiceCardItem = ({ service }: { service: ServiceCard }) => {
       tabIndex={0}
       aria-label={`Aller à ${service.title}`}
     >
-      {/* Icon area */}
-      <div className="h-[90px] bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center">
-        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-200">
-          <IconComp className="h-6 w-6 text-primary" strokeWidth={1.8} />
-        </div>
+      {/* Image area */}
+      <div className="h-[90px] bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center p-3">
+        <img
+          src={service.image}
+          alt={service.title}
+          className="h-full w-auto object-contain group-hover:scale-110 transition-transform duration-200"
+          loading="lazy"
+        />
       </div>
       {/* Label + description */}
       <div className="px-3.5 py-3 border-t border-border/40 text-left space-y-1">
