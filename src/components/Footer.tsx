@@ -94,7 +94,7 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2.5">
               {servicesLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link to={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
                     <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
                     {link.label}
@@ -111,7 +111,7 @@ const Footer = () => {
             </h4>
             <ul className="space-y-2.5">
               {professionalsLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link to={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 group">
                     <link.icon className="h-3.5 w-3.5 opacity-60 group-hover:opacity-100" />
                     {link.label}

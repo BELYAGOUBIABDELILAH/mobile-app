@@ -4,11 +4,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Star, MessageSquare, CheckCircle, XCircle, AlertCircle, Download, FileText, Loader2, Bell, BellOff, Trash2, ExternalLink, BookOpen } from 'lucide-react';
+import { 
+  Calendar, Clock, Star, MessageSquare, CheckCircle, XCircle, AlertCircle, 
+  Download, FileText, Loader2, Bell, BellOff, Trash2, ExternalLink,
+  Search, Map, Siren, Bot, Droplets, Users, Megaphone, BookOpen, 
+  User, Heart, CalendarCheck, Gift
+} from 'lucide-react';
 import { AppointmentDetailDialog } from '@/components/appointments/AppointmentDetailDialog';
 import { useProfileScore } from '@/hooks/useProfileScore';
 import { ProfileCompletionWidget } from '@/components/patient/ProfileCompletionWidget';
@@ -22,42 +27,21 @@ import { useAppointmentNotifications } from '@/hooks/useAppointmentNotifications
 import { format } from 'date-fns';
 import { fr, ar, enUS } from 'date-fns/locale';
 import jsPDF from 'jspdf';
-import { getSavedArticles, ResearchArticle } from '@/services/researchService';
-import { ArticleCard } from '@/components/research/ArticleCard';
 
-function SavedArticlesTab({ userId }: { userId?: string }) {
-  const [articles, setArticles] = useState<ResearchArticle[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!userId) { setLoading(false); return; }
-    getSavedArticles(userId).then(setArticles).catch(() => {}).finally(() => setLoading(false));
-  }, [userId]);
-
-  if (loading) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
-
-  if (articles.length === 0) {
-    return (
-      <Card className="border-dashed">
-        <CardContent className="py-12 text-center">
-          <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-          <p className="font-medium text-muted-foreground">Aucun article sauvegardé</p>
-          <p className="text-sm text-muted-foreground/70 mt-1">
-            Explorez la <Link to="/research" className="text-primary hover:underline">Recherche Médicale</Link> pour découvrir des publications
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {articles.map(article => (
-        <ArticleCard key={article.id} article={article} isSaved canReact={false} />
-      ))}
-    </div>
-  );
-}
+const quickServices = [
+  { label: 'Rechercher un praticien', description: 'Trouvez un médecin ou spécialiste', icon: Search, href: '/search', color: 'bg-blue-100 text-blue-600' },
+  { label: 'Carte interactive', description: 'Explorez les établissements proches', icon: Map, href: '/map/providers', color: 'bg-emerald-100 text-emerald-600' },
+  { label: 'Urgences', description: 'Services d\'urgence 24h/24', icon: Siren, href: '/emergency', color: 'bg-red-100 text-red-600' },
+  { label: 'Assistant Médical IA', description: 'Posez vos questions santé', icon: Bot, href: '/medical-assistant', color: 'bg-violet-100 text-violet-600' },
+  { label: 'Don de sang', description: 'Répondez aux appels urgents', icon: Droplets, href: '/blood-donation', color: 'bg-rose-100 text-rose-600' },
+  { label: 'Communauté', description: 'Échangez avec d\'autres patients', icon: Users, href: '/community', color: 'bg-sky-100 text-sky-600' },
+  { label: 'Annonces médicales', description: 'Offres et actualités santé', icon: Megaphone, href: '/annonces', color: 'bg-orange-100 text-orange-600' },
+  { label: 'Recherche médicale', description: 'Articles et publications', icon: BookOpen, href: '/research', color: 'bg-indigo-100 text-indigo-600' },
+  { label: 'Mon profil', description: 'Gérez vos informations', icon: User, href: '/profile', color: 'bg-slate-100 text-slate-600' },
+  { label: 'Mes favoris', description: 'Praticiens sauvegardés', icon: Heart, href: '/favorites', color: 'bg-pink-100 text-pink-600' },
+  { label: 'Rendez-vous', description: 'Gérez vos consultations', icon: CalendarCheck, href: '/citizen/appointments', color: 'bg-teal-100 text-teal-600' },
+  { label: 'Don gratuit', description: 'Offrez ou recevez de l\'aide', icon: Gift, href: '/citizen/provide', color: 'bg-amber-100 text-amber-600' },
+];
 
 const PatientDashboard = () => {
   const { profile, isAuthenticated, user } = useAuth();
@@ -194,6 +178,9 @@ const PatientDashboard = () => {
 
   // Note: Authentication check removed - CitizenGuard handles this in App.tsx
 
+  const greeting = new Date().getHours() < 18 ? 'Bonjour' : 'Bonsoir';
+  const today = format(new Date(), 'EEEE d MMMM yyyy', { locale: locales[language] || fr });
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-secondary/10 pt-20 pb-12">
@@ -201,12 +188,10 @@ const PatientDashboard = () => {
           {/* Header Section */}
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-2">
-                {t('appointments', 'myDashboard')}
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-1">
+                {greeting}, {profile?.full_name?.split(' ')[0] || 'Patient'} 👋
               </h1>
-              <p className="text-muted-foreground">
-                {t('appointments', 'welcome')}, {profile?.full_name}
-              </p>
+              <p className="text-muted-foreground capitalize">{today}</p>
             </div>
             
             {appointments.length > 0 && (
@@ -264,9 +249,29 @@ const PatientDashboard = () => {
             ))}
           </div>
 
+          {/* Quick Services Grid */}
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold mb-4">Accès rapide aux services</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {quickServices.map((service) => (
+                <Link
+                  key={service.label}
+                  to={service.href}
+                  className="group p-4 rounded-xl border border-border/50 bg-card hover:shadow-md hover:border-primary/30 transition-all duration-200"
+                >
+                  <div className={cn("h-10 w-10 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform", service.color)}>
+                    <service.icon className="h-5 w-5" />
+                  </div>
+                  <p className="font-medium text-sm text-foreground">{service.label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{service.description}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Tabs Section */}
           <Tabs defaultValue="upcoming" className="space-y-6">
-            <TabsList className="w-full max-w-2xl bg-muted/50 p-1 rounded-xl grid grid-cols-5 gap-1">
+            <TabsList className="w-full max-w-xl bg-muted/50 p-1 rounded-xl grid grid-cols-3 gap-1">
               <TabsTrigger value="upcoming" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm gap-1.5 px-2 sm:px-3">
                 <Calendar className="h-4 w-4 shrink-0 hidden sm:block" />
                 {t('appointments', 'upcoming')}
@@ -283,15 +288,6 @@ const PatientDashboard = () => {
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
-              </TabsTrigger>
-              <TabsTrigger value="reviews" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm gap-1.5 px-2 sm:px-3">
-                <Star className="h-4 w-4 shrink-0 hidden sm:block" />
-                {t('appointments', 'myReviews')}
-              </TabsTrigger>
-              <TabsTrigger value="saved-articles" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm gap-1.5 px-2 sm:px-3">
-                <BookOpen className="h-4 w-4 shrink-0 hidden sm:block" />
-                <span className="hidden sm:inline">Articles</span>
-                <span className="sm:hidden">Articles</span>
               </TabsTrigger>
             </TabsList>
 
@@ -512,65 +508,6 @@ const PatientDashboard = () => {
                   );
                 })
               )}
-            </TabsContent>
-
-            {/* Reviews */}
-            <TabsContent value="reviews" className="space-y-3">
-              {reviews.length === 0 ? (
-                <Card className="border-dashed">
-                  <CardContent className="py-16 text-center">
-                    <div className="h-16 w-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
-                      <MessageSquare className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-muted-foreground font-medium">{t('appointments', 'noReviews')}</p>
-                    <p className="text-sm text-muted-foreground/70 mt-1">Laissez un avis après chaque consultation</p>
-                  </CardContent>
-                </Card>
-              ) : (
-                reviews.map((review) => (
-                  <Card key={review.id} className="hover:shadow-sm transition-all">
-                    <CardContent className="p-4 sm:p-5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex gap-3 sm:gap-4 min-w-0 flex-1">
-                          <div className="shrink-0 h-10 w-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
-                            <Star className="h-5 w-5" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-medium text-sm">{t('appointments', 'reviewFor')} {review.providerId}</p>
-                            <div className="flex items-center gap-0.5 mt-1">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className={cn("h-3.5 w-3.5", i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground/30')}
-                                />
-                              ))}
-                              <span className="text-xs text-muted-foreground ml-2">
-                                {format(new Date(review.createdAt), 'dd/MM/yyyy', { locale: locales[language] })}
-                              </span>
-                            </div>
-                            {review.comment && (
-                              <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{review.comment}</p>
-                            )}
-                            {review.providerResponse && (
-                              <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-border/50">
-                                <p className="text-xs font-medium mb-1">{t('appointments', 'providerResponse')} :</p>
-                                <p className="text-xs text-muted-foreground">{review.providerResponse.text}</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <Badge variant={review.status === 'approved' ? 'default' : 'secondary'} className="shrink-0">
-                          {review.status === 'approved' ? t('appointments', 'published') : t('appointments', 'pending')}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </TabsContent>
-            {/* Saved Articles Tab */}
-            <TabsContent value="saved-articles" className="space-y-3">
-              <SavedArticlesTab userId={user?.uid} />
             </TabsContent>
 
           </Tabs>
