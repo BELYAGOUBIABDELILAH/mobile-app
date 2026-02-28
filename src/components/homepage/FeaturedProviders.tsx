@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Star, ArrowRight, ArrowUpRight, Shield, Clock } from 'lucide-react';
+import { Star, ArrowRight, ArrowUpRight, Shield } from 'lucide-react';
 import { ProviderAvatar } from '@/components/ui/ProviderAvatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,9 +18,7 @@ interface DisplayProvider {
   rating: number;
   reviewCount: number;
   isVerified: boolean;
-  isAvailable: boolean;
   image: string;
-  nextAvailable: string;
 }
 
 const containerVariants = {
@@ -76,9 +74,7 @@ export const FeaturedProviders = () => {
         rating: p.rating || 0,
         reviewCount: p.reviewsCount || 0,
         isVerified: isProviderVerified(p),
-        isAvailable: p.isOpen || false,
-        image: p.image || '',
-        nextAvailable: p.isOpen ? t('featuredProviders', 'available') : t('featuredProviders', 'soon')
+        image: p.image || ''
       }));
   }, [verifiedProviders, t]);
 
@@ -172,20 +168,6 @@ export const FeaturedProviders = () => {
                     </span>
                   )}
                   
-                  {/* Availability indicator */}
-                  <div className="absolute top-4 right-4">
-                    {provider.isAvailable ? (
-                      <span className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
-                        <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[10px] text-emerald-600 font-medium">{t('featuredProviders', 'available')}</span>
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        <Clock className="w-3 h-3" />
-                        <span className="text-[10px]">{t('featuredProviders', 'soon')}</span>
-                      </span>
-                    )}
-                  </div>
                   
                   {/* Avatar & Info */}
                   <div className="flex items-center gap-3 mb-4">
