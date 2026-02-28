@@ -1,7 +1,7 @@
 export interface Notification {
   id: string;
   userId: string;
-  type: 'appointment' | 'message' | 'profile_update' | 'verification_status';
+  type: 'appointment' | 'message' | 'profile_update' | 'verification_status' | 'blood_emergency';
   title: string;
   body: string;
   data?: any;
@@ -17,4 +17,5 @@ export interface NotificationPreferences {
   verificationStatus: boolean;
   emailNotifications: boolean;
   pushNotifications: boolean;
+  bloodEmergencies: boolean;
 }

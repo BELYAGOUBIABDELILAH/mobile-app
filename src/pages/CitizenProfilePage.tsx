@@ -741,6 +741,20 @@ export default function CitizenProfilePage() {
                       }}
                     />
                   </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label>Alertes don de sang</Label>
+                      <p className="text-sm text-muted-foreground">Urgences de don de sang à proximité</p>
+                    </div>
+                    <Switch
+                      checked={preferences.bloodEmergencies}
+                      onCheckedChange={(checked) => {
+                        updatePreferences({ bloodEmergencies: checked });
+                        toast.success(checked ? 'Alertes don de sang activées' : 'Alertes don de sang désactivées');
+                      }}
+                    />
+                  </div>
                 </div>
               </CardContent>
             </Card>

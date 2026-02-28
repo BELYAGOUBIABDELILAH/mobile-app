@@ -11,6 +11,7 @@ const defaultPreferences: NotificationPreferences = {
   verificationStatus: true,
   emailNotifications: true,
   pushNotifications: true,
+  bloodEmergencies: true,
 };
 
 export const useNotifications = (userId?: string) => {
@@ -54,6 +55,7 @@ export const useNotifications = (userId?: string) => {
       message: preferences.messages,
       profile_update: preferences.profileUpdates,
       verification_status: preferences.verificationStatus,
+      blood_emergency: preferences.bloodEmergencies,
     };
 
     const isTypeEnabled = typePreferenceMap[notification.type] ?? true;
