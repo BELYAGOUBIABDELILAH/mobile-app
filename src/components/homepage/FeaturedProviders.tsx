@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Star, ArrowRight, User, ArrowUpRight, Shield, Clock } from 'lucide-react';
+import { Star, ArrowRight, ArrowUpRight, Shield, Clock } from 'lucide-react';
+import { ProviderAvatar } from '@/components/ui/ProviderAvatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -12,6 +13,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 interface DisplayProvider {
   id: string;
   name: string;
+  type: string;
   specialty: string;
   rating: number;
   reviewCount: number;
@@ -62,13 +64,14 @@ export const FeaturedProviders = () => {
   const { data: verifiedProviders = [], isLoading } = useVerifiedProviders();
   const { t } = useLanguage();
 
-  const providers: DisplayProvider[] = useMemo(() => {
+  const providers = useMemo(() => {
     return verifiedProviders
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .slice(0, 8)
       .map(p => ({
         id: p.id,
         name: p.name,
+        type: p.type,
         specialty: p.specialty || p.type,
         rating: p.rating || 0,
         reviewCount: p.reviewsCount || 0,
@@ -131,8 +134,8 @@ export const FeaturedProviders = () => {
             viewport={{ once: true }}
             className="py-20 text-center bg-card border border-border rounded-xl"
           >
-            <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-muted-foreground" />
+            <div className="w-16 h-16 mx-auto mb-4">
+              <ProviderAvatar image={null} name="Provider" type="doctor" className="w-16 h-16" iconSize={32} />
             </div>
             <p className="text-muted-foreground text-sm mb-4">
               {t('featuredProviders', 'noPractitioners')}
@@ -191,20 +194,13 @@ export const FeaturedProviders = () => {
                       whileHover={{ scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 400 }}
                     >
-                      {provider.image ? (
-                        <img 
-                          src={provider.image} 
-                          alt={provider.name}
-                          className="w-14 h-14 rounded-full object-cover border-2 border-border"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
-                        />
-                      ) : (
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-muted to-muted/50 border-2 border-border flex items-center justify-center">
-                          <User className="w-6 h-6 text-muted-foreground" />
-                        </div>
-                      )}
+                      <ProviderAvatar
+                        image={provider.image || null}
+                        name={provider.name}
+                        type={provider.type}
+                        className="w-14 h-14 rounded-full border-2 border-border"
+                        iconSize={24}
+                      />
                       {/* Verified checkmark */}
                       {provider.isVerified && (
                         <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center border-2 border-background">

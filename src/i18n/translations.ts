@@ -1495,7 +1495,7 @@ export const translations: Record<Language, Translations> = {
       bestRated: 'Les praticiens les mieux notés de votre région',
       viewAll: 'Voir tous',
       viewAllPractitioners: 'Voir tous les praticiens',
-      available: 'Dispo',
+      available: 'Disponible',
       soon: 'Bientôt',
       noPractitioners: 'Aucun praticien disponible pour le moment',
       becomePractitioner: 'Devenir praticien',
