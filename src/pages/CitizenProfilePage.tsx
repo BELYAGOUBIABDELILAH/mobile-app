@@ -684,7 +684,10 @@ export default function CitizenProfilePage() {
                     </div>
                     <Switch
                       checked={preferences.pushNotifications}
-                      onCheckedChange={(checked) => updatePreferences({ pushNotifications: checked })}
+                      onCheckedChange={(checked) => {
+                        updatePreferences({ pushNotifications: checked });
+                        toast.success(checked ? 'Notifications push activées' : 'Notifications push désactivées');
+                      }}
                     />
                   </div>
 
@@ -695,7 +698,10 @@ export default function CitizenProfilePage() {
                     </div>
                     <Switch
                       checked={preferences.emailNotifications}
-                      onCheckedChange={(checked) => updatePreferences({ emailNotifications: checked })}
+                      onCheckedChange={(checked) => {
+                        updatePreferences({ emailNotifications: checked });
+                        toast.success(checked ? 'Notifications email activées' : 'Notifications email désactivées');
+                      }}
                     />
                   </div>
 
@@ -707,7 +713,10 @@ export default function CitizenProfilePage() {
                     <Label>Rappels de rendez-vous</Label>
                     <Switch
                       checked={preferences.appointments}
-                      onCheckedChange={(checked) => updatePreferences({ appointments: checked })}
+                      onCheckedChange={(checked) => {
+                        updatePreferences({ appointments: checked });
+                        toast.success(checked ? 'Rappels de rendez-vous activés' : 'Rappels de rendez-vous désactivés');
+                      }}
                     />
                   </div>
 
@@ -715,7 +724,10 @@ export default function CitizenProfilePage() {
                     <Label>Messages</Label>
                     <Switch
                       checked={preferences.messages}
-                      onCheckedChange={(checked) => updatePreferences({ messages: checked })}
+                      onCheckedChange={(checked) => {
+                        updatePreferences({ messages: checked });
+                        toast.success(checked ? 'Notifications de messages activées' : 'Notifications de messages désactivées');
+                      }}
                     />
                   </div>
 
@@ -723,7 +735,10 @@ export default function CitizenProfilePage() {
                     <Label>Rappels de santé</Label>
                     <Switch
                       checked={preferences.profileUpdates}
-                      onCheckedChange={(checked) => updatePreferences({ profileUpdates: checked })}
+                      onCheckedChange={(checked) => {
+                        updatePreferences({ profileUpdates: checked });
+                        toast.success(checked ? 'Rappels de santé activés' : 'Rappels de santé désactivés');
+                      }}
                     />
                   </div>
                 </div>

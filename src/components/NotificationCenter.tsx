@@ -18,6 +18,7 @@ export const NotificationCenter = () => {
     markAsRead, 
     markAllAsRead, 
     deleteNotification,
+    preferences,
     permission,
     requestPermission 
   } = useNotifications();
@@ -29,7 +30,7 @@ export const NotificationCenter = () => {
     unreadCount: aptUnreadCount, 
     markAsRead: markAptAsRead, 
     markAllAsRead: markAllAptAsRead 
-  } = useAppointmentNotifications(isCitizen ? appointments : []);
+  } = useAppointmentNotifications(isCitizen ? appointments : [], preferences.appointments);
 
   const totalUnread = unreadCount + aptUnreadCount;
 

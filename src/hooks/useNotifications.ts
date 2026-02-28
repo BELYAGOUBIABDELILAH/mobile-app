@@ -48,6 +48,19 @@ export const useNotifications = (userId?: string) => {
   }, []);
 
   const sendNotification = useCallback((notification: Omit<Notification, 'id' | 'createdAt' | 'read'>) => {
+    // Check if this notification type is enabled in preferences
+    const typePreferenceMap: Record<string, boolean> = {
+      appointment: preferences.appointments,
+      message: preferences.messages,
+      profile_update: preferences.profileUpdates,
+      verification_status: preferences.verificationStatus,
+    };
+
+    const isTypeEnabled = typePreferenceMap[notification.type] ?? true;
+    if (!isTypeEnabled) {
+      return null;
+    }
+
     const newNotification: Notification = {
       ...notification,
       id: crypto.randomUUID(),
@@ -63,7 +76,7 @@ export const useNotifications = (userId?: string) => {
 
     // Show browser notification if enabled
     if (preferences.pushNotifications && permission === 'granted') {
-      new Notification(notification.title, {
+      new window.Notification(notification.title, {
         body: notification.body,
         icon: '/favicon.ico',
         tag: newNotification.id,
@@ -71,7 +84,7 @@ export const useNotifications = (userId?: string) => {
     }
 
     return newNotification;
-  }, [preferences.pushNotifications, permission]);
+  }, [preferences, permission]);
 
   const markAsRead = useCallback((id: string) => {
     setNotifications(prev => {
