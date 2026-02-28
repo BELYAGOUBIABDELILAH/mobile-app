@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Appointment } from '@/types/appointments';
+import type { NotificationPreferences } from '@/types/notifications';
 
 export interface AppointmentNotification {
   id: string;
@@ -29,7 +30,7 @@ const saveNotifications = (notifications: AppointmentNotification[]) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
 };
 
-export const useAppointmentNotifications = (appointments: Appointment[]) => {
+export const useAppointmentNotifications = (appointments: Appointment[], appointmentsEnabled: boolean = true) => {
   const [notifications, setNotifications] = useState<AppointmentNotification[]>(loadNotifications);
   const prevStatusMap = useRef<Map<string, string>>(new Map());
   const isFirstLoad = useRef(true);
@@ -37,7 +38,7 @@ export const useAppointmentNotifications = (appointments: Appointment[]) => {
   useEffect(() => {
     if (appointments.length === 0) return;
 
-    if (!isFirstLoad.current) {
+    if (!isFirstLoad.current && appointmentsEnabled) {
       const newNotifs: AppointmentNotification[] = [];
       appointments.forEach((apt) => {
         const prev = prevStatusMap.current.get(apt.id);
