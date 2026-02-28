@@ -1,62 +1,76 @@
 
 
-## Plan: Deep Pricing Integration for CityHealth
+## Plan: CityHealth Companion Chrome Extension
 
-### 1. Database: Add `plan_type` column to providers (Firestore-based)
+### Overview
+Create an isolated `cityhealth-extension/` directory at the project root containing a Manifest V3 Chrome extension with two features: a popup UI for quick triage/search, and a background service worker for blood emergency notifications.
 
-The project uses Firebase/Firestore for providers (not a Supabase `providers` table). The `CityHealthProvider` interface in `src/data/providers.ts` is the canonical type. No Supabase migration needed -- we add `planType` as a field on the Firestore document and to the TypeScript interface.
+### File Structure
+```text
+cityhealth-extension/
+├── manifest.json
+├── index.html
+├── vite.config.ts
+├── package.json
+├── tailwind.config.ts
+├── postcss.config.js
+├── tsconfig.json
+├── src/
+│   ├── main.tsx
+│   ├── Popup.tsx
+│   ├── background.ts
+│   ├── supabaseClient.ts
+│   └── index.css
+```
 
-**Edit `src/data/providers.ts`**: Add `planType?: 'basic' | 'standard' | 'premium'` to `CityHealthProvider` interface.
+### Implementation Steps
 
-**Edit `src/types/provider.ts`**: Add same field if the type is duplicated there.
+#### 1. `manifest.json` — Manifest V3 Configuration
+- Permissions: `storage`, `notifications`
+- Service worker: `background.js` (built output)
+- Popup: `index.html`
+- Connect to Supabase URL in `host_permissions`
 
-### 2. Redesign PricingSection (Landing Page)
+#### 2. `vite.config.ts` — Dual Build Configuration
+- Build popup as standard React app (`index.html` entry)
+- Build `background.ts` separately as an IIFE bundle (service worker can't use ES modules)
+- Output to `cityhealth-extension/dist/`
 
-**Rewrite `src/components/homepage/PricingSection.tsx`**:
-- 3 cards: Basic, Standard (highlighted), Premium
-- All features in French, CityHealth-specific:
-  - **Basic**: Profil public standard, Localisation sur la carte, Accès réseau "Urgence Sang", Badge "Vérifié" standard
-  - **Standard** (Most Popular): All Basic + Prise de RDV en ligne, Mode "Pharmacie de Garde", Affichage avis patients, Galerie photos
-  - **Premium**: All Standard + Badge "Premium Vérifié", Tête des résultats de recherche, Recommandation IA Triage, Statistiques avancées
-- Green "Gratuit la 1ère année" badge on all cards
-- CTA buttons with `useNavigate` to `/inscription-professionnel`:
-  - Basic: "Commencer gratuitement"
-  - Standard: "Choisir le Standard"
-  - Premium: "Devenir Premium"
+#### 3. `supabaseClient.ts` — Supabase Connection
+- Import `@supabase/supabase-js`
+- Use the project's existing Lovable Cloud Supabase URL and anon key (hardcoded, these are public/publishable)
 
-### 3. Provider Dashboard: Subscription Card
+#### 4. `Popup.tsx` — Popup UI (350×500px)
+- **Auth screen**: Email/password login via `supabase.auth.signInWithPassword`
+- **Main screen** (post-login):
+  - Header with CityHealth branding
+  - Read-only badge showing synced blood group from `emergency_health_cards` table (fetched on login, saved to `chrome.storage.local`)
+  - Search bar "Trouver un professionnel" — opens main app search page in new tab
+  - "Assistant Triage IA" button — opens main app `/assistant-medical` in new tab
+  - Logout button
+- Styled with Tailwind CSS, healthcare color theme
 
-**Create `src/components/provider/SubscriptionCard.tsx`**:
-- Displays current plan name from provider's `planType` (default 'basic')
-- Shows "Forfait Actuel : Basic/Standard/Premium" badge
-- If not premium, shows a "✨ Passer au Premium" button
-- Button opens a Dialog/modal listing Premium benefits
-- Modal has a confirm CTA (placeholder for future payment flow)
+#### 5. `background.ts` — Service Worker
+- On install/startup: read blood type from `chrome.storage.local`
+- Listen to `chrome.storage.onChanged` to update blood type if popup refreshes it
+- Subscribe to Supabase realtime channel on `blood_emergencies` table (INSERT events, status='active')
+- When a new emergency matches the user's blood group → `chrome.notifications.create` with French message
+- On notification click → open the blood donation page on the main app
 
-**Edit `src/pages/ProviderDashboard.tsx`**:
-- Import and render `SubscriptionCard` in the Overview tab area
+#### 6. `index.css` — Tailwind Setup
+- Standard Tailwind directives (`@tailwind base/components/utilities`)
+- Minimal custom styles for popup dimensions
 
-### 4. Premium Verified Badge Logic
+#### 7. Supporting Config Files
+- `package.json` with dependencies: `@supabase/supabase-js`, `react`, `react-dom`, `vite`, `tailwindcss`, `postcss`, `autoprefixer`, `@vitejs/plugin-react`
+- `tsconfig.json` for TypeScript
+- `tailwind.config.ts` and `postcss.config.js`
 
-**Edit `src/components/trust/VerifiedBadge.tsx`**: Already supports `type="premium"` with gold/amber styling. No changes needed.
+### Technical Notes
 
-**Edit badge rendering in key locations** to check `planType`:
-- `src/pages/ProviderProfilePage.tsx`: Change `<VerifiedBadge type="verified" />` to `<VerifiedBadge type={provider.planType === 'premium' ? 'premium' : 'verified'} />`
-- `src/components/search/SearchResults.tsx`: Same logic in `ProviderCard`
-- `src/components/search/ProviderInfoCard.tsx`: Same logic
-- `src/components/map/ProviderList.tsx`: Same logic
-- `src/components/map/MapSidebar.tsx`: Same logic
-
-### Files to create:
-- `src/components/provider/SubscriptionCard.tsx`
-
-### Files to edit:
-- `src/data/providers.ts` (add `planType` field)
-- `src/components/homepage/PricingSection.tsx` (full redesign)
-- `src/pages/ProviderDashboard.tsx` (add SubscriptionCard)
-- `src/pages/ProviderProfilePage.tsx` (premium badge logic)
-- `src/components/search/SearchResults.tsx` (premium badge logic)
-- `src/components/search/ProviderInfoCard.tsx` (premium badge logic)
-- `src/components/map/ProviderList.tsx` (premium badge logic)
-- `src/components/map/MapSidebar.tsx` (premium badge logic)
+- **Blood group source**: Uses existing `emergency_health_cards` table (column `blood_group`, keyed by `user_id`). No new tables needed.
+- **Auth**: Uses Supabase Auth (email/password). Session token stored in `chrome.storage.local` for the service worker to reuse.
+- **Realtime in service worker**: The background script creates a Supabase client and subscribes to postgres_changes on `blood_emergencies`. Service workers can maintain WebSocket connections while active; Chrome will wake the worker on incoming messages.
+- **No changes to main app**: Everything is self-contained in `cityhealth-extension/`. The main app codebase is untouched.
+- **Build process**: Run `cd cityhealth-extension && npm install && npm run build` to produce `dist/` folder ready to load as unpacked extension in Chrome.
 
