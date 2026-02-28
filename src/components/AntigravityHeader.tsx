@@ -58,7 +58,7 @@ export const AntigravityHeader = () => {
   }, []);
 
   const handleMenuLeave = useCallback(() => {
-    timeoutRef.current = setTimeout(() => setActiveMenu(null), 150);
+    timeoutRef.current = setTimeout(() => setActiveMenu(null), 220);
   }, []);
 
   const handlePanelEnter = useCallback(() => {
@@ -66,7 +66,7 @@ export const AntigravityHeader = () => {
   }, []);
 
   const handlePanelLeave = useCallback(() => {
-    timeoutRef.current = setTimeout(() => setActiveMenu(null), 150);
+    timeoutRef.current = setTimeout(() => setActiveMenu(null), 220);
   }, []);
 
   // Data
@@ -126,7 +126,6 @@ export const AntigravityHeader = () => {
   const NavTrigger = ({ label, menuKey }: { label: string; menuKey: MenuKey }) => (
     <button
       onMouseEnter={() => handleMenuEnter(menuKey)}
-      onMouseLeave={handleMenuLeave}
       aria-expanded={activeMenu === menuKey}
       className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
@@ -150,16 +149,14 @@ export const AntigravityHeader = () => {
           </div>
 
           {/* Center: Navigation */}
-          <nav className="hidden lg:flex flex-1 items-center justify-center gap-1" role="navigation">
-            <div onMouseLeave={handleMenuLeave}>
-              <NavTrigger label={t('footer', 'services')} menuKey="services" />
-            </div>
-            <div onMouseLeave={handleMenuLeave}>
-              <NavTrigger label={t('footer', 'professionals')} menuKey="pro" />
-            </div>
-            <div onMouseLeave={handleMenuLeave}>
-              <NavTrigger label={t('footer', 'resources')} menuKey="resources" />
-            </div>
+          <nav
+            className="hidden lg:flex flex-1 h-full items-center justify-center gap-1"
+            role="navigation"
+            onMouseLeave={handleMenuLeave}
+          >
+            <NavTrigger label={t('footer', 'services')} menuKey="services" />
+            <NavTrigger label={t('footer', 'professionals')} menuKey="pro" />
+            <NavTrigger label={t('footer', 'resources')} menuKey="resources" />
             <Link
               to="/map/emergency"
               className="px-4 py-2 text-sm font-semibold text-destructive hover:text-destructive/80 transition-colors rounded-lg hover:bg-destructive/5"
@@ -290,7 +287,7 @@ export const AntigravityHeader = () => {
             {/* CTA Button — ghost/outline style */}
             <button
               onClick={() => navigate('/search')}
-              className="hidden md:flex items-center gap-2 px-5 py-2 text-sm font-medium border border-primary text-primary bg-transparent hover:bg-primary hover:text-primary-foreground rounded-lg transition-all duration-200"
+              className="hidden md:flex items-center gap-2 ml-1 px-5 py-2 text-sm font-medium border border-primary bg-primary text-primary-foreground hover:bg-transparent hover:text-primary rounded-lg transition-all duration-200"
             >
               {t('footer', 'findDoctor')}
             </button>
@@ -316,7 +313,7 @@ export const AntigravityHeader = () => {
           onMouseEnter={handlePanelEnter}
           onMouseLeave={handlePanelLeave}
         >
-          <div className="max-w-7xl mx-auto px-8 lg:px-12 pt-2 pb-4">
+          <div className="max-w-7xl mx-auto px-8 lg:px-12 pt-0 pb-4">
             {/* Services Mega-Menu */}
             {activeMenu === 'services' && (
               <div className="animate-mega-enter bg-popover border border-border/40 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl overflow-hidden">
@@ -380,7 +377,7 @@ export const AntigravityHeader = () => {
 
             {/* Professionnels Mega-Menu */}
             {activeMenu === 'pro' && (
-              <div className="animate-mega-enter bg-popover border border-border/40 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl overflow-hidden max-w-2xl">
+              <div className="animate-mega-enter bg-popover border border-border/40 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl overflow-hidden max-w-2xl mx-auto">
                 <div className="flex">
                   <div className="flex-1 p-5">
                     <div className="grid grid-cols-2 gap-1">
@@ -414,7 +411,7 @@ export const AntigravityHeader = () => {
 
             {/* Ressources Mega-Menu */}
             {activeMenu === 'resources' && (
-              <div className="animate-mega-enter bg-popover border border-border/40 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl overflow-hidden max-w-2xl">
+              <div className="animate-mega-enter bg-popover border border-border/40 rounded-xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.15)] backdrop-blur-xl overflow-hidden max-w-2xl mx-auto">
                 <div className="flex">
                   <div className="flex-1 p-5">
                     <div className="grid grid-cols-2 gap-1">
@@ -616,7 +613,10 @@ export const AntigravityHeader = () => {
                   )}
 
                   <button
-                    onClick={() => { logout(); setIsMobileMenuOpen(false); }}
+                    onClick={() => {
+                      logout();
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="flex items-center gap-3 w-full px-2 py-2.5 text-sm text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                   >
                     <LogOut className="h-4 w-4" />
@@ -626,14 +626,20 @@ export const AntigravityHeader = () => {
               ) : (
                 <div className="px-6 space-y-2">
                   <Button
-                    onClick={() => { navigate('/citizen/login'); setIsMobileMenuOpen(false); }}
+                    onClick={() => {
+                      navigate('/citizen/login');
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="w-full"
                   >
                     {t('header', 'signin')}
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => { navigate('/search'); setIsMobileMenuOpen(false); }}
+                    onClick={() => {
+                      navigate('/search');
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="w-full"
                   >
                     <Search className="h-4 w-4 mr-2" />
@@ -641,6 +647,26 @@ export const AntigravityHeader = () => {
                   </Button>
                 </div>
               )}
+
+              {/* Provider CTA restored at bottom */}
+              <div className="px-6 mt-5">
+                <div className="rounded-xl border border-border/60 bg-muted/35 p-4">
+                  <p className="text-sm font-semibold text-foreground">Vous êtes un professionnel de santé ?</p>
+                  <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                    Rejoignez CityHealth et développez votre présence locale à Sidi Bel Abbès.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-3"
+                    onClick={() => {
+                      navigate('/provider/register');
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    Inscrire mon établissement
+                  </Button>
+                </div>
+              </div>
             </div>
           </ScrollArea>
         </SheetContent>
