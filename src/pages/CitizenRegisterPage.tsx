@@ -9,6 +9,24 @@ import { Loader2, User, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
 
+const PHONE_REGEX = /^(0[5-7]\d{8}|\+213[5-7]\d{8})$/;
+
+const formatPhoneDisplay = (value: string) => {
+  // Remove all non-digit chars except leading +
+  const cleaned = value.replace(/[^\d+]/g, '');
+  if (cleaned.startsWith('+213')) {
+    const digits = cleaned.slice(4);
+    const parts = [digits.slice(0, 1), digits.slice(1, 3), digits.slice(3, 5), digits.slice(5, 7), digits.slice(7, 9)].filter(Boolean);
+    return '+213 ' + parts.join(' ');
+  }
+  if (cleaned.startsWith('0')) {
+    const digits = cleaned.slice(1);
+    const parts = [cleaned.slice(0, 2), digits.slice(1, 3), digits.slice(3, 5), digits.slice(5, 7), digits.slice(7, 9)].filter(Boolean);
+    return parts.join(' ');
+  }
+  return cleaned;
+};
+
 const signupSchema = z.object({
   email: z.string().email('Email invalide').max(255),
   password: z.string()
@@ -17,7 +35,12 @@ const signupSchema = z.object({
     .regex(/[A-Z]/, 'Doit contenir une majuscule')
     .regex(/[0-9]/, 'Doit contenir un chiffre'),
   fullName: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(100),
-  phone: z.string().optional(),
+  phone: z.string()
+    .transform(v => v.replace(/\s/g, ''))
+    .pipe(
+      z.string().regex(PHONE_REGEX, 'Format: 05XX XXX XXX ou +213 5XX XXX XXX').or(z.literal(''))
+    )
+    .optional(),
 });
 
 const CitizenRegisterPage = () => {
@@ -124,10 +147,15 @@ const CitizenRegisterPage = () => {
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+213 555 123 456"
+                placeholder="05 55 12 34 56"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(formatPhoneDisplay(e.target.value))}
+                maxLength={18}
               />
+              {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
+              <p className="text-xs text-muted-foreground">
+                Format: 05XX XX XX XX ou +213 5XX XX XX XX
+              </p>
             </div>
 
             <div className="space-y-2">
