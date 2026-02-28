@@ -406,43 +406,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         displayName: fullName
       });
 
-      // Create user document with type
-      await createUserDocument(newUser.uid, email, 'citizen');
-
-      // Create Firestore profile
-      await setDoc(doc(db, 'profiles', newUser.uid), {
-        id: newUser.uid,
-        email: newUser.email,
-        full_name: fullName,
-        avatar_url: null,
-        phone: phone || null,
-        created_at: serverTimestamp(),
-        updated_at: serverTimestamp()
-      });
-
-      // Create citizen document
-      await createTypeDocument(newUser.uid, 'citizen', {
-        name: fullName,
-        email: newUser.email,
-        phone: phone || null,
-        preferences: {
-          language: 'fr',
-          theme: 'system'
-        }
-      });
-
-      // Assign 'patient' role for legacy compatibility
-      await setDoc(doc(db, 'user_roles', `${newUser.uid}_patient`), {
-        user_id: newUser.uid,
-        role: 'patient',
-        created_at: serverTimestamp()
-      });
-
-      // Send email verification
+      // Send email verification FIRST (before any Firestore writes that might fail)
       await sendEmailVerification(newUser, {
-        url: `${window.location.origin}/citizen/dashboard`,
+        url: `${window.location.origin}/citizen/login`,
         handleCodeInApp: false,
       });
+
+      // Create Firestore documents (non-blocking errors won't prevent confirmation screen)
+      try {
+        await createUserDocument(newUser.uid, email, 'citizen');
+
+        await setDoc(doc(db, 'profiles', newUser.uid), {
+          id: newUser.uid,
+          email: newUser.email,
+          full_name: fullName,
+          avatar_url: null,
+          phone: phone || null,
+          created_at: serverTimestamp(),
+          updated_at: serverTimestamp()
+        });
+
+        await createTypeDocument(newUser.uid, 'citizen', {
+          name: fullName,
+          email: newUser.email,
+          phone: phone || null,
+          preferences: { language: 'fr', theme: 'system' }
+        });
+
+        // Assign 'patient' role - may fail due to Firestore rules
+        await setDoc(doc(db, 'user_roles', `${newUser.uid}_patient`), {
+          user_id: newUser.uid,
+          role: 'patient',
+          created_at: serverTimestamp()
+        });
+      } catch (firestoreError) {
+        console.warn('Non-critical Firestore write error during signup:', firestoreError);
+      }
 
       // Sign out so user must verify email first
       await firebaseSignOut(auth);
