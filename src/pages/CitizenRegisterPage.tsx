@@ -9,23 +9,22 @@ import { Loader2, User, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
 
-const PHONE_REGEX = /^(0[5-7]\d{8}|\+213[5-7]\d{8})$/;
-
-const formatPhoneDisplay = (value: string) => {
-  // Remove all non-digit chars except leading +
-  const cleaned = value.replace(/[^\d+]/g, '');
-  if (cleaned.startsWith('+213')) {
-    const digits = cleaned.slice(4);
-    const parts = [digits.slice(0, 1), digits.slice(1, 3), digits.slice(3, 5), digits.slice(5, 7), digits.slice(7, 9)].filter(Boolean);
-    return '+213 ' + parts.join(' ');
-  }
-  if (cleaned.startsWith('0')) {
-    const digits = cleaned.slice(1);
-    const parts = [cleaned.slice(0, 2), digits.slice(1, 3), digits.slice(3, 5), digits.slice(5, 7), digits.slice(7, 9)].filter(Boolean);
-    return parts.join(' ');
-  }
-  return cleaned;
+const formatPhoneInput = (value: string) => {
+  // Strip everything except digits
+  const digits = value.replace(/\D/g, '');
+  
+  // Remove leading 213 if user typed it (we add prefix automatically)
+  const local = digits.startsWith('213') ? digits.slice(3) : digits;
+  
+  // Limit to 9 digits (Algerian mobile without country code)
+  const trimmed = local.slice(0, 9);
+  
+  // Format as: XXX XX XX XX
+  const parts = [trimmed.slice(0, 3), trimmed.slice(3, 5), trimmed.slice(5, 7), trimmed.slice(7, 9)].filter(Boolean);
+  return parts.join(' ');
 };
+
+const PHONE_REGEX = /^\d{9}$/;
 
 const signupSchema = z.object({
   email: z.string().email('Email invalide').max(255),
@@ -37,9 +36,7 @@ const signupSchema = z.object({
   fullName: z.string().trim().min(2, 'Le nom doit contenir au moins 2 caractères').max(100),
   phone: z.string()
     .transform(v => v.replace(/\s/g, ''))
-    .pipe(
-      z.string().regex(PHONE_REGEX, 'Format: 05XX XXX XXX ou +213 5XX XXX XXX').or(z.literal(''))
-    )
+    .pipe(z.string().regex(PHONE_REGEX, 'Le numéro doit contenir 9 chiffres').or(z.literal('')))
     .optional(),
 });
 
@@ -68,7 +65,9 @@ const CitizenRegisterPage = () => {
     try {
       const validated = signupSchema.parse({ email, password, fullName, phone });
       setIsLoading(true);
-      await signupAsCitizen(validated.email, validated.password, validated.fullName, validated.phone);
+      // Store phone with +213 prefix
+      const fullPhone = validated.phone ? `+213${validated.phone.replace(/\s/g, '')}` : undefined;
+      await signupAsCitizen(validated.email, validated.password, validated.fullName, fullPhone);
       toast.success('Compte créé avec succès! Bienvenue sur CityHealth.');
       // Explicit redirect after successful signup
       navigate('/citizen/dashboard');
@@ -144,17 +143,23 @@ const CitizenRegisterPage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="phone">Téléphone (optionnel)</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="05 55 12 34 56"
-                value={phone}
-                onChange={(e) => setPhone(formatPhoneDisplay(e.target.value))}
-                maxLength={18}
-              />
+              <div className="flex">
+                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-sm">
+                  +213
+                </span>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="XXX XX XX XX"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhoneInput(e.target.value))}
+                  className="rounded-l-none"
+                  maxLength={12}
+                />
+              </div>
               {errors.phone && <p className="text-sm text-destructive">{errors.phone}</p>}
               <p className="text-xs text-muted-foreground">
-                Format: 05XX XX XX XX ou +213 5XX XX XX XX
+                Format: +213 XXX XX XX XX
               </p>
             </div>
 
