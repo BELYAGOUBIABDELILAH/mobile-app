@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Menu, LogOut, Settings, User as UserIcon, Calendar, Bot, Stethoscope, Sparkles,
   MapPin, Phone, Heart, Search, ChevronDown, Droplet, AlertTriangle, Home, Info, HelpCircle, UserPlus, Building2, Shield, Users, HeartPulse, Globe, Check,
-  HeartHandshake, FileText
+  HeartHandshake, FileText, Megaphone, BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -193,8 +193,8 @@ export const Header = () => {
         { label: texts.aiAssistant, href: '/medical-assistant', icon: Bot, description: texts.aiDesc },
         { label: texts.bloodDonation, href: '/blood-donation', icon: Droplet, description: texts.bloodDesc },
         { label: texts.communityAid, href: '/citizen/provide', icon: HeartHandshake, description: texts.communityAidDesc },
-        { label: texts.announcements, href: '/annonces', icon: Search, description: texts.announcementsDesc },
-        { label: texts.research, href: '/research', icon: FileText, description: texts.researchDesc },
+        { label: texts.announcements, href: '/annonces', icon: Megaphone, description: texts.announcementsDesc },
+        { label: texts.research, href: '/research', icon: BookOpen, description: texts.researchDesc },
       ]
     },
     {
