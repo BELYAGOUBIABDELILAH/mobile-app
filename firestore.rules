@@ -114,10 +114,10 @@ service cloud.firestore {
         docId.matches(request.auth.uid + '_.*');
       // Allow admins to read all roles
       allow read: if isAdmin();
-      // Self-assignment for provider registration with shape validation
+      // Self-assignment for signup (patient role) and provider registration
       allow create: if isAuthenticated() && 
-        docId == (request.auth.uid + '_provider') &&
-        request.resource.data.role == 'provider' &&
+        docId == (request.auth.uid + '_' + request.resource.data.role) &&
+        request.resource.data.role in ['patient', 'provider'] &&
         request.resource.data.keys().hasAll(['role', 'user_id']) &&
         request.resource.data.size() <= 4;
       // Only admins can update/delete roles
