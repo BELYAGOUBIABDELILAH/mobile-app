@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, User, ArrowLeft, Mail, Lock, Phone, Eye, EyeOff, Heart, Shield, MapPin, CheckCircle2 } from 'lucide-react';
+import { Loader2, User, ArrowLeft, Mail, Lock, Phone, Eye, EyeOff, Heart, Shield, MapPin, CheckCircle2, MailCheck } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
@@ -50,6 +50,8 @@ const CitizenRegisterPage = () => {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [emailSent, setEmailSent] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   useEffect(() => {
     if (isAuthenticated && profile?.userType === 'citizen') {
@@ -65,8 +67,8 @@ const CitizenRegisterPage = () => {
       setIsLoading(true);
       const fullPhone = validated.phone ? `+213${validated.phone.replace(/\s/g, '')}` : undefined;
       await signupAsCitizen(validated.email, validated.password, validated.fullName, fullPhone);
-      toast.success('Compte créé avec succès! Bienvenue sur CityHealth.');
-      navigate('/citizen/dashboard');
+      setRegisteredEmail(validated.email);
+      setEmailSent(true);
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errs: Record<string, string> = {};
@@ -108,6 +110,57 @@ const CitizenRegisterPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-md text-center space-y-6"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+            className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center"
+          >
+            <MailCheck className="h-10 w-10 text-primary" />
+          </motion.div>
+
+          <div className="space-y-2">
+            <h1 className="text-2xl font-bold tracking-tight">Confirmez votre email</h1>
+            <p className="text-muted-foreground">
+              Merci de vous être inscrit sur <span className="font-semibold text-foreground">CityHealth</span> !
+            </p>
+          </div>
+
+          <div className="bg-muted/50 rounded-xl p-5 space-y-3 border">
+            <p className="text-sm text-muted-foreground">
+              Veuillez confirmer votre adresse email
+            </p>
+            <p className="font-medium text-foreground">{registeredEmail}</p>
+            <p className="text-sm text-muted-foreground">
+              en cliquant sur le bouton dans l'email que nous venons de vous envoyer.
+            </p>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <p className="text-xs text-muted-foreground">
+              Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam.
+            </p>
+            <Link to="/citizen/login">
+              <Button variant="outline" className="w-full h-11 gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Aller à la page de connexion
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
       </div>
     );
   }

@@ -6,7 +6,8 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  updateProfile as firebaseUpdateProfile
+  updateProfile as firebaseUpdateProfile,
+  sendEmailVerification
 } from 'firebase/auth';
 import { 
   doc, 
@@ -240,6 +241,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const { user: loggedInUser } = await signInWithEmailAndPassword(auth, email, password);
       
+      // Check email verification
+      if (!loggedInUser.emailVerified) {
+        await firebaseSignOut(auth);
+        toast.error('Veuillez d\'abord confirmer votre email avant de vous connecter.');
+        throw new Error('Email not verified');
+      }
       // Verify user type - allow if document doesn't exist (new user) or is citizen
       const userDoc = await getDoc(doc(db, 'users', loggedInUser.uid));
       if (userDoc.exists()) {
@@ -431,10 +438,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         created_at: serverTimestamp()
       });
 
-      // Immediately populate profile state so redirect works
-      await fetchUserProfile(newUser.uid, email);
+      // Send email verification
+      await sendEmailVerification(newUser, {
+        url: `${window.location.origin}/citizen/dashboard`,
+        handleCodeInApp: false,
+      });
 
-      toast.success('Compte citoyen créé avec succès!');
+      // Sign out so user must verify email first
+      await firebaseSignOut(auth);
+      setUser(null);
+      setProfile(null);
     } catch (error: any) {
       logError(error, 'signupAsCitizen');
       const message = getErrorMessage(error, 'fr');
