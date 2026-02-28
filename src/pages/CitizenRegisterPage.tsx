@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { getAuth, sendEmailVerification, signInWithEmailAndPassword as firebaseSignIn } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -52,6 +53,8 @@ const CitizenRegisterPage = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [emailSent, setEmailSent] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState('');
+  const [resending, setResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
     if (isAuthenticated && profile?.userType === 'citizen') {
@@ -153,6 +156,49 @@ const CitizenRegisterPage = () => {
             <p className="text-xs text-muted-foreground">
               Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam.
             </p>
+            <Button
+              variant="secondary"
+              className="w-full h-11 gap-2"
+              disabled={resending || resendCooldown > 0}
+              onClick={async () => {
+                setResending(true);
+                try {
+                  const auth = getAuth();
+                  let user = auth.currentUser;
+                  if (!user) {
+                    const cred = await firebaseSignIn(auth, registeredEmail, password);
+                    user = cred.user;
+                    await auth.signOut();
+                  }
+                  await sendEmailVerification(user, {
+                    url: `${window.location.origin}/citizen/dashboard`,
+                    handleCodeInApp: false,
+                  });
+                  toast.success('Email de vérification renvoyé !');
+                  setResendCooldown(60);
+                  const interval = setInterval(() => {
+                    setResendCooldown(prev => {
+                      if (prev <= 1) { clearInterval(interval); return 0; }
+                      return prev - 1;
+                    });
+                  }, 1000);
+                } catch (err: any) {
+                  console.error('Resend error:', err);
+                  toast.error("Impossible de renvoyer l'email. Réessayez plus tard.");
+                } finally {
+                  setResending(false);
+                }
+              }}
+            >
+              {resending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Mail className="h-4 w-4" />
+              )}
+              {resendCooldown > 0
+                ? `Renvoyer dans ${resendCooldown}s`
+                : "Renvoyer l'email de vérification"}
+            </Button>
             <Link to="/citizen/login">
               <Button variant="outline" className="w-full h-11 gap-2">
                 <ArrowLeft className="h-4 w-4" />
