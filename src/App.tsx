@@ -68,6 +68,7 @@ const AdsPage = lazy(() => import("./pages/AdsPage"));
 const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLandingPage"));
 const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
@@ -128,10 +129,14 @@ const AppRoutes = () => {
           {/* Medical Assistant (IA Chat tab) */}
           <Route path="/medical-assistant" element={<MedicalAssistantPage />} />
           
-          {/* Profile & citizen pages */}
+          {/* Profile */}
           <Route path="/profile" element={
             <CitizenGuard><CitizenProfilePage /></CitizenGuard>
           } />
+          
+          {/* Settings */}
+          <Route path="/settings" element={<SettingsPage />} />
+          
           <Route path="/favorites" element={
             <CitizenGuard><FavoritesPage /></CitizenGuard>
           } />
