@@ -1030,6 +1030,191 @@ export interface Translations {
     // Community
     comments: string;
   };
+
+  // Settings Page
+  settingsPage: {
+    title: string;
+    account: string;
+    myProfile: string;
+    changePassword: string;
+    logout: string;
+    notifications: string;
+    appointmentsNotif: string;
+    appointmentsNotifDesc: string;
+    bloodEmergencies: string;
+    bloodEmergenciesDesc: string;
+    messages: string;
+    messagesDesc: string;
+    healthServices: string;
+    emergencyCard: string;
+    bloodDonation: string;
+    preferences: string;
+    language: string;
+    darkMode: string;
+    resources: string;
+    howItWorks: string;
+    whyCityHealth: string;
+    faq: string;
+    documentation: string;
+    developerSpace: string;
+    legal: string;
+    termsOfUse: string;
+    privacyPolicy: string;
+    about: string;
+    visitWebsite: string;
+    appVersion: string;
+    helpCenter: string;
+    contactSupport: string;
+    reportBug: string;
+    reportBugMsg: string;
+    visitor: string;
+    notConnected: string;
+    signIn: string;
+    verified: string;
+    logoutSuccess: string;
+    logoutError: string;
+  };
+
+  // FAQ Page
+  faqPage: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    resultsFor: string;
+    back: string;
+    questions: string;
+    all: string;
+    citizens: string;
+    providers: string;
+    technical: string;
+    emergency: string;
+    security: string;
+    noResults: string;
+    noResultsHint: string;
+    reset: string;
+    notFound: string;
+    notFoundHint: string;
+    contactUs: string;
+    docs: string;
+    privacy: string;
+    terms: string;
+    emergencies: string;
+  };
+
+  // Change Password Dialog
+  changePasswordDialog: {
+    title: string;
+    description: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+    minChars: string;
+    mismatch: string;
+    submit: string;
+    submitting: string;
+    success: string;
+    errorNotConnected: string;
+    errorMinLength: string;
+    errorMismatch: string;
+    errorSamePassword: string;
+    errorWrongPassword: string;
+    errorWeakPassword: string;
+    errorTooMany: string;
+    errorGeneric: string;
+  };
+
+  // Auth Gateway
+  authGateway: {
+    tagline: string;
+    signIn: string;
+    createAccount: string;
+    continueAsGuest: string;
+    termsPrefix: string;
+    terms: string;
+    and: string;
+    privacy: string;
+  };
+
+  // Guest
+  guest: {
+    signIn: string;
+    createAccount: string;
+    visitor: string;
+    notConnected: string;
+    register: string;
+    unlockTitle: string;
+    unlockDesc: string;
+    freeTitle: string;
+    settingsLink: string;
+    // Locked features
+    medicalRecord: string;
+    myAppointments: string;
+    emergencyCard: string;
+    bloodProfile: string;
+    favoriteDoctors: string;
+    aiChatHistory: string;
+    // Free features
+    searchDoctor: string;
+    viewMap: string;
+    aiSessionOnly: string;
+    medicalAds: string;
+    medicalResearch: string;
+  };
+
+  // Register Page
+  registerPage: {
+    createAccount: string;
+    joinCityHealth: string;
+    continueGoogle: string;
+    orWithEmail: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    phoneOptional: string;
+    password: string;
+    creating: string;
+    create: string;
+    alreadyHaveAccount: string;
+    signIn: string;
+    backToHome: string;
+    confirmEmail: string;
+    thankYou: string;
+    confirmDesc: string;
+    noEmail: string;
+    checkSpam: string;
+    resend: string;
+    resendIn: string;
+    goToLogin: string;
+    // Features
+    healthcareAccess: string;
+    healthcareAccessDesc: string;
+    interactiveMap: string;
+    interactiveMapDesc: string;
+    secureData: string;
+    secureDataDesc: string;
+    // Stats
+    professionals: string;
+    citizensCount: string;
+    satisfaction: string;
+    // Branding
+    yourHealth: string;
+    ourPriority: string;
+    joinThousands: string;
+    // Strength
+    weak: string;
+    medium: string;
+    good: string;
+    strong: string;
+  };
+
+  // Auth Required Modal
+  authRequired: {
+    title: string;
+    description: string;
+    signIn: string;
+    createAccount: string;
+    continueWithout: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
