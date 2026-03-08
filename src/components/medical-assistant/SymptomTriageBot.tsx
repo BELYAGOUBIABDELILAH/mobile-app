@@ -132,6 +132,19 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     }
   }, [messages, isLoading, suggestionsLoading, suggestions]);
 
+  // Auto-send symptom from URL param
+  useEffect(() => {
+    if (autoSendSymptom && !autoSentRef.current && !isLoadingProviders && providers.length >= 0) {
+      autoSentRef.current = true;
+      // Find matching chip query for the symptom label
+      const allChips = Object.values(SYMPTOM_CHIPS).flat();
+      const match = allChips.find(c => c.label.toLowerCase() === autoSendSymptom.toLowerCase());
+      const query = match?.query || autoSendSymptom;
+      // Small delay to ensure component is ready
+      setTimeout(() => sendMessage(query), 300);
+    }
+  }, [autoSendSymptom, isLoadingProviders, providers]);
+
   const simplifiedDoctors: SimplifiedDoctor[] = useMemo(() => {
     return providers.map((p) => ({ id: p.id, name: p.name, specialty: p.specialty, city: p.city, type: p.type }));
   }, [providers]);
