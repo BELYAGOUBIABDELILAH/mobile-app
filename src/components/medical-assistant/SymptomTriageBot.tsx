@@ -191,19 +191,25 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
       });
 
       if (error) {
-        setMessages((prev) => [...prev, { role: "assistant", content: error.message || "Une erreur est survenue." }]);
+        const errContent = error.message || "Une erreur est survenue.";
+        setMessages((prev) => [...prev, { role: "assistant", content: errContent }]);
+        onMessageSent?.("assistant", errContent);
         setIsLoading(false);
         return;
       }
+      const assistantContent = data.analysis || "Analyse non disponible.";
       setMessages((prev) => [...prev, {
         role: "assistant",
-        content: data.analysis || "Analyse non disponible.",
+        content: assistantContent,
         doctorIds: data.doctorIds || [],
         recommendedSpecialty: data.recommendedSpecialty || "",
         urgencyLevel: data.urgencyLevel || undefined,
       }]);
+      onMessageSent?.("assistant", assistantContent);
     } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Erreur de connexion. Veuillez réessayer." }]);
+      const fallback = "Erreur de connexion. Veuillez réessayer.";
+      setMessages((prev) => [...prev, { role: "assistant", content: fallback }]);
+      onMessageSent?.("assistant", fallback);
     } finally {
       setIsLoading(false);
     }
