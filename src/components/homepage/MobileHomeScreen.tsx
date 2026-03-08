@@ -267,7 +267,7 @@ export const MobileHomeScreen = () => {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground truncate">{doc.specialty || 'Médecin'}</p>
+                <p className="text-xs text-muted-foreground truncate">{doc.specialty || t('mobileHome', 'defaultSpecialty')}</p>
                 <div className="flex items-center gap-1 mt-1">
                   <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
                   <span className="text-xs font-medium text-foreground">{doc.rating.toFixed(1)}</span>
