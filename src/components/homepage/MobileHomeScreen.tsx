@@ -163,12 +163,11 @@ export const MobileHomeScreen = () => {
       </motion.div>
 
       {/* 4. Urgent banner */}
-      <motion.button
-        variants={fadeUp}
-        onClick={() => navigate('/blood-donation')}
-        className="w-full rounded-xl bg-card border border-border border-l-4 border-l-destructive shadow-sm p-4 text-left active:scale-[0.98] transition-transform"
-      >
-        <div className="flex items-center gap-3">
+      <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-l-4 border-l-destructive shadow-sm p-4 space-y-3">
+        <button
+          onClick={() => navigate('/blood-donation')}
+          className="w-full flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
+        >
           <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
             <Droplets className="h-5 w-5 text-destructive" />
           </div>
@@ -183,8 +182,15 @@ export const MobileHomeScreen = () => {
             <p className="text-muted-foreground text-xs mt-0.5">Trouvez un centre de don près de vous</p>
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-        </div>
-      </motion.button>
+        </button>
+        <button
+          onClick={() => navigate('/map/blood')}
+          className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-destructive/5 py-2 text-xs font-medium text-destructive active:scale-[0.97] transition-transform"
+        >
+          <Map className="h-3.5 w-3.5" />
+          Voir la carte des centres
+        </button>
+      </motion.div>
 
       {/* 5. Services de santé */}
       <SectionHeader label="Spécialités" title="Services de santé" actionLabel="Tout voir" onAction={() => navigate('/search')} />
