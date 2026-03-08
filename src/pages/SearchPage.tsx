@@ -67,6 +67,7 @@ const SearchPage = () => {
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [filters, setFilters] = useState<FilterState>({
     categories: getInitialCategories(initialType),
     location: '', radius: 25, availability: 'any', minRating: 0,
