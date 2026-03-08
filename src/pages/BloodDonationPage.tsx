@@ -672,8 +672,8 @@ export default function BloodDonationPage() {
             </div>
           </TabsContent>
           
-          {/* Tab 2: Reminders */}
-          <TabsContent value="reminders" className="space-y-6">
+          {/* Tab 2: Reminders (authenticated only) */}
+          {isAuthenticated && (
             <Card className="bg-card border border-border rounded-xl shadow-sm max-w-xl mx-auto">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
