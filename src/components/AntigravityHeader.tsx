@@ -74,8 +74,8 @@ export const AntigravityHeader = () => {
   // Data
   const soinsItems: MegaMenuItem[] = [
     { label: t('footer', 'searchDoctors'), description: 'Trouvez un médecin près de chez vous', href: '/search', icon: Search },
-    { label: t('footer', 'interactiveMap'), description: 'Explorez les établissements de santé', href: '/map/providers', icon: Map },
-    { label: t('footer', 'emergency247'), description: 'Accès rapide aux urgences', href: '/map/emergency', icon: Siren },
+    { label: t('footer', 'interactiveMap'), description: 'Explorez les établissements de santé', href: '/map', icon: Map },
+    { label: t('footer', 'emergency247'), description: 'Accès rapide aux urgences', href: '/map?mode=emergency', icon: Siren },
     { label: t('footer', 'aiAssistant'), description: 'Posez vos questions de santé', href: '/medical-assistant', icon: Bot },
     { label: language === 'ar' ? 'الإعلانات' : language === 'en' ? 'Announcements' : 'Annonces', description: language === 'ar' ? 'عروض المهنيين' : language === 'en' ? 'Professional offers' : 'Offres des professionnels', href: '/annonces', icon: Megaphone },
     { label: language === 'ar' ? 'البحث الطبي' : language === 'en' ? 'Medical Research' : 'Recherche Médicale', description: language === 'ar' ? 'مقالات ومنشورات علمية' : language === 'en' ? 'Articles and publications' : 'Articles et publications scientifiques', href: '/research', icon: BookOpen },
