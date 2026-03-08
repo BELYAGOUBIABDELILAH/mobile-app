@@ -1,7 +1,7 @@
-import { useMemo, useState, useCallback } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { Bot, AlertTriangle, Phone, PenSquare, History, ChevronRight, Clock, Trash2, LogIn, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,12 +27,22 @@ import { useChatHistory } from "@/hooks/useChatHistory";
 
 export default function MedicalAssistantPage() {
   const { language } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [resetKey, setResetKey] = useState(0);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showGuestBanner, setShowGuestBanner] = useState(true);
   const [initialMessages, setInitialMessages] = useState<{ role: "user" | "assistant"; content: string }[] | undefined>();
+
+  const symptomFromUrl = searchParams.get("symptom");
+
+  // Clear the URL param after reading it so it doesn't re-trigger on navigation
+  useEffect(() => {
+    if (symptomFromUrl) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [symptomFromUrl, setSearchParams]);
 
   const {
     conversations,
@@ -212,6 +222,7 @@ export default function MedicalAssistantPage() {
             resetKey={resetKey}
             onMessageSent={handleMessageSent}
             initialMessages={initialMessages}
+            autoSendSymptom={symptomFromUrl}
           />
         </div>
 

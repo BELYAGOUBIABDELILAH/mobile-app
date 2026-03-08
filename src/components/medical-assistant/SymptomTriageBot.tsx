@@ -83,9 +83,10 @@ interface SymptomTriageBotProps {
   resetKey?: number;
   onMessageSent?: (role: "user" | "assistant", content: string) => void;
   initialMessages?: { role: "user" | "assistant"; content: string }[];
+  autoSendSymptom?: string | null;
 }
 
-export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages }: SymptomTriageBotProps) {
+export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages, autoSendSymptom }: SymptomTriageBotProps) {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<TriageMessage[]>([]);
   const [input, setInput] = useState("");
@@ -94,6 +95,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
   const [isLoadingProviders, setIsLoadingProviders] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoSentRef = useRef(false);
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
@@ -128,6 +131,19 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
   }, [messages, isLoading, suggestionsLoading, suggestions]);
+
+  // Auto-send symptom from URL param
+  useEffect(() => {
+    if (autoSendSymptom && !autoSentRef.current && !isLoadingProviders && providers.length >= 0) {
+      autoSentRef.current = true;
+      // Find matching chip query for the symptom label
+      const allChips = Object.values(SYMPTOM_CHIPS).flat();
+      const match = allChips.find(c => c.label.toLowerCase() === autoSendSymptom.toLowerCase());
+      const query = match?.query || autoSendSymptom;
+      // Small delay to ensure component is ready
+      setTimeout(() => sendMessage(query), 300);
+    }
+  }, [autoSendSymptom, isLoadingProviders, providers]);
 
   const simplifiedDoctors: SimplifiedDoctor[] = useMemo(() => {
     return providers.map((p) => ({ id: p.id, name: p.name, specialty: p.specialty, city: p.city, type: p.type }));
