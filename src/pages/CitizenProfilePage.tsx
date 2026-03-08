@@ -49,6 +49,12 @@ const TABS = [
 
 export default function CitizenProfilePage() {
   const { user, profile, updateProfile, logout, isAuthenticated, hasRole } = useAuth();
+
+  // Guest state — show dedicated guest profile page
+  if (!isAuthenticated || !user) {
+    const GuestProfilePage = require('@/components/guest/GuestProfilePage').default;
+    return <GuestProfilePage />;
+  }
   const { preferences, updatePreferences } = useNotifications();
   const navigate = useNavigate();
   
