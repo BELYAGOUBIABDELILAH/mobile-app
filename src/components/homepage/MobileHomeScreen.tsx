@@ -7,6 +7,7 @@ import {
   BookOpen, Megaphone, Users, Clock, Heart,
   Bell, SlidersHorizontal, Stethoscope, Star,
   MessageSquare, TrendingUp, LayoutGrid,
+  Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNotifications } from '@/hooks/useNotifications';
