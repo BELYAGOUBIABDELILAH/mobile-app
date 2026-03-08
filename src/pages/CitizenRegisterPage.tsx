@@ -73,8 +73,7 @@ const CitizenRegisterPage = () => {
       // Store credentials temporarily for auto-login after email verification
       sessionStorage.setItem('cityhealth_pending_email', validated.email);
       sessionStorage.setItem('cityhealth_pending_password', validated.password);
-      setRegisteredEmail(validated.email);
-      setEmailSent(true);
+      navigate('/verify-email', { replace: true });
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errs: Record<string, string> = {};

@@ -205,6 +205,7 @@ const AppRoutes = () => {
         <Route path="/citizen/login" element={<CitizenLoginPage />} />
         <Route path="/citizen/register" element={<CitizenRegisterPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/provider/login" element={<ProviderLoginPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
