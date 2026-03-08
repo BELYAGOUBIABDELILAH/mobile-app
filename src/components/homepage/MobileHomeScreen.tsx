@@ -28,6 +28,10 @@ const quickActions = [
   { icon: MapPin, label: 'Carte', path: '/map/providers' },
   { icon: Siren, label: 'Urgences', path: '/map/emergency' },
   { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments' },
+  { icon: CreditCard, label: 'Carte', path: '/citizen/health-card' },
+  { icon: Users, label: 'Communauté', path: '/community' },
+  { icon: Newspaper, label: 'Annonces', path: '/annonces' },
+  { icon: FlaskConical, label: 'Recherche', path: '/research' },
 ];
 
 const healthServices = [
