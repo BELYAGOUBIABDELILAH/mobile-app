@@ -189,70 +189,7 @@ const CitizenLoginPage = () => {
             </Link>
           </div>
 
-          <AnimatePresence mode="wait">
-            {showForgotPassword ? (
-              <motion.div
-                key="forgot"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-6"
-              >
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold tracking-tight">{t('loginPage', 'forgotPasswordTitle')}</h2>
-                  <p className="text-muted-foreground text-sm">
-                    {forgotEmailSent ? t('loginPage', 'resetSent') : 'Entrez votre email pour recevoir un lien de réinitialisation'}
-                  </p>
-                </div>
-
-                {forgotEmailSent ? (
-                  <div className="space-y-4">
-                    <div className="p-5 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-start gap-3">
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0 mt-0.5" />
-                      <p className="text-sm text-emerald-900 dark:text-emerald-100">{t('loginPage', 'checkInbox')}</p>
-                    </div>
-                    <Button variant="outline" className="w-full h-11" onClick={() => { setShowForgotPassword(false); setForgotEmailSent(false); setForgotEmail(''); }}>
-                      {t('loginPage', 'backToLogin')}
-                    </Button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="forgot-email">{t('auth', 'email')}</Label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          id="forgot-email"
-                          type="email"
-                          placeholder="votre@email.com"
-                          value={forgotEmail}
-                          onChange={(e) => setForgotEmail(e.target.value)}
-                          className="pl-10 h-11"
-                          required
-                        />
-                      </div>
-                    </div>
-                    <Button type="submit" className="w-full h-11" disabled={isLoading}>
-                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-                      {t('loginPage', 'sendLink')}
-                    </Button>
-                    <Button type="button" variant="ghost" className="w-full" onClick={() => setShowForgotPassword(false)}>
-                      <ArrowLeft className="h-4 w-4 mr-2" />
-                      {t('common', 'back')}
-                    </Button>
-                  </form>
-                )}
-              </motion.div>
-            ) : (
-              <motion.div
-                key="login"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-6"
-              >
+          <div className="space-y-6">
                 <div className="space-y-2">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-2">
                     <User className="h-3 w-3" />
