@@ -73,7 +73,7 @@ const quickAccess = [
   { icon: LayoutGrid, title: 'Tableau de bord', subtitle: 'Votre espace patient', isPrimary: false, path: '/citizen/dashboard' },
   { icon: CreditCard, title: 'Carte d\'urgence', subtitle: 'Vos infos médicales', isPrimary: true, path: '/citizen/health-card' },
   { icon: CalendarDays, title: 'Rendez-vous', subtitle: 'Gérer vos RDV', isPrimary: true, path: '/citizen/appointments' },
-  { icon: Map, title: 'Carte don de sang', subtitle: 'Centres à proximité', isPrimary: false, path: '/map/blood' },
+  { icon: Map, title: 'Carte don de sang', subtitle: 'Centres à proximité', isPrimary: false, path: '/map?mode=blood' },
   { icon: Siren, title: 'Urgences', subtitle: 'Guide & numéros utiles', isPrimary: true, path: '/emergency' },
   { icon: Phone, title: 'Contact', subtitle: 'Nous contacter', isPrimary: false, path: '/contact' },
   { icon: HelpCircle, title: 'FAQ', subtitle: 'Questions fréquentes', isPrimary: false, path: '/faq' },
