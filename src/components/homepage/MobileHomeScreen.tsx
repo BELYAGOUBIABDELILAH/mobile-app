@@ -202,7 +202,7 @@ export const MobileHomeScreen = () => {
 
       {/* ── Categories (scrollable) ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label={t('mobileHome', 'specialties')} title="Categories" />
+        <SectionHeader label={t('mobileHome', 'specialties')} title={t('mobileHome', 'categoriesLabel')} />
         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 mt-3">
           {categories.map((cat, i) => (
             <motion.button
