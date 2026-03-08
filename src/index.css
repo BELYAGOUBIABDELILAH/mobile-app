@@ -366,3 +366,13 @@
 .user-location-popup .leaflet-popup-tip {
   background: hsl(var(--primary));
 }
+
+/* Typing indicator bouncing dots */
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+.typing-dot {
+  animation: typing-bounce 1s ease-in-out infinite;
+}

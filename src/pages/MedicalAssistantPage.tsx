@@ -1,30 +1,63 @@
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Bot, AlertTriangle, Phone, Sparkles, Shield } from "lucide-react";
+import { Bot, AlertTriangle, Phone, Sparkles, PenSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { SymptomTriageBot } from "@/components/medical-assistant/SymptomTriageBot";
 
 export default function MedicalAssistantPage() {
   const { language } = useLanguage();
+  const [resetKey, setResetKey] = useState(0);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+
+  const handleConfirmReset = useCallback(() => {
+    setResetKey((k) => k + 1);
+    setShowResetDialog(false);
+  }, []);
 
   const t = useMemo(() => {
     const translations = {
       fr: {
         title: "Assistant Médical IA",
         online: "En ligne",
-        disclaimer: "Ne remplace pas un avis médical. Urgence →",
+        disclaimer: "Ne remplace pas un avis médical. Urgence → appelez le",
+        newConversation: "Nouvelle conversation",
+        resetTitle: "Nouvelle conversation ?",
+        resetDescription: "L'historique de cette session sera effacé.",
+        cancel: "Annuler",
+        confirm: "Confirmer",
       },
       ar: {
         title: "المساعد الطبي الذكي",
         online: "متصل",
-        disclaimer: "لا يحل محل الاستشارة الطبية. طوارئ →",
+        disclaimer: "لا يحل محل الاستشارة الطبية. طوارئ → اتصل بـ",
+        newConversation: "محادثة جديدة",
+        resetTitle: "محادثة جديدة؟",
+        resetDescription: "سيتم مسح سجل هذه الجلسة.",
+        cancel: "إلغاء",
+        confirm: "تأكيد",
       },
       en: {
         title: "AI Medical Assistant",
         online: "Online",
-        disclaimer: "Does not replace medical advice. Emergency →",
+        disclaimer: "Does not replace medical advice. Emergency → call",
+        newConversation: "New conversation",
+        resetTitle: "New conversation?",
+        resetDescription: "This session's history will be cleared.",
+        cancel: "Cancel",
+        confirm: "Confirm",
       },
     };
     return translations[language as keyof typeof translations] || translations.fr;
@@ -64,15 +97,35 @@ export default function MedicalAssistantPage() {
               </div>
             </div>
 
-            <Button
-              variant="destructive"
-              size="sm"
-              className="gap-1 rounded-lg shadow-md shadow-destructive/20 h-8 text-xs px-3"
-              onClick={() => window.location.href = "tel:15"}
-            >
-              <Phone className="w-3 h-3" />
-              <span className="font-bold">15</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+                      onClick={() => setShowResetDialog(true)}
+                    >
+                      <PenSquare className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p>{t.newConversation}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <Button
+                variant="destructive"
+                size="sm"
+                className="gap-1 rounded-lg shadow-md shadow-destructive/20 h-8 text-xs px-3"
+                onClick={() => window.location.href = "tel:15"}
+              >
+                <Phone className="w-3 h-3" />
+                <span className="font-bold">15</span>
+              </Button>
+            </div>
           </div>
 
           {/* Disclaimer */}
@@ -83,10 +136,26 @@ export default function MedicalAssistantPage() {
         </div>
       </motion.header>
 
-      {/* Chat — fills remaining height */}
+      {/* Chat */}
       <main className="flex-1 min-h-0 overflow-hidden">
-        <SymptomTriageBot />
+        <SymptomTriageBot resetKey={resetKey} />
       </main>
+
+      {/* Reset confirmation dialog */}
+      <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+        <AlertDialogContent className="max-w-[calc(100vw-2rem)] rounded-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t.resetTitle}</AlertDialogTitle>
+            <AlertDialogDescription>{t.resetDescription}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmReset} className="bg-primary hover:bg-primary/90">
+              {t.confirm}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
