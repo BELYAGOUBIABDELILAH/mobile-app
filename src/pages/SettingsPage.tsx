@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useNotificationPreferences } from '@/hooks/useNotificationPreferences';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
