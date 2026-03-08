@@ -39,15 +39,15 @@ const categories = [
   { label: 'Clinics', icon: Activity, type: 'clinic' },
 ];
 
-/* ── Symptoms ── */
+/* ── Symptoms (with icons) ── */
 const symptoms = [
-  { emoji: '🤕', label: 'Headache' },
-  { emoji: '🤢', label: 'Nausea' },
-  { emoji: '🤒', label: 'Fever' },
-  { emoji: '😴', label: 'Fatigue' },
-  { emoji: '💊', label: 'Allergy' },
-  { emoji: '🫁', label: 'Breathing' },
-  { emoji: '💔', label: 'Chest pain' },
+  { icon: Brain, label: 'Headache' },
+  { icon: Frown, label: 'Nausea' },
+  { icon: Thermometer, label: 'Fever' },
+  { icon: Moon, label: 'Fatigue' },
+  { icon: Pill, label: 'Allergy' },
+  { icon: Wind, label: 'Breathing' },
+  { icon: HeartPulse, label: 'Chest pain' },
 ];
 
 export const MobileHomeScreen = () => {
