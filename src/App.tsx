@@ -68,6 +68,7 @@ const AdsPage = lazy(() => import("./pages/AdsPage"));
 const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
+const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
 const AuthGatewayPage = lazy(() => import("./pages/AuthGatewayPage"));
@@ -204,6 +205,7 @@ const AppRoutes = () => {
         <Route path="/citizen/login" element={<CitizenLoginPage />} />
         <Route path="/citizen/register" element={<CitizenRegisterPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/provider/login" element={<ProviderLoginPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
