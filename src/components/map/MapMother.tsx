@@ -11,7 +11,7 @@ import { createUserLocationMarker, createRouteStartMarker } from './MapMarkers';
 import { MapPin, Loader2, LocateFixed, Car, Footprints, Route, Clock, X, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MapChatWidget } from './MapChatWidget';
-import { useCallback } from 'react';
+
 
 const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
