@@ -50,6 +50,19 @@ export const MobileHomeScreen = () => {
 
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || t('mobileHome', 'visitor');
   const isGuest = !user;
+
+  const categories = [
+    { label: t('mobileHome', 'catDoctors'), icon: Stethoscope, type: 'doctor' },
+    { label: t('mobileHome', 'catPharmacy'), icon: Pill, type: 'pharmacy' },
+    { label: t('mobileHome', 'catHospitals'), icon: Building2, type: 'hospital' },
+    { label: t('mobileHome', 'catLabs'), icon: FlaskConical, type: 'lab' },
+    { label: t('mobileHome', 'catClinics'), icon: Activity, type: 'clinic' },
+  ];
+
+  const symptoms = symptomKeys.map((key, i) => ({
+    icon: symptomIcons[i],
+    label: t('mobileHome', key),
+  }));
   const hour = new Date().getHours();
   const greeting = hour >= 18
     ? t('mobileHome', 'goodEvening')
