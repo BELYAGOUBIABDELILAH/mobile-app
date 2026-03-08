@@ -62,7 +62,7 @@ export const BottomNavBar = () => {
                     {tab.isProfile ? (
                       <div
                         className={cn(
-                          'w-7 h-7 rounded-full overflow-hidden transition-all border border-border',
+                          'w-6 h-6 rounded-full overflow-hidden transition-all border border-border/60',
                           active && 'ring-2 ring-primary ring-offset-1 ring-offset-background'
                         )}
                       >
@@ -73,13 +73,13 @@ export const BottomNavBar = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-muted/50 flex items-center justify-center">
-                            {profile?.full_name || user?.email ? (
-                              <span className="text-[10px] font-semibold text-muted-foreground">
+                          <div className="w-full h-full bg-secondary flex items-center justify-center">
+                            {getInitial() ? (
+                              <span className="text-[9px] font-semibold text-secondary-foreground">
                                 {getInitial()}
                               </span>
                             ) : (
-                              <User className="w-3.5 h-3.5 text-muted-foreground" />
+                              <User className="w-3 h-3 text-muted-foreground" />
                             )}
                           </div>
                         )}
