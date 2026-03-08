@@ -409,7 +409,7 @@ export default function BloodDonationPage() {
                     variant="destructive"
                     size="sm"
                     className="w-full"
-                    onClick={() => setRespondingEmergency(emergency)}
+                    onClick={() => requireAuth(() => setRespondingEmergency(emergency))}
                   >
                     <Heart className="h-4 w-4 mr-1" />
                     Je peux donner
