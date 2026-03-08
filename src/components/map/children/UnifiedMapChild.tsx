@@ -106,12 +106,16 @@ const UnifiedMapChild = () => {
   // Sync filters to URL (only in "all" mode)
   useEffect(() => {
     if (mode !== 'all') return;
-    const params = new URLSearchParams();
-    if (selectedTypes.size > 0) params.set('types', Array.from(selectedTypes).join(','));
-    if (openNowOnly) params.set('open', '1');
-    if (debouncedSearch) params.set('q', debouncedSearch);
-    setSearchParams(params, { replace: true });
-  }, [mode, selectedTypes, openNowOnly, debouncedSearch, setSearchParams]);
+    const params = new URLSearchParams(window.location.search);
+    const newParams = new URLSearchParams();
+    if (selectedTypes.size > 0) newParams.set('types', Array.from(selectedTypes).join(','));
+    if (openNowOnly) newParams.set('open', '1');
+    if (debouncedSearch) newParams.set('q', debouncedSearch);
+    // Only update if changed to avoid loops
+    if (newParams.toString() !== params.toString()) {
+      setSearchParams(newParams, { replace: true });
+    }
+  }, [mode, selectedTypes, openNowOnly, debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleType = (type: ProviderType) => {
     setSelectedTypes(prev => {
