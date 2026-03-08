@@ -493,10 +493,16 @@ export function seedProvidersIfNeeded(count = 50) {
 export function getProviders(): CityHealthProvider[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEYS.providers)
-    if (!raw) return []
-    return JSON.parse(raw) as CityHealthProvider[]
+    if (raw) {
+      const parsed = JSON.parse(raw) as CityHealthProvider[];
+      if (parsed.length > 0) return parsed;
+    }
+    // Auto-seed mock providers if none exist
+    const mocks = generateMockProviders();
+    localStorage.setItem(STORAGE_KEYS.providers, JSON.stringify(mocks));
+    return mocks;
   } catch {
-    return []
+    return generateMockProviders();
   }
 }
 
