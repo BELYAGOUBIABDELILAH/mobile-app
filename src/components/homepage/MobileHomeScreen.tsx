@@ -6,9 +6,10 @@ import {
   CalendarDays, Heart, MessageSquare, Stethoscope,
   ChevronRight, Star, ArrowRight,
   Bot, Pill, Activity, BookOpen, Megaphone,
-  Users, Clock, Flame, TrendingUp,
+  Users, Clock, Flame, TrendingUp, Bell,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const stagger = {
   hidden: {},
@@ -46,8 +47,14 @@ const communityHighlights = [
 export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const { unreadCount } = useNotifications(user?.uid);
 
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Visiteur';
+  const isGuest = !user;
+
+  // Dynamic greeting based on time of day
+  const hour = new Date().getHours();
+  const greeting = hour >= 18 ? 'Bonsoir' : hour >= 12 ? 'Bon après-midi' : 'Bonjour';
 
   return (
     <motion.div
@@ -56,23 +63,54 @@ export const MobileHomeScreen = () => {
       animate="show"
       className="px-4 pt-2 pb-6 space-y-6"
     >
-      {/* ── 1. Greeting ── */}
-      <motion.div variants={fadeUp} className="flex items-center justify-between">
-        <div>
-          <p className="text-muted-foreground text-[11px]">Bienvenue sur CityHealth</p>
-          <h2 className="text-xl font-bold text-foreground">
-            Bonjour 👋 <span className="text-primary">{displayName}</span>
-          </h2>
+      {/* ── 1. Header with gradient background ── */}
+      <motion.div variants={fadeUp} className="-mx-4 px-4 py-3 rounded-b-3xl bg-gradient-to-r from-blue-50 to-teal-50 dark:from-blue-950/20 dark:to-teal-950/20">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[11px] text-muted-foreground italic">Bienvenue sur CityHealth</p>
+            <h2 className="text-2xl font-extrabold text-foreground">
+              {greeting} 👋{' '}
+              <span className="bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">
+                {displayName}
+              </span>
+            </h2>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Notification bell */}
+            <button
+              onClick={() => navigate('/settings')}
+              className="relative p-2 rounded-full hover:bg-muted/50 transition-colors"
+              aria-label="Notifications"
+            >
+              <Bell className="h-5 w-5 text-muted-foreground" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+
+            {/* Avatar or Login CTA */}
+            {isGuest ? (
+              <button
+                onClick={() => navigate('/auth')}
+                className="bg-primary text-primary-foreground rounded-full px-4 py-2 text-xs font-semibold active:scale-95 transition-transform"
+              >
+                Se connecter
+              </button>
+            ) : (
+              <button onClick={() => navigate('/citizen/profile')} className="relative">
+                <Avatar className="h-11 w-11 ring-2 ring-emerald-400 ring-offset-2 ring-offset-background shadow-lg">
+                  <AvatarImage src={profile?.avatar_url || ''} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                    {displayName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background" />
+              </button>
+            )}
+          </div>
         </div>
-        <button onClick={() => navigate('/settings')} className="relative">
-          <Avatar className="h-10 w-10 ring-2 ring-primary/30 ring-offset-2 ring-offset-background">
-            <AvatarImage src={profile?.avatar_url || ''} />
-            <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
-              {displayName.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background" />
-        </button>
       </motion.div>
 
       {/* ── 2. Search bar ── */}

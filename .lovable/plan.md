@@ -1,54 +1,110 @@
 
 
-## Bottom Nav Bar + App Header Upgrade
+## Plan: CityHealth Public API System
 
-Two files to edit: `BottomNavBar.tsx` and `MobileHomeScreen.tsx` (the header is inside the home screen greeting section, not in `MobileStatusBar.tsx`).
+This is a large feature spanning database tables, an edge function router, 3 frontend pages, and admin panel additions. The project uses **Firebase Auth** (not Supabase Auth), so the developer portal auth will use the existing Firebase auth system.
 
----
+### 1. Database Migration (3 new tables)
 
-### 1. Bottom Navigation Bar (`src/components/layout/BottomNavBar.tsx`)
+**`api_keys`** — stores hashed API keys linked to Firebase user IDs (developer_id as TEXT, not UUID FK to auth.users since auth is Firebase-based).
 
-**Visual redesign:**
-- Frosted glass: `bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl` with a soft `shadow-[0_-2px_20px_rgba(0,0,0,0.06)]` top shadow (no border)
-- Active tab: pill background (`bg-primary/10 rounded-2xl px-3 py-1.5`), filled icon via `strokeWidth={2.5}`, bold label in `text-primary` (#3B82F6), icon size 24px (`h-6 w-6`)
-- Inactive tab: outline icon `strokeWidth={1.5}`, `text-gray-400`, smaller label `text-[10px]`
-- Gap between icon and label: `gap-1` (4px)
-- Tap target: min `min-w-[48px] min-h-[48px]`
-- Tap feedback: `active:scale-90 transition-transform duration-150`
+**`api_usage`** — daily per-endpoint usage counters with UNIQUE(api_key_id, date, endpoint).
 
-**Badges:**
-- "IA Chat" tab: red notification dot (`w-2 h-2 bg-red-500 rounded-full absolute -top-0.5 -right-0.5`)
-- "Carte" tab: pulsing green dot when location is active (use `useUserLocation` hook to check `location !== null`), with `animate-pulse`
+**`api_logs`** — request logs with auto-cleanup guidance (pg_cron note in migration comments).
 
-**Imports to add:** `useUserLocation` from hooks
+RLS policies:
+- `api_keys`: Users can SELECT/INSERT/UPDATE/DELETE their own keys (where `developer_id = user_id text`). Since Firebase auth is used, RLS will use permissive policies scoped by the app logic. Admin reads all.
+- `api_usage`: Read own usage. Edge function inserts via service role.
+- `api_logs`: Read own logs. Edge function inserts via service role.
 
----
+Since the app uses Firebase Auth (not Supabase Auth), RLS policies will be permissive for edge function operations (using service role key), and frontend queries will filter by the Firebase user ID.
 
-### 2. App Header in Home Screen (`src/components/homepage/MobileHomeScreen.tsx`)
+### 2. Edge Function: `supabase/functions/public-api/index.ts`
 
-**Greeting section redesign (section 1):**
-- Dynamic greeting: compute based on current hour — "Bonjour" (6-12), "Bon après-midi" (12-18), "Bonsoir" (18+)
-- Subtitle: "Bienvenue sur CityHealth" → smaller `text-[11px] text-gray-500 italic`
-- Name: larger `text-2xl font-extrabold`, user name wrapped in gradient text `bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent`
-- Add fade-in animation on greeting via existing `fadeUp` variant
+Single Hono-based router handling:
 
-**Avatar:**
-- Size increased to `h-11 w-11` (44px)
-- Colored ring: `ring-2 ring-emerald-400` for online status, add `shadow-lg`
-- Click navigates to `/profile` (not `/settings`)
-- If user is "Visiteur" (no auth): show a "Se connecter" pill button (`bg-primary text-white rounded-full px-4 py-2 text-xs font-semibold`) instead of the avatar
+| Route | Auth | Description |
+|-------|------|-------------|
+| `GET /v1/categories` | None | Returns provider type labels |
+| `GET /v1/providers` | API Key | Query providers with filters |
+| `GET /v1/providers/:id` | API Key | Single provider detail |
+| `GET /v1/emergency` | API Key (no rate limit) | 24/7 verified providers |
+| `GET /v1/pharmacies` | API Key | Verified pharmacies |
+| `GET /v1/search` | API Key | Full-text search |
 
-**Notification bell:**
-- Add a `Bell` icon between greeting and avatar
-- Positioned with a badge count circle
-- Click navigates to notifications panel (or `/settings` as fallback)
-- Use `useNotifications` hook for `unreadCount`
+Middleware flow:
+1. Extract `x-api-key` header
+2. SHA-256 hash → lookup in `api_keys.key_hash`
+3. Check `is_active`
+4. Check daily usage in `api_usage` vs `rate_limit_per_day`
+5. Upsert usage count, insert log entry
+6. Add `X-RateLimit-Limit` and `X-RateLimit-Remaining` headers
 
-**Background strip:** Add a subtle gradient `bg-gradient-to-r from-blue-50 to-teal-50 dark:from-blue-950/20 dark:to-teal-950/20` behind the entire header section via a wrapper div with `-mx-4 px-4 py-3 rounded-b-3xl`
+Response format: `{ success, data, meta }` or `{ success: false, error: { code, message } }`
 
----
+Note: Provider data comes from localStorage/mock data on frontend, but the API will query the Firestore-sourced data. Since providers are stored in Firestore (not Supabase), the edge function will need to either:
+- Query a Supabase `providers` table (if we mirror data), OR
+- Return from a static/cached dataset
 
-### Files Changed
-- `src/components/layout/BottomNavBar.tsx` — full redesign
-- `src/components/homepage/MobileHomeScreen.tsx` — header/greeting section only
+Given the current architecture uses Firestore for providers, the edge function will create a lightweight `providers_public` Supabase table that mirrors public provider data, or query Firestore directly. **Recommended**: Create a `providers_public` view/table in Supabase seeded from existing data, keeping the API self-contained.
+
+Actually, looking more carefully at the codebase, providers are in localStorage mock data. The API will query this mock dataset server-side. We'll embed a reference dataset in the edge function or create a `providers_public` table. **Decision**: Create a `providers_public` Supabase table so the API has real queryable data.
+
+### 3. Additional Migration: `providers_public` table
+
+Minimal table with public-safe fields only:
+- id, name, type, specialty, address, city, area, phone, lat, lng, is_verified, is_24h, is_open, rating, reviews_count, description, languages, image_url, created_at
+
+### 4. Frontend Pages
+
+#### `/developers` — Landing Page
+- Hero: "Build with CityHealth API"
+- 3 plan cards (Free/Basic/Pro)
+- CTAs to login and docs
+- No auth required
+
+#### `/developers/dashboard` — Protected (Firebase Auth)
+- App registration form (name, description)
+- Key generation: `ch_live_` + `crypto.randomUUID()`, show once in modal
+- Display: key_suffix, usage progress bar, 7-day chart (recharts), regenerate/deactivate buttons
+
+#### `/developers/docs` — Public
+- Sidebar nav documentation page
+- Sections: Auth, Rate Limits, Endpoints, Error Codes
+- Dark code blocks with curl/JS examples
+
+### 5. Admin Dashboard Addition
+
+New tab `api` in AdminSidebar with 3 sub-sections:
+- **API Keys**: Table of developers, plan, usage, status
+- **Usage Stats**: Global request charts
+- **Logs**: Searchable log table
+
+### 6. Config Updates
+
+- `supabase/config.toml`: Add `[functions.public-api]` with `verify_jwt = false`
+- `src/App.tsx`: Add routes for `/developers`, `/developers/dashboard`, `/developers/docs`
+
+### Files to Create/Edit
+
+| File | Action |
+|------|--------|
+| Migration SQL | Create (4 tables + RLS) |
+| `supabase/functions/public-api/index.ts` | Create |
+| `src/pages/developers/DeveloperLandingPage.tsx` | Create |
+| `src/pages/developers/DeveloperDashboardPage.tsx` | Create |
+| `src/pages/developers/DeveloperDocsPage.tsx` | Create |
+| `src/services/apiKeyService.ts` | Create |
+| `src/components/admin/ApiManagementPanel.tsx` | Create |
+| `src/components/admin/AdminSidebar.tsx` | Edit (add API tab) |
+| `src/pages/AdminDashboard.tsx` | Edit (add API case) |
+| `src/App.tsx` | Edit (add /developers routes) |
+
+### Implementation Order
+1. Database migration (4 tables)
+2. Edge function with Hono router
+3. API key service (frontend)
+4. Developer portal pages (3 pages)
+5. Admin API management panel
+6. Route wiring in App.tsx + AdminSidebar
 
