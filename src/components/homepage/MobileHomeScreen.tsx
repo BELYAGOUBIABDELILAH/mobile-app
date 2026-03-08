@@ -111,18 +111,6 @@ export const MobileHomeScreen = () => {
     { icon: Handshake, title: t('mobileHome', 'food'), subtitle: t('mobileHome', 'foodAid'), path: '/citizen/provide' },
   ];
 
-  const quickAccess = [
-    { icon: Bot, title: t('mobileHome', 'aiAssistant'), subtitle: t('mobileHome', 'askQuestions'), isPrimary: true, path: '/medical-assistant' },
-    { icon: Heart, title: t('mobileHome', 'favorites'), subtitle: t('mobileHome', 'savedDoctors'), isPrimary: false, path: '/favorites' },
-    { icon: LayoutGrid, title: t('mobileHome', 'dashboard'), subtitle: t('mobileHome', 'patientSpace'), isPrimary: false, path: '/citizen/dashboard' },
-    { icon: CreditCard, title: t('mobileHome', 'emergencyCard'), subtitle: t('mobileHome', 'medicalInfo'), isPrimary: true, path: '/citizen/health-card' },
-    { icon: CalendarDays, title: t('mobileHome', 'appointment'), subtitle: t('mobileHome', 'manageAppointments'), isPrimary: true, path: '/citizen/appointments' },
-    { icon: Map, title: t('mobileHome', 'bloodDonationMap'), subtitle: t('mobileHome', 'nearbyCenters'), isPrimary: false, path: '/map?mode=blood' },
-    { icon: Siren, title: t('mobileHome', 'emergencyGuideLabel'), subtitle: t('mobileHome', 'usefulNumbers'), isPrimary: true, path: '/emergency' },
-    { icon: Phone, title: t('mobileHome', 'contact'), subtitle: t('mobileHome', 'contactUs'), isPrimary: false, path: '/contact' },
-    { icon: HelpCircle, title: t('mobileHome', 'faq'), subtitle: t('mobileHome', 'frequentQuestions'), isPrimary: false, path: '/faq' },
-    { icon: SettingsIcon, title: t('mobileHome', 'settings'), subtitle: t('mobileHome', 'preferencesAccount'), isPrimary: false, path: '/settings' },
-  ];
 
   // Map real data
   const ads = (adsData ?? []).map((ad) => ({
@@ -196,22 +184,21 @@ export const MobileHomeScreen = () => {
         <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight">
           Let's find your<br /><span className="text-primary-foreground">Docteur !</span>
         </h1>
-      </motion.div>
 
-      {/* ── Search bar (overlapping header bottom) ── */}
-      <motion.form
-        variants={fadeUp}
-        onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
-        className="relative -mt-7 z-10 mx-1"
-      >
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <Input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={t('mobileHome', 'searchPlaceholder')}
-          className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
-        />
-      </motion.form>
+        {/* Search bar inside header */}
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+          className="relative mt-5 mb-[-24px] z-10"
+        >
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('mobileHome', 'searchPlaceholder')}
+            className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
+          />
+        </form>
+      </motion.div>
 
       {/* ── Categories (scrollable) ── */}
       <motion.div variants={fadeUp}>
@@ -509,27 +496,6 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── Quick access ── */}
-      <SectionHeader label={t('mobileHome', 'navigation')} title={t('mobileHome', 'quickAccess')} />
-      <motion.div variants={fadeUp} className="space-y-2.5" role="navigation" aria-label={t('mobileHome', 'quickAccess')}>
-        {quickAccess.map((item, i) => (
-          <button
-            key={i}
-            onClick={() => navigate(item.path)}
-            className={`w-full rounded-xl bg-card border border-border border-l-4 ${item.isPrimary ? 'border-l-primary' : 'border-l-muted-foreground/30'} shadow-sm p-4 flex items-center gap-3 text-left active:scale-[0.98] transition-transform`}
-            aria-label={item.title}
-          >
-            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-              <item.icon className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground">{item.title}</p>
-              <p className="text-xs text-muted-foreground">{item.subtitle}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          </button>
-        ))}
-      </motion.div>
     </motion.div>
   );
 };
