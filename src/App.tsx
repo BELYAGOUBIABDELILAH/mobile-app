@@ -17,9 +17,7 @@ import { MobileAppShell } from "@/components/layout/MobileAppShell";
 // Lazy-load heavy pages for better LCP
 const AntigravityIndex = lazy(() => import("./pages/AntigravityIndex"));
 const MapMother = lazy(() => import("./components/map/MapMother"));
-const ProvidersMapChild = lazy(() => import("./components/map/children/ProvidersMapChild"));
-const EmergencyMapChild = lazy(() => import("./components/map/children/EmergencyMapChild"));
-const BloodMapChild = lazy(() => import("./components/map/children/BloodMapChild"));
+const UnifiedMapChild = lazy(() => import("./components/map/children/UnifiedMapChild"));
 
 import LoadingSpinner from "./components/LoadingSpinner";
 
