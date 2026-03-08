@@ -19,6 +19,11 @@ export default function NewAppointmentPage() {
   if (!isAuthenticated) {
     return <GuestBlockMessage title="Prendre rendez-vous" description="Connectez-vous pour réserver un rendez-vous avec ce praticien." />;
   }
+
+  return <NewAppointmentContent />;
+}
+
+function NewAppointmentContent() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const providerId = searchParams.get('providerId');
