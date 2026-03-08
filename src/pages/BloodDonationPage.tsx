@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { EmergencyAlertBanner } from '@/components/blood-emergency/EmergencyAlertBanner';
 import { DonationConfirmationView } from '@/components/blood-emergency/DonationConfirmationView';
 import { getDonationHistory, subscribeToEmergencies } from '@/services/bloodEmergencyService';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 import type { BloodEmergency } from '@/services/bloodEmergencyService';
 
 const BLOOD_TYPES = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'] as const;
@@ -51,6 +52,8 @@ interface BloodProfile {
 export default function BloodDonationPage() {
   const { isRTL, language } = useLanguage();
   const { isAuthenticated, profile } = useAuth();
+  
+  const { requireAuth, AuthRequiredModal: AuthModal } = useAuthRequired();
   
   // Emergency response state
   const [respondingEmergency, setRespondingEmergency] = useState<BloodEmergency | null>(null);
@@ -406,7 +409,7 @@ export default function BloodDonationPage() {
                     variant="destructive"
                     size="sm"
                     className="w-full"
-                    onClick={() => setRespondingEmergency(emergency)}
+                    onClick={() => requireAuth(() => setRespondingEmergency(emergency))}
                   >
                     <Heart className="h-4 w-4 mr-1" />
                     Je peux donner
@@ -419,15 +422,17 @@ export default function BloodDonationPage() {
         
         {/* Main Tabs */}
         <Tabs defaultValue="donate" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-muted/50">
+          <TabsList className={cn("grid w-full h-auto p-1 bg-muted/50", isAuthenticated ? "grid-cols-3" : "grid-cols-2")}>
             <TabsTrigger value="donate" className="flex flex-col sm:flex-row items-center gap-2 py-3">
               <Heart className="h-4 w-4" />
               <span className="text-xs sm:text-sm">{tx.donateBlood}</span>
             </TabsTrigger>
-            <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-2 py-3">
-              <Bell className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">{tx.reminders}</span>
-            </TabsTrigger>
+            {isAuthenticated && (
+              <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-2 py-3">
+                <Bell className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">{tx.reminders}</span>
+              </TabsTrigger>
+            )}
             <TabsTrigger value="info" className="flex flex-col sm:flex-row items-center gap-2 py-3">
               <Info className="h-4 w-4" />
               <span className="text-xs sm:text-sm">{tx.info}</span>
@@ -667,99 +672,92 @@ export default function BloodDonationPage() {
             </div>
           </TabsContent>
           
-          {/* Tab 2: Reminders */}
-          <TabsContent value="reminders" className="space-y-6">
-            <Card className="bg-card border border-border rounded-xl shadow-sm max-w-xl mx-auto">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="h-5 w-5 text-primary" />
-                  {language === 'ar' ? 'تذكيرات التبرع' : 'Rappels de Don'}
-                </CardTitle>
-                <CardDescription>
-                  {tx.reminderInfo}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {!isAuthenticated ? (
-                  <Alert>
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>{tx.loginRequired}</AlertDescription>
-                  </Alert>
-                ) : (
-                  <>
-                    <div className="space-y-2">
-                      <Label>{tx.bloodType}</Label>
-                      {profileBloodGroup ? (
-                        <div className="flex items-center gap-2">
-                          <Badge variant="destructive" className="text-lg py-2 px-4">
-                            <Droplet className="h-4 w-4 mr-1" />
-                            {profileBloodGroup}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {language === 'ar' ? 'من ملفك الشخصي' : 'Depuis votre profil'}
-                          </span>
-                        </div>
-                      ) : (
-                        <Select
-                          value={bloodProfile.bloodType || ''}
-                          onValueChange={(value) => setBloodProfile({ ...bloodProfile, bloodType: value as BloodType })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={tx.selectBloodType} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {BLOOD_TYPES.map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label>{tx.lastDonationDate}</Label>
-                      <Input
-                        type="date"
-                        value={bloodProfile.lastDonationDate || ''}
-                        onChange={(e) => setBloodProfile({ ...bloodProfile, lastDonationDate: e.target.value })}
-                        readOnly={hasAutoFilledDonationDate}
-                        className={hasAutoFilledDonationDate ? "opacity-70 cursor-not-allowed" : ""}
-                      />
-                      {hasAutoFilledDonationDate && (
-                        <p className="text-xs text-muted-foreground">
-                          {language === 'ar' ? 'تم ملؤه تلقائياً من سجل التبرعات' : 'Pré-rempli depuis votre historique de dons'}
-                        </p>
-                      )}
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
-                      <div className="flex items-center gap-3">
-                        {bloodProfile.reminderEnabled ? (
-                          <Bell className="h-5 w-5 text-primary" />
-                        ) : (
-                          <BellOff className="h-5 w-5 text-muted-foreground" />
-                        )}
-                        <div>
-                          <p className="font-medium">{tx.enableReminders}</p>
-                          <p className="text-sm text-muted-foreground">{tx.reminderInfo}</p>
-                        </div>
+          {/* Tab 2: Reminders (authenticated only) */}
+          {isAuthenticated && (
+            <TabsContent value="reminders" className="space-y-6">
+              <Card className="bg-card border border-border rounded-xl shadow-sm max-w-xl mx-auto">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Bell className="h-5 w-5 text-primary" />
+                    {language === 'ar' ? 'تذكيرات التبرع' : 'Rappels de Don'}
+                  </CardTitle>
+                  <CardDescription>
+                    {tx.reminderInfo}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label>{tx.bloodType}</Label>
+                    {profileBloodGroup ? (
+                      <div className="flex items-center gap-2">
+                        <Badge variant="destructive" className="text-lg py-2 px-4">
+                          <Droplet className="h-4 w-4 mr-1" />
+                          {profileBloodGroup}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {language === 'ar' ? 'من ملفك الشخصي' : 'Depuis votre profil'}
+                        </span>
                       </div>
-                      <Switch
-                        checked={bloodProfile.reminderEnabled}
-                        onCheckedChange={(checked) => setBloodProfile({ ...bloodProfile, reminderEnabled: checked })}
-                      />
+                    ) : (
+                      <Select
+                        value={bloodProfile.bloodType || ''}
+                        onValueChange={(value) => setBloodProfile({ ...bloodProfile, bloodType: value as BloodType })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={tx.selectBloodType} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {BLOOD_TYPES.map((type) => (
+                            <SelectItem key={type} value={type}>
+                              {type}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>{tx.lastDonationDate}</Label>
+                    <Input
+                      type="date"
+                      value={bloodProfile.lastDonationDate || ''}
+                      onChange={(e) => setBloodProfile({ ...bloodProfile, lastDonationDate: e.target.value })}
+                      readOnly={hasAutoFilledDonationDate}
+                      className={hasAutoFilledDonationDate ? "opacity-70 cursor-not-allowed" : ""}
+                    />
+                    {hasAutoFilledDonationDate && (
+                      <p className="text-xs text-muted-foreground">
+                        {language === 'ar' ? 'تم ملؤه تلقائياً من سجل التبرعات' : 'Pré-rempli depuis votre historique de dons'}
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-muted/50">
+                    <div className="flex items-center gap-3">
+                      {bloodProfile.reminderEnabled ? (
+                        <Bell className="h-5 w-5 text-primary" />
+                      ) : (
+                        <BellOff className="h-5 w-5 text-muted-foreground" />
+                      )}
+                      <div>
+                        <p className="font-medium">{tx.enableReminders}</p>
+                        <p className="text-sm text-muted-foreground">{tx.reminderInfo}</p>
+                      </div>
                     </div>
-                    
-                    <Button onClick={saveBloodProfile} className="w-full">
-                      {tx.saveProfile}
-                    </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                    <Switch
+                      checked={bloodProfile.reminderEnabled}
+                      onCheckedChange={(checked) => setBloodProfile({ ...bloodProfile, reminderEnabled: checked })}
+                    />
+                  </div>
+                  
+                  <Button onClick={saveBloodProfile} className="w-full">
+                    {tx.saveProfile}
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
           
           {/* Tab 3: Info */}
           <TabsContent value="info" className="space-y-6">
@@ -833,6 +831,7 @@ export default function BloodDonationPage() {
           </TabsContent>
         </Tabs>
       </main>
+      <AuthModal />
     </div>
   );
 }
