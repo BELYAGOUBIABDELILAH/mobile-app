@@ -68,6 +68,7 @@ const AdsPage = lazy(() => import("./pages/AdsPage"));
 const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
+const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
 const AuthGatewayPage = lazy(() => import("./pages/AuthGatewayPage"));
