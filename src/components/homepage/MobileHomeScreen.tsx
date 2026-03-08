@@ -8,7 +8,7 @@ import {
   Bell, SlidersHorizontal, Stethoscope, Star,
   MessageSquare, TrendingUp, LayoutGrid,
   Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
-  CreditCard, Newspaper, FlaskConical, UserPlus,
+  CreditCard, Newspaper, FlaskConical, UserPlus, UserCircle,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -32,6 +32,7 @@ const quickActions = [
   { icon: Users, label: 'Communauté', path: '/community' },
   { icon: Newspaper, label: 'Annonces', path: '/annonces' },
   { icon: FlaskConical, label: 'Recherche', path: '/research' },
+  { icon: UserCircle, label: 'Mon Profil', path: '/profile' },
 ];
 
 const healthServices = [
