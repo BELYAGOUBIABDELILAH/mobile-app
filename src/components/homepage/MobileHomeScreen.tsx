@@ -76,7 +76,7 @@ export const MobileHomeScreen = () => {
   const topDoctors = allProviders
     .filter((p) => p.type === 'doctor')
     .sort((a, b) => b.rating - a.rating)
-    .slice(0, 5);
+    .slice(0, 3);
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
