@@ -244,7 +244,7 @@ export const MobileHomeScreen = () => {
 
       {/* ── Top Providers ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label="Premium" title="Top Providers" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
+        <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
         <div className="space-y-3 mt-3">
           {topProviders.map((doc) => (
             <button
