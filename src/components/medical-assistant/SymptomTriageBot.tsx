@@ -181,7 +181,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
     if (!trimmed || isLoading || isLoadingProviders) return;
 
     setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
-    setInput("");
+    onMessageSent?.("user", trimmed);
     if (inputRef.current) inputRef.current.style.height = "auto";
     setIsLoading(true);
 
