@@ -46,13 +46,8 @@ const CitizenRegisterPage = () => {
 
   const strengthLabels = [t('registerPage', 'weak'), t('registerPage', 'medium'), t('registerPage', 'good'), t('registerPage', 'strong')];
 
-const CitizenRegisterPage = () => {
   const navigate = useNavigate();
   const { signupAsCitizen, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
