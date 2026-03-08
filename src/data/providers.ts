@@ -347,7 +347,7 @@ function getDefaultProviderImage(type: string, index: number): string {
   return images[index % images.length];
 }
 
-
+function makeName(type: ProviderType, specialty: string | undefined, i: number) {
   switch (type) {
     case 'doctor':
       return `Dr. ${['Ahmed', 'Sara', 'Youssef', 'Imen', 'Nadia', 'Khaled', 'Rania'][i % 7]} ${['Benali', 'Bendaoud', 'Merabet', 'Saadi', 'Zerrouki'][i % 5]}${specialty ? ' - ' + specialty : ''}`
