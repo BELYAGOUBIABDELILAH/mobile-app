@@ -30,25 +30,11 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/* ── Categories ── */
-const categories = [
-  { label: 'Doctors', icon: Stethoscope, type: 'doctor' },
-  { label: 'Pharmacy', icon: Pill, type: 'pharmacy' },
-  { label: 'Hospitals', icon: Building2, type: 'hospital' },
-  { label: 'Labs', icon: FlaskConical, type: 'lab' },
-  { label: 'Clinics', icon: Activity, type: 'clinic' },
-];
+/* ── Categories (moved inside component for translations) ── */
 
-/* ── Symptoms (with icons) ── */
-const symptoms = [
-  { icon: Brain, label: 'Headache' },
-  { icon: Frown, label: 'Nausea' },
-  { icon: Thermometer, label: 'Fever' },
-  { icon: Moon, label: 'Fatigue' },
-  { icon: Pill, label: 'Allergy' },
-  { icon: Wind, label: 'Breathing' },
-  { icon: HeartPulse, label: 'Chest pain' },
-];
+/* ── Symptoms icons ── */
+const symptomIcons = [Brain, Frown, Thermometer, Moon, Pill, Wind, HeartPulse];
+const symptomKeys = ['headache', 'nausea', 'fever', 'fatigue', 'allergy', 'breathing', 'chestPain'] as const;
 
 export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
