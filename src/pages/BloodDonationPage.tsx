@@ -308,7 +308,7 @@ export default function BloodDonationPage() {
   return (
     <div className={cn("min-h-screen bg-background", isRTL && "rtl")}>
       
-      <main className="container mx-auto px-4 pt-20 pb-8">
+      <main className="px-4 pt-6 pb-4">
         {/* Emergency Alert Banner - visible to ALL users */}
         {!respondingEmergency && (
           <EmergencyAlertBanner onRespond={setRespondingEmergency} />
@@ -324,14 +324,15 @@ export default function BloodDonationPage() {
           </div>
         )}
 
-        {/* Hero Section - removed redundant pill badge */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-destructive to-primary bg-clip-text text-transparent">
-            {tx.title}
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            {tx.subtitle}
-          </p>
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
+            <Droplet className="h-5 w-5 text-destructive" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-foreground">{tx.title}</h1>
+            <p className="text-xs text-muted-foreground">{tx.subtitle}</p>
+          </div>
         </div>
         
         {/* Emergency Disclaimer */}
@@ -437,7 +438,7 @@ export default function BloodDonationPage() {
           <TabsContent value="donate" className="space-y-6">
             <div className="grid lg:grid-cols-2 gap-6">
               {/* Eligibility Checker */}
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-primary" />
@@ -633,7 +634,7 @@ export default function BloodDonationPage() {
               </Card>
               
               {/* Blood Facts */}
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Heart className="h-5 w-5 text-destructive" />
@@ -668,7 +669,7 @@ export default function BloodDonationPage() {
           
           {/* Tab 2: Reminders */}
           <TabsContent value="reminders" className="space-y-6">
-            <Card className="glass-card max-w-xl mx-auto">
+            <Card className="bg-card border border-border rounded-xl shadow-sm max-w-xl mx-auto">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Bell className="h-5 w-5 text-primary" />
@@ -763,7 +764,7 @@ export default function BloodDonationPage() {
           {/* Tab 3: Info */}
           <TabsContent value="info" className="space-y-6">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Droplet className="h-5 w-5 text-destructive" />
@@ -787,7 +788,7 @@ export default function BloodDonationPage() {
                 </CardContent>
               </Card>
               
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Hospital className="h-5 w-5 text-primary" />
@@ -810,7 +811,7 @@ export default function BloodDonationPage() {
                 </CardContent>
               </Card>
               
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Phone className="h-5 w-5 text-primary" />
