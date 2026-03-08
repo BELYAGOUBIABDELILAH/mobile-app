@@ -499,7 +499,7 @@ export function getProviders(): CityHealthProvider[] {
     }
     // Auto-seed mock providers if none exist
     const mocks = generateMockProviders();
-    saveProviders(mocks);
+    localStorage.setItem(STORAGE_KEYS.providers, JSON.stringify(mocks));
     return mocks;
   } catch {
     return generateMockProviders();
