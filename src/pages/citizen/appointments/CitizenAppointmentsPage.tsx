@@ -10,9 +10,21 @@ import { AppointmentCard } from '@/components/appointments/AppointmentCard';
 import { PostAppointmentReviewWidget } from '@/components/appointments/PostAppointmentReviewWidget';
 import { useRealtimePatientAppointments, useCancelAppointment } from '@/hooks/useAppointments';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/contexts/AuthContext';
+import { GuestBlockMessage } from '@/components/guest/GuestBlockMessage';
 import { toast } from 'sonner';
 
 export default function CitizenAppointmentsPage() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <GuestBlockMessage title="Mes Rendez-vous" description="Connectez-vous pour gérer vos rendez-vous médicaux." />;
+  }
+
+  return <CitizenAppointmentsPageContent />;
+}
+
+function CitizenAppointmentsPageContent() {
   const { appointments, loading } = useRealtimePatientAppointments();
   const cancelMutation = useCancelAppointment();
 

@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AppointmentCard } from '@/components/appointments/AppointmentCard';
 import { useRealtimePatientAppointments } from '@/hooks/useAppointments';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/contexts/AuthContext';
+import { GuestBlockMessage } from '@/components/guest/GuestBlockMessage';
 
 const MONTHS_FR = [
   'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
@@ -18,6 +20,16 @@ const MONTHS_FR = [
 ];
 
 export default function AppointmentHistoryPage() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <GuestBlockMessage title="Historique" description="Connectez-vous pour consulter l'historique de vos rendez-vous." />;
+  }
+
+  return <AppointmentHistoryContent />;
+}
+
+function AppointmentHistoryContent() {
   const { appointments, loading } = useRealtimePatientAppointments();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');

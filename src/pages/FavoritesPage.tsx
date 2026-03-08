@@ -10,9 +10,21 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 import SkeletonCard from '@/components/SkeletonCard';
 import { useFavorites, useRemoveFavorite } from '@/hooks/useFavorites';
 import { useVerifiedProviders } from '@/hooks/useProviders';
+import { useAuth } from '@/contexts/AuthContext';
+import { GuestBlockMessage } from '@/components/guest/GuestBlockMessage';
 import { toast } from 'sonner';
 
 const FavoritesPage = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <GuestBlockMessage title="Mes Favoris" description="Connectez-vous pour sauvegarder vos médecins favoris et y accéder rapidement." />;
+  }
+
+  return <FavoritesPageContent />;
+};
+
+const FavoritesPageContent = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');

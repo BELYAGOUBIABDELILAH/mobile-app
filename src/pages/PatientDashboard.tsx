@@ -34,8 +34,19 @@ import jsPDF from 'jspdf';
 
 // Provider data for favorites display
 import { providers as allProviders } from '@/data/providers';
+import { GuestBlockMessage } from '@/components/guest/GuestBlockMessage';
 
 const PatientDashboard = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <GuestBlockMessage title="Tableau de bord" description="Connectez-vous pour accéder à votre tableau de bord santé personnalisé." />;
+  }
+
+  return <PatientDashboardContent />;
+};
+
+const PatientDashboardContent = () => {
   const { profile, user } = useAuth();
   const { t, language } = useLanguage();
   const navigate = useNavigate();
