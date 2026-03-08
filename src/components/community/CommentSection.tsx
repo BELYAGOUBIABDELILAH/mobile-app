@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { EyeOff, Send, LogIn } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 import { CommentItem } from './CommentItem';
 import { ReportDialog } from './ReportDialog';
 import { containsProfanity } from '@/utils/profanityFilter';
