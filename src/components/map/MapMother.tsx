@@ -35,11 +35,7 @@ const MapMotherInner = () => {
   const location = useLocation();
   const [isBotOpen, setIsBotOpen] = useState(false);
 
-  const mode: MapMode = useMemo(() => {
-    if (location.pathname.includes('/emergency')) return 'emergency';
-    if (location.pathname.includes('/blood')) return 'blood';
-    return 'providers';
-  }, [location.pathname]);
+  // Mode is now handled by UnifiedMapChild, not by pathname
 
   // Init map
   useEffect(() => {
