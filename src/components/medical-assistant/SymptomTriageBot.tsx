@@ -86,7 +86,7 @@ interface SymptomTriageBotProps {
   autoSendSymptom?: string | null;
 }
 
-export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages }: SymptomTriageBotProps) {
+export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages, autoSendSymptom }: SymptomTriageBotProps) {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<TriageMessage[]>([]);
   const [input, setInput] = useState("");
