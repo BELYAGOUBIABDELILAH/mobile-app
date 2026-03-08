@@ -193,6 +193,7 @@ export const CommentSection = ({ postId, upvotedCommentIds, onUpvoteChange }: Pr
         onClose={() => setReportTarget(null)}
         onSubmit={handleReport}
       />
+      <AuthRequiredModal />
     </div>
   );
 };
