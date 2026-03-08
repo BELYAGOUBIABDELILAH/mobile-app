@@ -288,7 +288,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
   return (
     <div className="h-full flex flex-col w-full">
       {/* Messages area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide">
         <div className="px-4 py-4" style={{ minHeight: "100%" }}>
           {/* Welcome state */}
           {!hasConversation && (

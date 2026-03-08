@@ -150,8 +150,7 @@ export default function MedicalAssistantPage() {
 
   return (
     <div className={cn(
-      "flex flex-col overflow-hidden",
-      "h-[calc(100dvh-4rem-env(safe-area-inset-bottom,8px))]",
+      "flex flex-col overflow-hidden h-[100dvh]",
       language === "ar" && "rtl"
     )} style={{ backgroundColor: "#F8F9FA" }}>
       {/* Header — 56px */}

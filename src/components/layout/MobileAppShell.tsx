@@ -5,12 +5,13 @@ import { BottomNavBar } from './BottomNavBar';
 export const MobileAppShell = () => {
   const location = useLocation();
   const isMapRoute = location.pathname.startsWith('/map');
+  const isFullScreenRoute = isMapRoute || location.pathname === '/medical-assistant';
 
   return (
     <div className="min-h-screen bg-background mx-auto max-w-[430px] relative">
-      {!isMapRoute && <MobileStatusBar />}
+      {!isFullScreenRoute && <MobileStatusBar />}
       
-      <main className={isMapRoute ? '' : 'pb-24 min-h-[calc(100vh-3rem)]'}>
+      <main className={isFullScreenRoute ? '' : 'pb-24 min-h-[calc(100vh-3rem)]'}>
         <Outlet />
       </main>
       
