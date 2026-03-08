@@ -181,10 +181,7 @@ const AppRoutes = () => {
         {/* ============================================ */}
         <Route element={<MobileAppShell />}>
           <Route path="/map" element={<MapMother />}>
-            <Route index element={<Navigate to="/map/providers" replace />} />
-            <Route path="providers" element={<ProvidersMapChild />} />
-            <Route path="emergency" element={<EmergencyMapChild />} />
-            <Route path="blood" element={<BloodMapChild />} />
+            <Route index element={<UnifiedMapChild />} />
           </Route>
         </Route>
 
