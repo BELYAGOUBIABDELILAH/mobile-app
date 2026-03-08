@@ -103,7 +103,7 @@ export const MobileHomeScreen = () => {
             </button>
             {isGuest ? (
               <button
-                onClick={() => navigate('/auth')}
+                onClick={() => navigate('/auth-gateway')}
                 className="bg-primary text-primary-foreground rounded-full px-3 py-1.5 text-xs font-semibold active:scale-95 transition-transform"
               >
                 Se connecter
