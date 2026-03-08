@@ -35,11 +35,16 @@ const signupSchema = z.object({
     .optional(),
 });
 
-const features = [
-  { icon: Heart, title: 'Accès aux soins', desc: 'Trouvez les meilleurs professionnels de santé près de chez vous' },
-  { icon: MapPin, title: 'Carte interactive', desc: 'Localisez pharmacies, cliniques et hôpitaux en temps réel' },
-  { icon: Shield, title: 'Données sécurisées', desc: 'Vos informations médicales sont protégées et chiffrées' },
-];
+const CitizenRegisterPage = () => {
+  const { t } = useLanguage();
+
+  const features = [
+    { icon: Heart, title: t('registerPage', 'healthcareAccess'), desc: t('registerPage', 'healthcareAccessDesc') },
+    { icon: MapPin, title: t('registerPage', 'interactiveMap'), desc: t('registerPage', 'interactiveMapDesc') },
+    { icon: Shield, title: t('registerPage', 'secureData'), desc: t('registerPage', 'secureDataDesc') },
+  ];
+
+  const strengthLabels = [t('registerPage', 'weak'), t('registerPage', 'medium'), t('registerPage', 'good'), t('registerPage', 'strong')];
 
 const CitizenRegisterPage = () => {
   const navigate = useNavigate();
