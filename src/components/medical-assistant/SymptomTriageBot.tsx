@@ -132,15 +132,32 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     }
   }, [messages, isLoading, suggestionsLoading, suggestions]);
 
-  // Auto-send symptom from URL param
+  // Mapping from homepage symptom keys to queries per language
+  const SYMPTOM_KEY_QUERIES: Record<string, Record<string, string>> = useMemo(() => ({
+    headache: { fr: "J'ai des maux de tête fréquents et intenses", ar: "أعاني من صداع متكرر وشديد", en: "I have frequent and intense headaches" },
+    nausea: { fr: "J'ai des nausées et vomissements", ar: "أعاني من غثيان وقيء", en: "I have nausea and vomiting" },
+    fever: { fr: "J'ai de la fièvre, que dois-je faire ?", ar: "لدي حمى، ماذا أفعل؟", en: "I have a fever, what should I do?" },
+    fatigue: { fr: "Je souffre de fatigue intense et persistante", ar: "أعاني من إرهاق شديد ومستمر", en: "I suffer from intense and persistent fatigue" },
+    allergy: { fr: "J'ai des symptômes d'allergie (éternuements, démangeaisons)", ar: "أعاني من أعراض حساسية (عطس، حكة)", en: "I have allergy symptoms (sneezing, itching)" },
+    breathing: { fr: "J'ai des difficultés à respirer", ar: "أعاني من صعوبة في التنفس", en: "I have difficulty breathing" },
+    chestPain: { fr: "J'ai une douleur dans la poitrine", ar: "لدي ألم في الصدر", en: "I have chest pain" },
+  }), []);
+
+  // Auto-send symptom from URL param (supports both keys and labels)
   useEffect(() => {
     if (autoSendSymptom && !autoSentRef.current && !isLoadingProviders && providers.length >= 0) {
       autoSentRef.current = true;
-      // Find matching chip query for the symptom label
+      // First try matching by key
+      const keyMatch = SYMPTOM_KEY_QUERIES[autoSendSymptom];
+      if (keyMatch) {
+        const query = keyMatch[language] || keyMatch.fr;
+        setTimeout(() => sendMessage(query), 300);
+        return;
+      }
+      // Fallback: match by label against chips
       const allChips = Object.values(SYMPTOM_CHIPS).flat();
       const match = allChips.find(c => c.label.toLowerCase() === autoSendSymptom.toLowerCase());
       const query = match?.query || autoSendSymptom;
-      // Small delay to ensure component is ready
       setTimeout(() => sendMessage(query), 300);
     }
   }, [autoSendSymptom, isLoadingProviders, providers]);

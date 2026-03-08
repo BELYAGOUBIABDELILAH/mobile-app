@@ -232,7 +232,7 @@ export const MobileHomeScreen = () => {
               initial={{ opacity: 0, x: 16 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05, duration: 0.3 }}
-              onClick={() => navigate(`/medical-assistant?symptom=${encodeURIComponent(s.label)}`)}
+              onClick={() => navigate(`/medical-assistant?symptom=${symptomKeys[i]}`)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-card border border-border shadow-sm flex-shrink-0 snap-start active:scale-95 transition-transform"
             >
               <s.icon className="h-4 w-4 text-primary" strokeWidth={1.8} />
