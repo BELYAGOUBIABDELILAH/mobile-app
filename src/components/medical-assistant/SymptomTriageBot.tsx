@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, Loader2, Bot, User, ShieldAlert, ShieldCheck, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { DoctorProfileCard } from "./DoctorProfileCard";
 import { supabase } from "@/lib/supabaseClient";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TriageMessage {
   role: "user" | "assistant";
@@ -17,6 +18,7 @@ interface TriageMessage {
   doctorIds?: string[];
   recommendedSpecialty?: string;
   urgencyLevel?: "low" | "medium" | "high";
+  isError?: boolean;
 }
 
 interface SimplifiedDoctor {
@@ -94,6 +96,11 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  // Follow-up suggestions state
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [suggestionsForIndex, setSuggestionsForIndex] = useState<number | null>(null);
+
   // Reset on resetKey change
   useEffect(() => {
     if (resetKey > 0) {
@@ -104,6 +111,9 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
       }
       setInput("");
       setIsLoading(false);
+      setSuggestions([]);
+      setSuggestionsLoading(false);
+      setSuggestionsForIndex(null);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [resetKey, initialMessages]);
@@ -120,7 +130,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, suggestionsLoading, suggestions]);
 
   const simplifiedDoctors: SimplifiedDoctor[] = useMemo(() => {
     return providers.map((p) => ({ id: p.id, name: p.name, specialty: p.specialty, city: p.city, type: p.type }));
@@ -168,7 +178,6 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
     setInput(query);
     setTimeout(() => {
       inputRef.current?.focus();
-      // Auto-resize
       if (inputRef.current) {
         inputRef.current.style.height = "auto";
         inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 120) + "px";
@@ -176,12 +185,48 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
     }, 50);
   };
 
+  const fetchSuggestions = useCallback(async (allMessages: TriageMessage[]) => {
+    setSuggestionsLoading(true);
+    setSuggestions([]);
+    const targetIndex = allMessages.length - 1;
+    setSuggestionsForIndex(targetIndex);
+
+    // 500ms delay for fade-in effect
+    await new Promise(r => setTimeout(r, 500));
+
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-followups", {
+        body: {
+          messages: allMessages.map(m => ({ role: m.role, content: m.content })),
+          language,
+        },
+      });
+
+      if (error || !data?.suggestions) {
+        setSuggestions(["En savoir plus", "Quand consulter ?", "Trouver un médecin"]);
+      } else {
+        setSuggestions((data.suggestions as string[]).slice(0, 3));
+      }
+    } catch {
+      setSuggestions(["En savoir plus", "Quand consulter ?", "Trouver un médecin"]);
+    } finally {
+      setSuggestionsLoading(false);
+    }
+  }, [language]);
+
   const sendMessage = async (text?: string) => {
     const trimmed = (text || input).trim();
     if (!trimmed || isLoading || isLoadingProviders) return;
 
-    setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
+    // Clear previous suggestions
+    setSuggestions([]);
+    setSuggestionsLoading(false);
+    setSuggestionsForIndex(null);
+
+    const userMsg: TriageMessage = { role: "user", content: trimmed };
+    setMessages((prev) => [...prev, userMsg]);
     onMessageSent?.("user", trimmed);
+    setInput("");
     if (inputRef.current) inputRef.current.style.height = "auto";
     setIsLoading(true);
 
@@ -192,27 +237,41 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
 
       if (error) {
         const errContent = error.message || "Une erreur est survenue.";
-        setMessages((prev) => [...prev, { role: "assistant", content: errContent }]);
+        const errMsg: TriageMessage = { role: "assistant", content: errContent, isError: true };
+        setMessages((prev) => [...prev, errMsg]);
         onMessageSent?.("assistant", errContent);
         setIsLoading(false);
         return;
       }
       const assistantContent = data.analysis || "Analyse non disponible.";
-      setMessages((prev) => [...prev, {
+      const assistantMsg: TriageMessage = {
         role: "assistant",
         content: assistantContent,
         doctorIds: data.doctorIds || [],
         recommendedSpecialty: data.recommendedSpecialty || "",
         urgencyLevel: data.urgencyLevel || undefined,
-      }]);
+      };
+      setMessages((prev) => {
+        const updated = [...prev, assistantMsg];
+        // Fire suggestions fetch in parallel (non-blocking)
+        fetchSuggestions(updated);
+        return updated;
+      });
       onMessageSent?.("assistant", assistantContent);
     } catch {
       const fallback = "Erreur de connexion. Veuillez réessayer.";
-      setMessages((prev) => [...prev, { role: "assistant", content: fallback }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: fallback, isError: true }]);
       onMessageSent?.("assistant", fallback);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSuggestionClick = (question: string) => {
+    setSuggestions([]);
+    setSuggestionsLoading(false);
+    setSuggestionsForIndex(null);
+    sendMessage(question);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -231,6 +290,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
     el.style.height = Math.min(el.scrollHeight, 120) + "px";
   };
 
+  const lastAssistantIndex = messages.length - 1;
+
   return (
     <div className="h-full flex flex-col max-w-4xl mx-auto w-full">
       {/* Messages area */}
@@ -247,7 +308,6 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
               <h2 className="text-xl sm:text-2xl font-bold text-center mb-2">{t.welcome}</h2>
               <p className="text-sm text-muted-foreground text-center mb-6">{t.welcomeSub}</p>
 
-              {/* 12 emoji symptom chips — 2 columns */}
               <div className="grid grid-cols-2 gap-2 w-full max-w-lg max-h-[340px] overflow-y-auto pr-1">
                 {chips.map((chip, i) => (
                   <motion.button
@@ -346,6 +406,44 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
                   {msg.role === "assistant" && msg.doctorIds && msg.doctorIds.length === 0 && msg.recommendedSpecialty && (
                     <div className="rounded-xl border border-dashed border-amber-500/30 bg-amber-500/5 p-3 text-xs text-muted-foreground">
                       {t.noSpecialist} <strong>{msg.recommendedSpecialty}</strong> {t.noSpecialistSuffix}
+                    </div>
+                  )}
+
+                  {/* Follow-up suggestion chips — only on last assistant message, not on errors */}
+                  {msg.role === "assistant" && i === lastAssistantIndex && !msg.isError && suggestionsForIndex === i && (
+                    <div className="flex flex-wrap gap-2 mt-2.5">
+                      {suggestionsLoading ? (
+                        // Skeleton pill placeholders
+                        <>
+                          <Skeleton className="h-7 w-24 rounded-full" />
+                          <Skeleton className="h-7 w-28 rounded-full" />
+                          <Skeleton className="h-7 w-20 rounded-full" />
+                        </>
+                      ) : (
+                        <AnimatePresence>
+                          {suggestions.map((q, idx) => (
+                            <motion.button
+                              key={q}
+                              initial={{ opacity: 0, scale: 0.9 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: idx * 0.08 }}
+                              whileHover={{ scale: 1.03, y: -1 }}
+                              whileTap={{ scale: 0.97 }}
+                              onClick={() => handleSuggestionClick(q)}
+                              className={cn(
+                                "px-3.5 py-1.5 text-xs rounded-full",
+                                "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300",
+                                "border border-blue-200/60 dark:border-blue-800/40",
+                                "hover:border-blue-400/60 dark:hover:border-blue-600/60",
+                                "transition-all duration-200 hover:bg-blue-100/80 dark:hover:bg-blue-900/40",
+                                "shadow-sm hover:shadow cursor-pointer"
+                              )}
+                            >
+                              {q}
+                            </motion.button>
+                          ))}
+                        </AnimatePresence>
+                      )}
                     </div>
                   )}
                 </div>
