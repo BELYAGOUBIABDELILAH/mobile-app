@@ -372,7 +372,24 @@ function makeName(type: ProviderType, specialty: string | undefined, i: number):
   }
 }
 
-function makeDescription(type: ProviderType) {
+function makeDescription(type: ProviderType): string {
+  const base = 'Service de santé de confiance à Sidi Bel Abbès, avec une équipe dédiée et des équipements modernes.';
+  switch (type) {
+    case 'doctor':
+      return base + ' Consultation sur rendez-vous, suivi personnalisé et prévention.';
+    case 'clinic':
+      return base + ' Prise en charge pluridisciplinaire et urgences mineures.';
+    case 'pharmacy':
+      return base + " Conseils pharmaceutiques, disponibilité 24/7 pour certaines officines.";
+    case 'lab':
+      return base + ' Analyses médicales rapides et précises, résultats numériques.';
+    case 'hospital':
+    case 'birth_hospital':
+      return base + " Plateaux techniques complets et services d'urgences 24/7.";
+    default:
+      return base;
+  }
+}
   const base = 'Service de santé de confiance à Sidi Bel Abbès, avec une équipe dédiée et des équipements modernes.'
   switch (type) {
     case 'doctor':
