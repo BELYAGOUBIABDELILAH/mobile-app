@@ -256,7 +256,7 @@ export const MobileHomeScreen = () => {
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
                 <AvatarImage src={doc.image} className="object-cover" />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                  {doc.name.charAt(0)}
+                  {(doc.name || '?').charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
