@@ -943,6 +943,93 @@ export interface Translations {
     rdvWith: string;
     statusChange: string;
   };
+
+  // Mobile Home Screen
+  mobileHome: {
+    goodMorning: string;
+    goodAfternoon: string;
+    goodEvening: string;
+    visitor: string;
+    signIn: string;
+    searchPlaceholder: string;
+    // Quick actions
+    map: string;
+    emergencies: string;
+    appointment: string;
+    healthCard: string;
+    community: string;
+    announcements: string;
+    research: string;
+    myProfile: string;
+    // Blood donation
+    bloodDonation: string;
+    urgent: string;
+    bloodDonationDesc: string;
+    viewBloodMap: string;
+    // Emergency
+    emergencyTitle: string;
+    emergencyDesc: string;
+    call15: string;
+    emergencyMap: string;
+    emergencyGuide: string;
+    // Section headers
+    specialties: string;
+    healthServices: string;
+    viewAll: string;
+    news: string;
+    medicalAds: string;
+    publications: string;
+    medicalResearch: string;
+    explore: string;
+    discussions: string;
+    communityLabel: string;
+    join: string;
+    solidarity: string;
+    citizenAid: string;
+    navigation: string;
+    quickAccess: string;
+    // Health services
+    pharmacyOnDuty: string;
+    openNow: string;
+    cardiology: string;
+    specialists: string;
+    pediatrics: string;
+    doctors: string;
+    ophthalmology: string;
+    // Quick access items
+    aiAssistant: string;
+    askQuestions: string;
+    favorites: string;
+    savedDoctors: string;
+    dashboard: string;
+    patientSpace: string;
+    emergencyCard: string;
+    medicalInfo: string;
+    manageAppointments: string;
+    bloodDonationMap: string;
+    nearbyCenters: string;
+    emergencyGuideLabel: string;
+    usefulNumbers: string;
+    contact: string;
+    contactUs: string;
+    faq: string;
+    frequentQuestions: string;
+    settings: string;
+    preferencesAccount: string;
+    // Entraide
+    medications: string;
+    donationsAvailable: string;
+    transport: string;
+    accompaniment: string;
+    medicalEquipment: string;
+    loanDonation: string;
+    food: string;
+    foodAid: string;
+    // Articles
+    reads: string;
+    // Community
+    comments: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
