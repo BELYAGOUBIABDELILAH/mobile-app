@@ -190,12 +190,12 @@ export const MobileHomeScreen = () => {
           onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
           className="relative mt-5 mb-[-24px] z-10"
         >
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('mobileHome', 'searchPlaceholder')}
-            className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
+            className="ps-10 pe-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
           />
         </form>
       </motion.div>
