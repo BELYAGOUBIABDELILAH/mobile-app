@@ -9,6 +9,7 @@ import { Loader2, User, ArrowLeft, Mail, Lock, Phone, Eye, EyeOff, Heart, Shield
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const formatPhoneInput = (value: string) => {
   const digits = value.replace(/\D/g, '');
