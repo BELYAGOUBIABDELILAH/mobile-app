@@ -563,7 +563,7 @@ export const AntigravityHeader = () => {
 
               {/* Emergency */}
               <Link
-                to="/map/emergency"
+                to="/map?mode=emergency"
                 className="flex items-center gap-3 px-6 py-3 text-sm font-semibold text-destructive hover:bg-destructive/10 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
