@@ -246,27 +246,27 @@ export interface CityHealthProvider {
 
 // Provider Type Labels (French/Arabic/English)
 export const PROVIDER_TYPE_LABELS: Record<ProviderType, { fr: string; ar: string; en: string; icon: string }> = {
-  hospital: { fr: 'Hôpital', ar: 'مستشفى', en: 'Hospital', icon: '🏥' },
-  birth_hospital: { fr: 'Maternité', ar: 'مستشفى الولادة', en: 'Maternity', icon: '👶' },
-  clinic: { fr: 'Clinique', ar: 'عيادة', en: 'Clinic', icon: '🏨' },
-  doctor: { fr: 'Cabinet Médical', ar: 'عيادة طبية', en: 'Medical Office', icon: '👨‍⚕️' },
-  pharmacy: { fr: 'Pharmacie', ar: 'صيدلية', en: 'Pharmacy', icon: '💊' },
-  lab: { fr: 'Laboratoire d\'Analyses', ar: 'مختبر التحاليل', en: 'Laboratory', icon: '🔬' },
-  blood_cabin: { fr: 'Centre de Don de Sang', ar: 'مركز التبرع بالدم', en: 'Blood Donation Center', icon: '🩸' },
-  radiology_center: { fr: 'Centre de Radiologie', ar: 'مركز الأشعة', en: 'Radiology Center', icon: '📷' },
-  medical_equipment: { fr: 'Équipement Médical', ar: 'معدات طبية', en: 'Medical Equipment', icon: '🦽' },
+  hospital: { fr: 'Hôpital', ar: '\u0645\u0633\u062a\u0634\u0641\u0649', en: 'Hospital', icon: '\uD83C\uDFE5' },
+  birth_hospital: { fr: 'Maternit\u00e9', ar: '\u0645\u0633\u062a\u0634\u0641\u0649 \u0627\u0644\u0648\u0644\u0627\u062f\u0629', en: 'Maternity', icon: '\uD83D\uDC76' },
+  clinic: { fr: 'Clinique', ar: '\u0639\u064a\u0627\u062f\u0629', en: 'Clinic', icon: '\uD83C\uDFE8' },
+  doctor: { fr: 'Cabinet M\u00e9dical', ar: '\u0639\u064a\u0627\u062f\u0629 \u0637\u0628\u064a\u0629', en: 'Medical Office', icon: '\uD83D\uDC68\u200D\u2695\uFE0F' },
+  pharmacy: { fr: 'Pharmacie', ar: '\u0635\u064a\u062f\u0644\u064a\u0629', en: 'Pharmacy', icon: '\uD83D\uDC8A' },
+  lab: { fr: "Laboratoire d'Analyses", ar: '\u0645\u062e\u062a\u0628\u0631 \u0627\u0644\u062a\u062d\u0627\u0644\u064a\u0644', en: 'Laboratory', icon: '\uD83D\uDD2C' },
+  blood_cabin: { fr: 'Centre de Don de Sang', ar: '\u0645\u0631\u0643\u0632 \u0627\u0644\u062a\u0628\u0631\u0639 \u0628\u0627\u0644\u062f\u0645', en: 'Blood Donation Center', icon: '\uD83E\uDE78' },
+  radiology_center: { fr: 'Centre de Radiologie', ar: '\u0645\u0631\u0643\u0632 \u0627\u0644\u0623\u0634\u0639\u0629', en: 'Radiology Center', icon: '\uD83D\uDCF7' },
+  medical_equipment: { fr: '\u00c9quipement M\u00e9dical', ar: '\u0645\u0639\u062f\u0627\u062a \u0637\u0628\u064a\u0629', en: 'Medical Equipment', icon: '\uD83E\uDDBD' },
 };
 
 export const SPECIALTIES = [
-  'Médecine générale',
+  'M\u00e9decine g\u00e9n\u00e9rale',
   'Cardiologie',
   'Dermatologie',
-  'Pédiatrie',
-  'Gynécologie',
+  'P\u00e9diatrie',
+  'Gyn\u00e9cologie',
   'Ophtalmologie',
   'Dentisterie',
   'Radiologie',
-  'Analyses médicales',
+  'Analyses m\u00e9dicales',
 ];
 
 export const PROVIDER_TYPES: ProviderType[] = [
@@ -284,10 +284,10 @@ export const PROVIDER_TYPES: ProviderType[] = [
 export const AREAS = [
   'Centre Ville',
   'Hay El Badr',
-  'Sidi Bel Abbès Est',
-  'Sidi Bel Abbès Ouest',
-  'Périphérie Nord',
-  'Périphérie Sud',
+  'Sidi Bel Abb\u00e8s Est',
+  'Sidi Bel Abb\u00e8s Ouest',
+  'P\u00e9riph\u00e9rie Nord',
+  'P\u00e9riph\u00e9rie Sud',
 ];
 
 const STORAGE_KEYS = {
@@ -347,34 +347,47 @@ function getDefaultProviderImage(type: string, index: number): string {
   return images[index % images.length];
 }
 
-function makeName(type: ProviderType, specialty: string | undefined, i: number) {
+function makeName(type: ProviderType, specialty: string | undefined, i: number): string {
   switch (type) {
     case 'doctor':
-      return `Dr. ${['Ahmed', 'Sara', 'Youssef', 'Imen', 'Nadia', 'Khaled', 'Rania'][i % 7]} ${['Benali', 'Bendaoud', 'Merabet', 'Saadi', 'Zerrouki'][i % 5]}${specialty ? ' - ' + specialty : ''}`
+      return `Dr. ${['Ahmed', 'Sara', 'Youssef', 'Imen', 'Nadia', 'Khaled', 'Rania'][i % 7]} ${['Benali', 'Bendaoud', 'Merabet', 'Saadi', 'Zerrouki'][i % 5]}${specialty ? ' - ' + specialty : ''}`;
     case 'clinic':
-      return `Clinique ${['El Amal', 'El Chifa', 'Ibn Sina', 'An Nasr', 'El Rahma'][i % 5]}`
+      return `Clinique ${['El Amal', 'El Chifa', 'Ibn Sina', 'An Nasr', 'El Rahma'][i % 5]}`;
     case 'pharmacy':
-      return `Pharmacie ${['Centrale', 'El Fajr', 'El Baraka', 'El Wafa'][i % 4]}`
+      return `Pharmacie ${['Centrale', 'El Fajr', 'El Baraka', 'El Wafa'][i % 4]}`;
     case 'lab':
-      return `Laboratoire ${['Atlas', 'Pasteur', 'BioLab', 'El Yakine'][i % 4]}`
+      return `Laboratoire ${['Atlas', 'Pasteur', 'BioLab', 'El Yakine'][i % 4]}`;
     case 'hospital':
-      return `Hôpital ${['Universitaire', 'Régional', 'Privé Al Hayat'][i % 3]}`
+      return `H\u00f4pital ${['Universitaire', 'R\u00e9gional', 'Priv\u00e9 Al Hayat'][i % 3]}`;
+    case 'birth_hospital':
+      return `Maternit\u00e9 ${['El Amel', 'El Hayat', 'Ibn Rochd'][i % 3]}`;
+    case 'blood_cabin':
+      return `Centre de Don ${['Central', 'Nord', 'Sud', 'Est'][i % 4]}`;
+    case 'radiology_center':
+      return `Centre Radio ${['El Nour', 'Atlas', 'El Chifa'][i % 3]}`;
+    case 'medical_equipment':
+      return `\u00c9quipement M\u00e9dical ${['Sant\u00e9Plus', 'MedEquip', 'Alg\u00e9riaMed'][i % 3]}`;
+    default:
+      return `\u00c9tablissement ${i + 1}`;
   }
 }
 
-function makeDescription(type: ProviderType) {
-  const base = 'Service de santé de confiance à Sidi Bel Abbès, avec une équipe dédiée et des équipements modernes.'
+function makeDescription(type: ProviderType): string {
+  const base = "Service de sant\u00e9 de confiance \u00e0 Sidi Bel Abb\u00e8s, avec une \u00e9quipe d\u00e9di\u00e9e et des \u00e9quipements modernes.";
   switch (type) {
     case 'doctor':
-      return base + ' Consultation sur rendez-vous, suivi personnalisé et prévention.'
+      return base + " Consultation sur rendez-vous, suivi personnalis\u00e9 et pr\u00e9vention.";
     case 'clinic':
-      return base + ' Prise en charge pluridisciplinaire et urgences mineures.'
+      return base + " Prise en charge pluridisciplinaire et urgences mineures.";
     case 'pharmacy':
-      return base + ' Conseils pharmaceutiques, disponibilité 24/7 pour certaines officines.'
+      return base + " Conseils pharmaceutiques, disponibilit\u00e9 24/7 pour certaines officines.";
     case 'lab':
-      return base + ' Analyses médicales rapides et précises, résultats numériques.'
+      return base + " Analyses m\u00e9dicales rapides et pr\u00e9cises, r\u00e9sultats num\u00e9riques.";
     case 'hospital':
-      return base + ' Plateaux techniques complets et services d’urgences 24/7.'
+    case 'birth_hospital':
+      return base + " Plateaux techniques complets et services d'urgences 24/7.";
+    default:
+      return base;
   }
 }
 
@@ -383,12 +396,12 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
   const centerLng = -0.6300;
   const list: CityHealthProvider[] = [];
   
-  // First, add dedicated ophthalmologists to ensure coverage
+  // First, add dedicated specialists to ensure coverage
   const dedicatedDoctors: Array<{ name: string; specialty: string; area: string }> = [
     { name: "Dr. Amina Belkacemi - Ophtalmologie", specialty: "Ophtalmologie", area: "Centre Ville" },
     { name: "Dr. Rachid Mesbah - Ophtalmologie", specialty: "Ophtalmologie", area: "Hay El Badr" },
     { name: "Dr. Fatima Cherif - Cardiologie", specialty: "Cardiologie", area: "Centre Ville" },
-    { name: "Dr. Omar Boudiaf - Pédiatrie", specialty: "Pédiatrie", area: "Sidi Bel Abbès Est" },
+    { name: "Dr. Omar Boudiaf - P\u00e9diatrie", specialty: "P\u00e9diatrie", area: "Sidi Bel Abb\u00e8s Est" },
   ];
 
   dedicatedDoctors.forEach((doc, idx) => {
@@ -407,15 +420,15 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       emergency: false,
       accessible: true,
       isOpen: true,
-      address: `${10 + idx} Boulevard de la Santé, ${doc.area}`,
-      city: 'Sidi Bel Abbès',
+      address: `${10 + idx} Boulevard de la Sant\u00e9, ${doc.area}`,
+      city: 'Sidi Bel Abb\u00e8s',
       area: doc.area,
       phone: genPhone(i),
       image: getDefaultProviderImage('doctor', i),
       lat,
       lng,
       languages: ['fr', 'ar'],
-      description: `Spécialiste en ${doc.specialty} à Sidi Bel Abbès. Consultation sur rendez-vous, suivi personnalisé.`,
+      description: `Sp\u00e9cialiste en ${doc.specialty} \u00e0 Sidi Bel Abb\u00e8s. Consultation sur rendez-vous, suivi personnalis\u00e9.`,
       verificationStatus: 'verified',
       isPublic: true,
     });
@@ -423,7 +436,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
 
   for (let i = 0; i < count; i++) {
     const type = randomFrom(PROVIDER_TYPES, i);
-    const specialty = type === 'doctor' ? randomFrom(SPECIALTIES, i) : (type === 'lab' ? 'Analyses médicales' : (type === 'pharmacy' ? 'Pharmacie' : undefined));
+    const specialty = type === 'doctor' ? randomFrom(SPECIALTIES, i) : (type === 'lab' ? 'Analyses m\u00e9dicales' : (type === 'pharmacy' ? 'Pharmacie' : undefined));
     const rating = Math.min(5, Math.max(3.6, 3.5 + (i % 15) * 0.1 + (i % 3) * 0.05));
     const distance = pseudoRandom(i, 0.3, 18);
     const lat = centerLat + (pseudoRandom(i, -0.03, 0.03) as number);
@@ -452,7 +465,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       accessible,
       isOpen,
       address: `${1 + (i % 90)} Rue principale, ${area}`,
-      city: 'Sidi Bel Abbès',
+      city: 'Sidi Bel Abb\u00e8s',
       area,
       phone: genPhone(i),
       image: getDefaultProviderImage(type, i),
@@ -470,7 +483,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       } : {}),
       // Type-specific fields for radiology_center
       ...(type === 'radiology_center' ? {
-        imagingTypes: ['Radiographie standard', 'Scanner (CT)', 'Échographie'].slice(0, (i % 3) + 1),
+        imagingTypes: ['Radiographie standard', 'Scanner (CT)', '\u00c9chographie'].slice(0, (i % 3) + 1),
       } : {}),
     };
     list.push(item);

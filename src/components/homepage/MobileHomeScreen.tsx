@@ -74,6 +74,7 @@ export const MobileHomeScreen = () => {
   // Top providers — always use real providers from data
   const allProviders = getProviders();
   const topProviders = allProviders
+    .filter(p => p.name) // safety: skip providers without name
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 3)
     .map(p => ({ ...p, isPremium: p.planType === 'premium' || p.rating >= 4.5 }));
@@ -255,7 +256,7 @@ export const MobileHomeScreen = () => {
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
                 <AvatarImage src={doc.image} className="object-cover" />
                 <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                  {doc.name.charAt(0)}
+                  {(doc.name || '?').charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
