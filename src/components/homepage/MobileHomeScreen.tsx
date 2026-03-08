@@ -12,6 +12,7 @@ import {
   Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
   CreditCard, Newspaper, FlaskConical, UserCircle,
   Building2, ArrowRight,
+  Brain, Frown, Thermometer, Moon, Wind, HeartPulse, Menu,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
