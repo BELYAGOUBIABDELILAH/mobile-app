@@ -21,6 +21,7 @@ interface Props {
 export const CreatePostComposer = ({ onSubmit, isLoading }: Props) => {
   const { t } = useLanguage();
   const { user, profile } = useAuth();
+  const { requireAuth, AuthRequiredModal } = useAuthRequired();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState<CommunityCategory>('suggestion');
