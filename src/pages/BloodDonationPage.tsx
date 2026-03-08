@@ -662,7 +662,7 @@ export default function BloodDonationPage() {
                   </div>
                   
                   <Button className="w-full mt-4" asChild>
-                    <Link to="/map/blood">
+                    <Link to="/map?mode=blood">
                       <MapPin className="h-4 w-4 mr-2" />
                       {tx.findCenter}
                     </Link>
