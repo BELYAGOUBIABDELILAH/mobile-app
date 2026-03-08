@@ -247,7 +247,7 @@ export const MobileHomeScreen = () => {
               onClick={() => navigate(`/medical-assistant?symptom=${encodeURIComponent(s.label)}`)}
               className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-card border border-border shadow-sm flex-shrink-0 snap-start active:scale-95 transition-transform"
             >
-              <span className="text-base">{s.emoji}</span>
+              <s.icon className="h-4 w-4 text-primary" strokeWidth={1.8} />
               <span className="text-xs font-medium text-foreground whitespace-nowrap">{s.label}</span>
             </motion.button>
           ))}
