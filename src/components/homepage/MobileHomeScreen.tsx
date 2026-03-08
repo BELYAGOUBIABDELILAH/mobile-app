@@ -78,23 +78,25 @@ export const MobileHomeScreen = () => {
       className="bg-[#F8F9FA] min-h-screen px-4 pb-20 space-y-6"
     >
       {/* 1. Header */}
-      <motion.div variants={fadeUp} className="-mx-4 px-4 pt-3 pb-4 bg-gradient-to-r from-[#F0F4FF] to-[#F0FAFA]">
+      <motion.div variants={fadeUp} className="-mx-4 px-4 pt-2 pb-3">
         <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[11px] text-[#9CA3AF] italic">Bienvenue sur CityHealth</p>
-            <h2 className="text-2xl font-extrabold text-[#111827]">
-              {greeting} 👋 <span className="text-[#1D4ED8]">{displayName}</span>
+          <div className="min-w-0">
+            <p className="text-[10px] text-muted-foreground tracking-wide uppercase">
+              {greeting}
+            </p>
+            <h2 className="text-lg font-bold text-foreground truncate">
+              👋 <span className="text-primary">{displayName}</span>
             </h2>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => navigate('/settings')}
-              className="relative p-2 rounded-full hover:bg-black/5 transition-colors"
+              className="relative p-2 rounded-full hover:bg-accent transition-colors"
               aria-label="Notifications"
             >
-              <Bell className="h-5 w-5 text-[#6B7280]" />
+              <Bell className="h-5 w-5 text-muted-foreground" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-red-500 text-white text-[9px] font-bold px-1">
+                <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
@@ -102,19 +104,19 @@ export const MobileHomeScreen = () => {
             {isGuest ? (
               <button
                 onClick={() => navigate('/auth')}
-                className="bg-[#1D4ED8] text-white rounded-full px-4 py-2 text-xs font-semibold active:scale-95 transition-transform"
+                className="bg-primary text-primary-foreground rounded-full px-3 py-1.5 text-xs font-semibold active:scale-95 transition-transform"
               >
                 Se connecter
               </button>
             ) : (
-              <button onClick={() => navigate('/citizen/profile')} className="relative">
-                <Avatar className="h-11 w-11 ring-2 ring-emerald-400 ring-offset-2 ring-offset-[#F0F4FF] shadow-lg">
+              <button onClick={() => navigate('/profile')} className="relative">
+                <Avatar className="h-9 w-9 ring-2 ring-primary/30 ring-offset-1 ring-offset-background">
                   <AvatarImage src={profile?.avatar_url || ''} />
-                  <AvatarFallback className="bg-[#1D4ED8]/10 text-[#1D4ED8] font-semibold text-sm">
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
                     {displayName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#F0F4FF]" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-background" />
               </button>
             )}
           </div>
