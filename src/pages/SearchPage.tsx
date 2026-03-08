@@ -293,7 +293,7 @@ const SearchPage = () => {
       </div>
 
       {/* Provider list */}
-      <div className="flex-1 px-4 pb-4 space-y-3">
+      <div className={`flex-1 px-4 pb-4 ${viewMode === 'grid' ? '' : 'space-y-3'}`}>
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -309,6 +309,22 @@ const SearchPage = () => {
             <Search className="h-10 w-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">Aucun résultat trouvé</p>
             <Button variant="outline" size="sm" onClick={clearAll}>Effacer les filtres</Button>
+          </div>
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 gap-3">
+            <AnimatePresence mode="popLayout">
+              {filteredProviders.map((provider, i) => (
+                <motion.div
+                  key={provider.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.25), duration: 0.3 }}
+                >
+                  <ProviderGridCard provider={provider} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
