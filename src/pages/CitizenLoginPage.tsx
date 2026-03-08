@@ -23,9 +23,7 @@ const CitizenLoginPage = () => {
   const { loginAsCitizen, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
   const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotEmailSent, setForgotEmailSent] = useState(false);
+  
   const [showPassword, setShowPassword] = useState(false);
   
   const [email, setEmail] = useState('');
