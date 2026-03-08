@@ -32,7 +32,6 @@ const MapMotherInner = () => {
   const routeStartMarkerRef = useRef<L.Marker | null>(null);
   const initRef = useRef(false);
   const { language } = useLanguage();
-  const location = useLocation();
   const [isBotOpen, setIsBotOpen] = useState(false);
 
   // Mode is now handled by UnifiedMapChild, not by pathname
