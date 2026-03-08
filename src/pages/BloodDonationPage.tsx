@@ -634,7 +634,7 @@ export default function BloodDonationPage() {
               </Card>
               
               {/* Blood Facts */}
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Heart className="h-5 w-5 text-destructive" />
