@@ -764,7 +764,7 @@ export default function BloodDonationPage() {
           {/* Tab 3: Info */}
           <TabsContent value="info" className="space-y-6">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Droplet className="h-5 w-5 text-destructive" />
