@@ -11,8 +11,14 @@ import { useRealtimePatientAppointments } from '@/hooks/useAppointments';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { WeeklyCalendarView } from '@/components/appointments/WeeklyCalendarView';
 import { BookingSlidePanel } from '@/components/appointments/BookingSlidePanel';
+import { GuestBlockMessage } from '@/components/guest/GuestBlockMessage';
 
 export default function NewAppointmentPage() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <GuestBlockMessage title="Prendre rendez-vous" description="Connectez-vous pour réserver un rendez-vous avec ce praticien." />;
+  }
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const providerId = searchParams.get('providerId');

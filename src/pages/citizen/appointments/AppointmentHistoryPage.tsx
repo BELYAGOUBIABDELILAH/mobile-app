@@ -20,6 +20,12 @@ const MONTHS_FR = [
 ];
 
 export default function AppointmentHistoryPage() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <GuestBlockMessage title="Historique" description="Connectez-vous pour consulter l'historique de vos rendez-vous." />;
+  }
+
   const { appointments, loading } = useRealtimePatientAppointments();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');

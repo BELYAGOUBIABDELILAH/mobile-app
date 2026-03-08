@@ -151,21 +151,11 @@ const AppRoutes = () => {
           {/* Settings */}
           <Route path="/settings" element={<SettingsPage />} />
           
-          <Route path="/favorites" element={
-            <CitizenGuard><FavoritesPage /></CitizenGuard>
-          } />
-          <Route path="/citizen/dashboard" element={
-            <CitizenGuard><PatientDashboard /></CitizenGuard>
-          } />
-          <Route path="/citizen/appointments" element={
-            <CitizenGuard><CitizenAppointmentsPage /></CitizenGuard>
-          } />
-          <Route path="/citizen/appointments/history" element={
-            <CitizenGuard><AppointmentHistoryPage /></CitizenGuard>
-          } />
-          <Route path="/citizen/appointments/new" element={
-            <CitizenGuard><NewAppointmentPage /></CitizenGuard>
-          } />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/citizen/dashboard" element={<PatientDashboard />} />
+          <Route path="/citizen/appointments" element={<CitizenAppointmentsPage />} />
+          <Route path="/citizen/appointments/history" element={<AppointmentHistoryPage />} />
+          <Route path="/citizen/appointments/new" element={<NewAppointmentPage />} />
           
           {/* Provide (community help) */}
           <Route path="/citizen/provide" element={<ProvideListPage />} />
