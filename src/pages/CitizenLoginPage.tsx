@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, User, ArrowLeft, Mail, Lock, Eye, EyeOff, Heart, MapPin, Shield, CheckCircle2 } from 'lucide-react';
+import { Loader2, User, ArrowLeft, Mail, Lock, Eye, EyeOff, Heart, MapPin, Shield } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
