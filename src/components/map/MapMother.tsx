@@ -110,12 +110,7 @@ const MapMotherInner = () => {
     };
   }, [mapRef, geolocation.latitude, geolocation.longitude, setUserPosition]);
 
-  const handleModeChange = useCallback((m: MapMode) => {
-    // Navigation handled by parent — we just use location-based mode
-    const paths: Record<MapMode, string> = { providers: '/map/providers', emergency: '/map/emergency', blood: '/map/blood' };
-    window.history.pushState(null, '', paths[m]);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  }, []);
+  // Mode change is now handled inside UnifiedMapChild
 
   const handleFlyToProvider = useCallback((id: string) => {
     const p = sidebarProviders.find(p => p.id === id);

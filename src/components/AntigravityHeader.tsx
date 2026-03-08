@@ -193,7 +193,7 @@ export const AntigravityHeader = () => {
             <NavTrigger label={t('footer', 'professionals')} menuKey="pro" />
             <NavTrigger label={t('footer', 'resources')} menuKey="resources" />
             <Link
-              to="/map/emergency"
+              to="/map?mode=emergency"
               className="px-4 py-2 text-sm font-semibold text-destructive hover:text-destructive/80 transition-colors rounded-lg hover:bg-destructive/5"
             >
               {t('nav', 'emergency')}

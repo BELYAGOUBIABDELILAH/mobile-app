@@ -202,7 +202,7 @@ export const Header = () => {
     {
       label: texts.emergency,
       items: [
-        { label: texts.emergencyServices, href: '/map/emergency', icon: AlertTriangle, description: texts.emergencyDesc },
+        { label: texts.emergencyServices, href: '/map?mode=emergency', icon: AlertTriangle, description: texts.emergencyDesc },
         { label: texts.emergencyCall, href: 'tel:15', icon: Phone, isDestructive: true },
       ]
     },
