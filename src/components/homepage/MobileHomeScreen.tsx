@@ -242,58 +242,51 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── Top Doctors ── */}
-      {topDoctors.length > 0 && (
-        <motion.div variants={fadeUp}>
-          <SectionHeader label="Recommended" title="Top Doctors" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search?type=doctor')} />
-          <div className="space-y-2.5 mt-3">
-            {topDoctors.map((doc) => (
-              <button
-                key={doc.id}
-                onClick={() => navigate(`/provider/${doc.id}`)}
-                className="w-full rounded-xl bg-card border border-border shadow-sm p-3 flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
-              >
-                <Avatar className="h-12 w-12 flex-shrink-0">
-                  <AvatarImage src={doc.image} className="object-cover" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
-                    {doc.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
-                  <p className="text-xs text-muted-foreground truncate">{doc.specialty || 'Médecin'}</p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                    <span className="text-[11px] font-medium text-foreground">{doc.rating.toFixed(1)}</span>
-                    <span className="text-[10px] text-muted-foreground">({doc.reviewsCount})</span>
-                  </div>
+      {/* ── Top Docteurs ── */}
+      <motion.div variants={fadeUp}>
+        <SectionHeader label="Recommended" title="Top Docteurs" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search?type=doctor')} />
+        <div className="space-y-3 mt-3">
+          {topDoctors.length > 0 ? topDoctors.map((doc) => (
+            <button
+              key={doc.id}
+              onClick={() => navigate(`/provider/${doc.id}`)}
+              className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-left active:scale-[0.98] transition-transform"
+            >
+              <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
+                <AvatarImage src={doc.image} className="object-cover" />
+                <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                  {doc.name.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
+                <p className="text-xs text-muted-foreground truncate">{doc.specialty || 'Médecin'}</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
+                  <span className="text-xs font-medium text-foreground">{doc.rating.toFixed(1)}</span>
+                  <span className="text-[10px] text-muted-foreground">({doc.reviewsCount} avis)</span>
                 </div>
-                <div className="flex-shrink-0">
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold">
-                    Appointment <ArrowRight className="h-3 w-3" />
-                  </span>
+              </div>
+              <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold shadow-sm">
+                  RDV <ArrowRight className="h-3 w-3" />
+                </span>
+                <Heart className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </button>
+          )) : (
+            [1, 2, 3].map((i) => (
+              <div key={i} className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4">
+                <div className="h-14 w-14 rounded-full bg-muted animate-pulse flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 w-28 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-20 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-16 bg-muted rounded animate-pulse" />
                 </div>
-              </button>
-            ))}
-          </div>
-        </motion.div>
-      )}
-
-      {/* ── Quick actions grid ── */}
-      <motion.div variants={fadeUp} className="grid grid-cols-4 gap-3" role="navigation" aria-label={t('mobileHome', 'quickAccess')}>
-        {quickActions.map((a) => (
-          <button
-            key={a.label}
-            onClick={() => navigate(a.path)}
-            className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
-            aria-label={a.label}
-          >
-            <div className="w-12 h-12 rounded-xl bg-card border border-border shadow-sm flex items-center justify-center">
-              <a.icon className="h-5 w-5 text-primary" strokeWidth={2} />
-            </div>
-            <span className="text-[11px] font-medium text-foreground">{a.label}</span>
-          </button>
-        ))}
+              </div>
+            ))
+          )}
+        </div>
       </motion.div>
 
       {/* ── Urgent banner ── */}
