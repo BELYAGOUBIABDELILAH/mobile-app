@@ -14,12 +14,60 @@ interface NotificationPayload {
   data?: Record<string, unknown>;
 }
 
+async function verifyFirebaseToken(
+  token: string
+): Promise<{ uid: string } | null> {
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`
+    );
+    if (!res.ok) {
+      const res2 = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!res2.ok) return null;
+      const info = await res2.json();
+      return info.sub ? { uid: info.sub } : null;
+    }
+    const payload = await res.json();
+    const projectId = Deno.env.get("VITE_FIREBASE_PROJECT_ID");
+    if (
+      projectId &&
+      payload.aud !== projectId &&
+      payload.azp !== projectId
+    ) {
+      return null;
+    }
+    return payload.sub ? { uid: payload.sub } : null;
+  } catch {
+    return null;
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Authenticate caller via Firebase token
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Missing authorization" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    const token = authHeader.replace("Bearer ", "");
+    const firebaseUser = await verifyFirebaseToken(token);
+    if (!firebaseUser) {
+      return new Response(
+        JSON.stringify({ error: "Invalid token" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -64,11 +112,9 @@ Deno.serve(async (req) => {
     const skippedUserIds = user_ids.filter((uid) => !eligibleUserIds.includes(uid));
 
     console.log(
-      `[send-notification] type=${type} | total=${user_ids.length} | eligible=${eligibleUserIds.length} | skipped=${skippedUserIds.length}`
+      `[send-notification] caller=${firebaseUser.uid} type=${type} | total=${user_ids.length} | eligible=${eligibleUserIds.length} | skipped=${skippedUserIds.length}`
     );
 
-    // Here you would integrate with a push service (FCM, APNs, Web Push, etc.)
-    // For now we return the filtered list so callers know who should be notified
     const result = {
       type,
       title,
