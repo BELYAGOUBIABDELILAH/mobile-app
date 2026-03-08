@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -40,6 +41,7 @@ export default function SettingsPage() {
   const [notifAppointments, setNotifAppointments] = useState(true);
   const [notifEmergency, setNotifEmergency] = useState(true);
   const [notifMessages, setNotifMessages] = useState(true);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   const initials = profile?.full_name
     ?.split(' ')
@@ -73,7 +75,7 @@ export default function SettingsPage() {
       title: 'Compte',
       items: [
         { icon: User, label: 'Mon Profil', onClick: () => navigate('/profile'), iconColor: 'text-blue-500 bg-blue-500/10' },
-        { icon: Lock, label: 'Changer le mot de passe', onClick: () => toast.info('Fonctionnalité à venir'), iconColor: 'text-slate-500 bg-slate-500/10' },
+        { icon: Lock, label: 'Changer le mot de passe', onClick: () => setPasswordDialogOpen(true), iconColor: 'text-slate-500 bg-slate-500/10' },
         { icon: LogOut, label: 'Se déconnecter', onClick: handleLogout, destructive: true },
       ],
     },
@@ -235,6 +237,8 @@ export default function SettingsPage() {
           </motion.div>
         ))}
       </div>
+
+      <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </div>
   );
 }
