@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { auth } from '@/lib/firebase';
 
 export type NotificationType = 'appointments' | 'blood_emergencies' | 'messages';
 
@@ -18,6 +18,12 @@ interface SendNotificationResult {
   total_skipped: number;
 }
 
+async function getFirebaseToken(): Promise<string> {
+  const user = auth.currentUser;
+  if (!user) throw new Error('Not authenticated');
+  return user.getIdToken();
+}
+
 /**
  * Sends a notification filtered by user preferences via the edge function.
  * Users who have disabled the given notification type will be excluded.
@@ -25,19 +31,30 @@ interface SendNotificationResult {
 export async function sendFilteredNotification(
   params: SendNotificationParams
 ): Promise<SendNotificationResult> {
-  const { data, error } = await supabase.functions.invoke('send-notification', {
-    body: {
-      user_ids: params.userIds,
-      type: params.type,
-      title: params.title,
-      body: params.body,
-      data: params.data,
-    },
-  });
+  const token = await getFirebaseToken();
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const res = await fetch(
+    `https://${projectId}.supabase.co/functions/v1/send-notification`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_ids: params.userIds,
+        type: params.type,
+        title: params.title,
+        body: params.body,
+        data: params.data,
+      }),
+    }
+  );
 
-  if (error) {
-    console.error('[sendFilteredNotification] error:', error);
-    throw error;
+  const data = await res.json();
+  if (!res.ok) {
+    console.error('[sendFilteredNotification] error:', data);
+    throw new Error(data.error || 'Notification failed');
   }
 
   return data as SendNotificationResult;
