@@ -32,10 +32,10 @@ export const BottomNavBar = () => {
     return location.pathname.startsWith(tab.path);
   };
 
-  const getInitial = () => {
+  const getInitial = (): string | null => {
     if (profile?.full_name) return profile.full_name.charAt(0).toUpperCase();
     if (user?.email) return user.email.charAt(0).toUpperCase();
-    return '?';
+    return null;
   };
 
   return (
