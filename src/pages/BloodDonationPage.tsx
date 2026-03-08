@@ -831,6 +831,7 @@ export default function BloodDonationPage() {
           </TabsContent>
         </Tabs>
       </main>
+      <AuthModal />
     </div>
   );
 }
