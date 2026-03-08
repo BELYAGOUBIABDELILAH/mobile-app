@@ -390,7 +390,8 @@ function makeDescription(type: ProviderType): string {
       return base;
   }
 }
-  const base = 'Service de santé de confiance à Sidi Bel Abbès, avec une équipe dédiée et des équipements modernes.'
+
+
   switch (type) {
     case 'doctor':
       return base + ' Consultation sur rendez-vous, suivi personnalisé et prévention.'
