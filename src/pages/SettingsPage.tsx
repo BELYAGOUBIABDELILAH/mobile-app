@@ -78,7 +78,7 @@ export default function SettingsPage() {
         { icon: LogOut, label: 'Se déconnecter', onClick: handleLogout, destructive: true },
       ],
     }] : []),
-    {
+    ...(isAuthenticated ? [{
       title: 'Notifications',
       items: [
         { icon: Calendar, label: 'Rendez-vous', description: 'Rappels et confirmations', rightElement: <Switch checked={prefs.appointments} onCheckedChange={(v) => updatePref('appointments', v)} />, iconColor: 'text-indigo-500 bg-indigo-500/10' },
@@ -92,7 +92,7 @@ export default function SettingsPage() {
         { icon: ShieldCheck, label: 'Carte d\'urgence', onClick: () => navigate('/profile'), iconColor: 'text-teal-500 bg-teal-500/10' },
         { icon: Droplet, label: 'Don de sang', onClick: () => navigate('/blood-donation'), iconColor: 'text-rose-500 bg-rose-500/10' },
       ],
-    },
+    }] : []),
     {
       title: 'Préférences',
       items: [
