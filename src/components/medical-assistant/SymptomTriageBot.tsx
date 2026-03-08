@@ -80,9 +80,11 @@ const SYMPTOM_CHIPS: Record<string, SymptomChip[]> = {
 
 interface SymptomTriageBotProps {
   resetKey?: number;
+  onMessageSent?: (role: "user" | "assistant", content: string) => void;
+  initialMessages?: { role: "user" | "assistant"; content: string }[];
 }
 
-export function SymptomTriageBot({ resetKey = 0 }: SymptomTriageBotProps) {
+export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages }: SymptomTriageBotProps) {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<TriageMessage[]>([]);
   const [input, setInput] = useState("");
@@ -95,12 +97,16 @@ export function SymptomTriageBot({ resetKey = 0 }: SymptomTriageBotProps) {
   // Reset on resetKey change
   useEffect(() => {
     if (resetKey > 0) {
-      setMessages([]);
+      if (initialMessages && initialMessages.length > 0) {
+        setMessages(initialMessages.map(m => ({ role: m.role, content: m.content })));
+      } else {
+        setMessages([]);
+      }
       setInput("");
       setIsLoading(false);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [resetKey]);
+  }, [resetKey, initialMessages]);
 
   useEffect(() => {
     setIsLoadingProviders(true);
@@ -175,7 +181,7 @@ export function SymptomTriageBot({ resetKey = 0 }: SymptomTriageBotProps) {
     if (!trimmed || isLoading || isLoadingProviders) return;
 
     setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
-    setInput("");
+    onMessageSent?.("user", trimmed);
     if (inputRef.current) inputRef.current.style.height = "auto";
     setIsLoading(true);
 
@@ -185,19 +191,25 @@ export function SymptomTriageBot({ resetKey = 0 }: SymptomTriageBotProps) {
       });
 
       if (error) {
-        setMessages((prev) => [...prev, { role: "assistant", content: error.message || "Une erreur est survenue." }]);
+        const errContent = error.message || "Une erreur est survenue.";
+        setMessages((prev) => [...prev, { role: "assistant", content: errContent }]);
+        onMessageSent?.("assistant", errContent);
         setIsLoading(false);
         return;
       }
+      const assistantContent = data.analysis || "Analyse non disponible.";
       setMessages((prev) => [...prev, {
         role: "assistant",
-        content: data.analysis || "Analyse non disponible.",
+        content: assistantContent,
         doctorIds: data.doctorIds || [],
         recommendedSpecialty: data.recommendedSpecialty || "",
         urgencyLevel: data.urgencyLevel || undefined,
       }]);
+      onMessageSent?.("assistant", assistantContent);
     } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Erreur de connexion. Veuillez réessayer." }]);
+      const fallback = "Erreur de connexion. Veuillez réessayer.";
+      setMessages((prev) => [...prev, { role: "assistant", content: fallback }]);
+      onMessageSent?.("assistant", fallback);
     } finally {
       setIsLoading(false);
     }
