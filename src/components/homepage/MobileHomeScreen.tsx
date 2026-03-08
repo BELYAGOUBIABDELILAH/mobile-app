@@ -249,7 +249,7 @@ export const MobileHomeScreen = () => {
           {topProviders.map((doc) => (
             <button
               key={doc.id}
-              onClick={() => navigate(doc.id.startsWith('ex-') ? '/search' : `/provider/${doc.id}`)}
+              onClick={() => navigate(`/provider/${doc.id}`)}
               className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-left active:scale-[0.98] transition-transform"
             >
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
