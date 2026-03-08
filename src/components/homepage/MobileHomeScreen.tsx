@@ -412,7 +412,7 @@ export const MobileHomeScreen = () => {
               <button
                 key={article.id}
                 onClick={() => navigate('/research')}
-                className="w-full p-3.5 flex items-start gap-3 text-left active:bg-accent transition-colors"
+                className="w-full p-3.5 flex items-start gap-3 text-start active:bg-accent transition-colors"
               >
                 <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 mt-0.5">
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
