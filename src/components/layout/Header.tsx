@@ -190,7 +190,7 @@ export const Header = () => {
     {
       label: texts.services,
       items: [
-        { label: texts.map, href: '/map/providers', icon: MapPin, description: texts.mapDesc },
+        { label: texts.map, href: '/map', icon: MapPin, description: texts.mapDesc },
         { label: texts.search, href: '/search', icon: Search, description: texts.searchDesc },
         { label: texts.aiAssistant, href: '/medical-assistant', icon: Bot, description: texts.aiDesc },
         { label: texts.bloodDonation, href: '/blood-donation', icon: Droplet, description: texts.bloodDesc },
