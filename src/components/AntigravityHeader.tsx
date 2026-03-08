@@ -414,7 +414,7 @@ export const AntigravityHeader = () => {
                         </p>
                       </div>
                       <Link
-                        to="/map/emergency"
+                        to="/map?mode=emergency"
                         className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-destructive hover:underline"
                       >
                         Accéder aux urgences <ArrowRight className="h-3 w-3" />

@@ -246,7 +246,7 @@ export const AnimatedMapSection = () => {
               
               <div className="absolute bottom-4 right-4 md:hidden">
                 <Button asChild size="sm" variant="secondary" className="shadow-lg">
-                  <Link to="/map/providers" className="flex items-center gap-2">
+                  <Link to="/map" className="flex items-center gap-2">
                     {t('homepage', 'openButton')}
                     <ArrowRight className="h-4 w-4 rtl-flip" />
                   </Link>

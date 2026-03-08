@@ -801,7 +801,7 @@ export default function BloodDonationPage() {
                     }
                   </p>
                   <Button className="w-full" variant="outline" asChild>
-                    <Link to="/map/blood">
+                    <Link to="/map?mode=blood">
                       <Map className="h-4 w-4 mr-2" />
                       {tx.viewMap}
                     </Link>

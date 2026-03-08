@@ -192,7 +192,7 @@ export const MobileHomeScreen = () => {
           <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         </button>
         <button
-          onClick={() => navigate('/map/blood')}
+          onClick={() => navigate('/map?mode=blood')}
           className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-destructive/5 py-2 text-xs font-medium text-destructive active:scale-[0.97] transition-transform"
         >
           <Map className="h-3.5 w-3.5" />
