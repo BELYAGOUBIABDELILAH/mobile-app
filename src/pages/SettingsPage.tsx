@@ -107,7 +107,7 @@ export default function SettingsPage() {
         { icon: Heart, label: 'Pourquoi CityHealth', onClick: () => navigate('/docs/getting-started/why-cityhealth'), external: true, iconColor: 'text-pink-500 bg-pink-500/10' },
         { icon: HelpCircle, label: 'FAQ', onClick: () => navigate('/faq'), external: true, iconColor: 'text-sky-500 bg-sky-500/10' },
         { icon: BookOpen, label: 'Documentation', onClick: () => navigate('/docs'), external: true, iconColor: 'text-emerald-500 bg-emerald-500/10' },
-        { icon: Code, label: 'Espace développeurs', onClick: () => navigate('/developers'), external: true, iconColor: 'text-orange-500 bg-orange-500/10' },
+        { icon: Code, label: 'Espace développeurs', onClick: () => window.open('https://cityhealth-dz.lovable.app/developers', '_blank'), external: true, iconColor: 'text-orange-500 bg-orange-500/10' },
       ],
     },
     {
