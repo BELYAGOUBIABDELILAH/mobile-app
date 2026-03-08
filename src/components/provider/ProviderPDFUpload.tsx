@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabaseClient';
+import { secureUpload, secureDelete } from '@/services/storageUploadService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, Upload, CheckCircle2, AlertCircle, Loader2, Trash2 } from 'lucide-react';
@@ -30,14 +30,7 @@ export const ProviderPDFUpload = () => {
     setErrorMsg('');
 
     try {
-      const { error } = await supabase.storage
-        .from('pdfs')
-        .upload(`${user.uid}.pdf`, file, {
-          upsert: true,
-          contentType: 'application/pdf',
-        });
-
-      if (error) throw error;
+      await secureUpload('pdfs', `${user.uid}.pdf`, file, true);
       setStatus('success');
     } catch (err: any) {
       setStatus('error');
@@ -56,7 +49,7 @@ export const ProviderPDFUpload = () => {
     if (!user?.uid) return;
     setStatus('uploading');
     try {
-      await supabase.storage.from('pdfs').remove([`${user.uid}.pdf`]);
+      await secureDelete('pdfs', [`${user.uid}.pdf`]);
       setStatus('idle');
       setFileName(null);
     } catch {

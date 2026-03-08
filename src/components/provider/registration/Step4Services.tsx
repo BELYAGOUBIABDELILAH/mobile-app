@@ -48,7 +48,7 @@ import {
 } from './types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TypeSpecificFields } from './TypeSpecificFields';
-import { supabase } from '@/lib/supabaseClient';
+import { secureUpload } from '@/services/storageUploadService';
 
 interface Step4Props {
   formData: ProviderFormData;
@@ -113,10 +113,8 @@ export function Step4Services({ formData, updateFormData, onNext, onPrev }: Step
     try {
       const fileName = `${Date.now()}_${file.name}`;
       const filePath = `catalogs/${fileName}`;
-      const { error } = await supabase.storage.from('provider-catalogs').upload(filePath, file);
-      if (error) throw error;
-      const { data: urlData } = supabase.storage.from('provider-catalogs').getPublicUrl(filePath);
-      updateFormData({ catalogPdfUrl: urlData.publicUrl });
+      const publicUrl = await secureUpload('provider-catalogs', filePath, file);
+      updateFormData({ catalogPdfUrl: publicUrl });
     } catch (err: any) {
       setErrors(prev => ({ ...prev, catalog: err.message || 'Erreur lors du téléchargement' }));
     } finally {

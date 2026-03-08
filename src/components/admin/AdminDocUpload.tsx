@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { supabase, SUPABASE_URL } from '@/lib/supabaseClient';
+import { SUPABASE_URL } from '@/lib/supabaseClient';
+import { secureUpload, secureDelete } from '@/services/storageUploadService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Upload, FileText, Trash2, CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
@@ -41,8 +42,7 @@ export function AdminDocUpload() {
 
     setState('uploading');
     try {
-      const { error } = await supabase.storage.from(BUCKET).upload(FILE_NAME, file, { upsert: true });
-      if (error) throw error;
+      await secureUpload(BUCKET, FILE_NAME, file, true);
       setState('success');
       setHasExisting(true);
       toast.success('Documentation officielle mise à jour avec succès.');
@@ -54,8 +54,7 @@ export function AdminDocUpload() {
 
   const handleDelete = async () => {
     try {
-      const { error } = await supabase.storage.from(BUCKET).remove([FILE_NAME]);
-      if (error) throw error;
+      await secureDelete(BUCKET, [FILE_NAME]);
       setHasExisting(false);
       setState('idle');
       toast.success('Document supprimé.');
