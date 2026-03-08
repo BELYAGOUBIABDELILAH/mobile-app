@@ -6,7 +6,7 @@ import { isProviderVerified } from '@/utils/verificationUtils';
 import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
-  Loader2, ShieldCheck, Heart,
+  Loader2, ShieldCheck, Heart, List, LayoutGrid, ArrowRight,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
