@@ -146,22 +146,24 @@ export const MobileHomeScreen = () => {
       animate="show"
       className="bg-background min-h-screen px-4 pb-20 space-y-5"
     >
-      {/* ── Header ── */}
-      <motion.div variants={fadeUp} className="-mx-4 px-4 pt-2 pb-1">
-        <div className="flex items-center justify-between">
-          <div className="min-w-0">
-            <p className="text-[10px] text-muted-foreground tracking-wide uppercase">{greeting}</p>
-            <h1 className="text-lg font-bold text-foreground truncate">
-              👋 <span className="text-primary">{displayName}</span>
-            </h1>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
+      {/* ── Header with background shape ── */}
+      <motion.div variants={fadeUp} className="-mx-4 -mt-0 bg-primary rounded-b-[32px] px-5 pt-5 pb-14 relative">
+        {/* Top row: settings + avatar */}
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={() => navigate('/settings')}
+            className="p-2 rounded-full hover:bg-primary-foreground/10 transition-colors"
+            aria-label={t('mobileHome', 'settings')}
+          >
+            <Menu className="h-5 w-5 text-primary-foreground" />
+          </button>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/notifications')}
-              className="relative p-2 rounded-full hover:bg-accent transition-colors"
+              className="relative p-2 rounded-full hover:bg-primary-foreground/10 transition-colors"
               aria-label={t('mobileHome', 'announcements')}
             >
-              <Bell className="h-5 w-5 text-muted-foreground" />
+              <Bell className="h-5 w-5 text-primary-foreground" />
               {unreadCount > 0 && (
                 <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
                   {unreadCount > 9 ? '9+' : unreadCount}
@@ -171,44 +173,43 @@ export const MobileHomeScreen = () => {
             {isGuest ? (
               <button
                 onClick={() => navigate('/auth-gateway')}
-                className="bg-primary text-primary-foreground rounded-full px-3 py-1.5 text-xs font-semibold active:scale-95 transition-transform"
+                className="bg-primary-foreground text-primary rounded-full px-3 py-1.5 text-xs font-semibold active:scale-95 transition-transform"
               >
                 {t('mobileHome', 'signIn')}
               </button>
             ) : (
               <button onClick={() => navigate('/profile')} className="relative" aria-label={t('mobileHome', 'myProfile')}>
-                <Avatar className="h-9 w-9 ring-2 ring-primary/30 ring-offset-1 ring-offset-background">
+                <Avatar className="h-11 w-11 ring-2 ring-primary-foreground/30 ring-offset-1 ring-offset-primary">
                   <AvatarImage src={profile?.avatar_url || ''} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                  <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground font-semibold text-sm">
                     {displayName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-background" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-primary" />
               </button>
             )}
           </div>
         </div>
+
+        {/* Greeting + hero text */}
+        <p className="text-primary-foreground/70 text-sm mb-1">👋 {greeting}, {displayName}</p>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight">
+          Let's find your<br /><span className="text-primary-foreground">Docteur !</span>
+        </h1>
       </motion.div>
 
-      {/* ── Hero text ── */}
-      <motion.div variants={fadeUp}>
-        <h2 className="text-2xl font-bold text-foreground leading-tight">
-          Let's find your <span className="text-primary">Docteur</span> !
-        </h2>
-      </motion.div>
-
-      {/* ── Search bar (functional) ── */}
+      {/* ── Search bar (overlapping header bottom) ── */}
       <motion.form
         variants={fadeUp}
         onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
-        className="relative"
+        className="relative -mt-7 z-10 mx-1"
       >
         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         <Input
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder={t('mobileHome', 'searchPlaceholder')}
-          className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-sm text-sm"
+          className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
         />
       </motion.form>
 
