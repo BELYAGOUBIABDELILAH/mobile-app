@@ -48,7 +48,7 @@ import {
 } from './types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TypeSpecificFields } from './TypeSpecificFields';
-import { supabase } from '@/lib/supabaseClient';
+import { secureUpload } from '@/services/storageUploadService';
 
 interface Step4Props {
   formData: ProviderFormData;
