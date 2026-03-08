@@ -11,7 +11,6 @@ import { ProviderProvider } from "@/contexts/ProviderContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ProviderRouteGuard } from "@/components/ProviderRouteGuard";
 import { AdminGuard } from "@/components/guards/AdminGuard";
-import { CitizenGuard } from "@/components/guards/CitizenGuard";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { MobileAppShell } from "@/components/layout/MobileAppShell";
 

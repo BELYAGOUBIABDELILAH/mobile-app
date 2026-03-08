@@ -308,7 +308,7 @@ export default function BloodDonationPage() {
   return (
     <div className={cn("min-h-screen bg-background", isRTL && "rtl")}>
       
-      <main className="container mx-auto px-4 pt-20 pb-8">
+      <main className="px-4 pt-6 pb-4">
         {/* Emergency Alert Banner - visible to ALL users */}
         {!respondingEmergency && (
           <EmergencyAlertBanner onRespond={setRespondingEmergency} />

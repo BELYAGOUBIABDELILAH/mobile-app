@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
 import { useToastNotifications } from '@/hooks/useToastNotifications';
 import ToastContainer from '@/components/ToastContainer';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -14,18 +13,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const ContactPage = () => {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    type: ''
+    name: '', email: '', subject: '', message: '', type: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const headerRef = useScrollReveal();
-  const formRef = useScrollReveal();
-  const infoRef = useScrollReveal();
-  
   const { toasts, addToast } = useToastNotifications();
 
   const contactTypes = [
@@ -62,190 +52,152 @@ const ContactPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!formData.name || !formData.email || !formData.message) {
-      addToast({
-        type: 'warning',
-        title: t('contact', 'requiredFields'),
-        message: t('contact', 'requiredFieldsDesc')
-      });
+      addToast({ type: 'warning', title: t('contact', 'requiredFields'), message: t('contact', 'requiredFieldsDesc') });
       return;
     }
-
     setIsSubmitting(true);
-
     setTimeout(() => {
       setIsSubmitting(false);
-      addToast({
-        type: 'success',
-        title: t('contact', 'messageSent'),
-        message: t('contact', 'messageSentDesc')
-      });
-      
+      addToast({ type: 'success', title: t('contact', 'messageSent'), message: t('contact', 'messageSentDesc') });
       setFormData({ name: '', email: '', subject: '', message: '', type: '' });
     }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <div className="min-h-screen bg-background px-4 pt-6 pb-4">
       <ToastContainer toasts={toasts} />
-      
-      <section ref={headerRef} className="pt-24 pb-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-3 mb-6 animate-float">
-            <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center animate-glow-pulse">
-              <MessageSquare className="text-primary" size={24} />
+
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <MessageSquare className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold text-foreground">{t('contact', 'title')}</h1>
+          <p className="text-xs text-muted-foreground">{t('contact', 'subtitle')}</p>
+        </div>
+      </div>
+
+      {/* Contact Form */}
+      <Card className="bg-card border border-border rounded-xl shadow-sm mb-4">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Send className="h-4 w-4 text-primary" />
+            {t('contact', 'sendMessage')}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">{t('contact', 'fullName')} *</label>
+                <Input name="name" value={formData.name} onChange={handleInputChange} placeholder={t('contact', 'fullName')} required className="rounded-lg" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">{t('contact', 'email')} *</label>
+                <Input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="votre@email.com" required className="rounded-lg" />
+              </div>
             </div>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            {t('contact', 'title')}
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t('contact', 'subtitle')}
-          </p>
-        </div>
-      </section>
 
-      <div className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Card ref={formRef} className="glass-card animate-scale-in">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Send className="text-primary" size={24} />
-                  {t('contact', 'sendMessage')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">{t('contact', 'fullName')} *</label>
-                      <Input name="name" value={formData.name} onChange={handleInputChange} placeholder={t('contact', 'fullName')} required />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">{t('contact', 'email')} *</label>
-                      <Input type="email" name="email" value={formData.email} onChange={handleInputChange} placeholder="votre@email.com" required />
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">{t('contact', 'requestType')}</label>
+                <Select value={formData.type} onValueChange={(v) => handleSelectChange('type', v)}>
+                  <SelectTrigger className="rounded-lg"><SelectValue placeholder={t('contact', 'choosePlaceholder')} /></SelectTrigger>
+                  <SelectContent>
+                    {contactTypes.map((type) => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">{t('contact', 'subject')}</label>
+                <Input name="subject" value={formData.subject} onChange={handleInputChange} placeholder={t('contact', 'subjectPlaceholder')} className="rounded-lg" />
+              </div>
+            </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">{t('contact', 'requestType')}</label>
-                      <Select value={formData.type} onValueChange={(value) => handleSelectChange('type', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('contact', 'choosePlaceholder')} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {contactTypes.map((type) => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium">{t('contact', 'subject')}</label>
-                      <Input name="subject" value={formData.subject} onChange={handleInputChange} placeholder={t('contact', 'subjectPlaceholder')} />
-                    </div>
-                  </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">{t('contact', 'message')} *</label>
+              <Textarea name="message" value={formData.message} onChange={handleInputChange} placeholder={t('contact', 'messagePlaceholder')} rows={4} required className="rounded-lg" />
+            </div>
 
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">{t('contact', 'message')} *</label>
-                    <Textarea name="message" value={formData.message} onChange={handleInputChange} placeholder={t('contact', 'messagePlaceholder')} rows={6} required />
-                  </div>
+            <Button type="submit" className="w-full rounded-lg" disabled={isSubmitting}>
+              {isSubmitting ? <LoadingSpinner size="sm" /> : <><Send className="mr-2 h-4 w-4" />{t('contact', 'send')}</>}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
-                  <Button type="submit" className="w-full ripple-effect" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <LoadingSpinner size="sm" />
-                    ) : (
-                      <>
-                        <Send className="mr-2" size={18} />
-                        {t('contact', 'send')}
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
+      {/* Contact Info */}
+      <Card className="bg-card border border-border rounded-xl shadow-sm mb-4">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">{t('contact', 'contactInfo')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {contactInfo.map((info, i) => (
+            <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-accent/50 transition-colors">
+              <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <info.icon className="h-4 w-4 text-primary" />
+              </div>
+              <div>
+                <h4 className="text-sm font-medium">{info.title}</h4>
+                <p className="text-xs text-foreground">{info.details}</p>
+                <p className="text-[11px] text-muted-foreground">{info.description}</p>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
-          <div className="space-y-6">
-            <Card ref={infoRef} className="glass-card animate-scale-in">
-              <CardHeader>
-                <CardTitle>{t('contact', 'contactInfo')}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {contactInfo.map((info, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg hover:bg-primary/5 transition-colors">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                      <info.icon className="text-primary" size={20} />
-                    </div>
-                    <div>
-                      <h4 className="font-medium">{info.title}</h4>
-                      <p className="text-sm text-foreground">{info.details}</p>
-                      <p className="text-xs text-muted-foreground">{info.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+      {/* FAQ */}
+      <Card className="bg-card border border-border rounded-xl shadow-sm mb-4">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">{t('contact', 'faq')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {faqItems.map((item, i) => (
+            <div key={i} className="space-y-1">
+              <h4 className="text-sm font-medium">{item.question}</h4>
+              <p className="text-xs text-muted-foreground leading-relaxed">{item.answer}</p>
+              {i < faqItems.length - 1 && <hr className="border-border/50" />}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
-            <Card className="glass-card animate-scale-in" style={{ animationDelay: '0.2s' }}>
-              <CardHeader>
-                <CardTitle>{t('contact', 'faq')}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {faqItems.map((item, index) => (
-                  <div key={index} className="space-y-2">
-                    <h4 className="font-medium text-sm">{item.question}</h4>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{item.answer}</p>
-                    {index < faqItems.length - 1 && <hr className="border-border/50" />}
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
+      {/* Emergency */}
+      <Card className="bg-card border border-destructive/20 rounded-xl shadow-sm mb-4">
+        <CardContent className="p-4 text-center">
+          <Phone className="mx-auto mb-2 text-destructive" size={20} />
+          <h4 className="text-sm font-medium text-destructive mb-1">{t('contact', 'emergencyTitle')}</h4>
+          <p className="text-xs text-muted-foreground mb-3">{t('contact', 'emergencyDesc')}</p>
+          <Button variant="destructive" className="w-full rounded-lg" size="sm">
+            <Phone className="mr-2 h-3 w-3" /> {t('contact', 'callEmergency')}
+          </Button>
+        </CardContent>
+      </Card>
 
-            <Card className="glass-card animate-scale-in border-destructive/20" style={{ animationDelay: '0.4s' }}>
+      {/* Team */}
+      <div className="mb-4">
+        <h2 className="text-base font-bold mb-3 text-center">{t('contact', 'teamTitle')}</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { name: 'Naimi Abdeldjalil', role: t('contact', 'coFounderDev'), icon: Code2 },
+            { name: 'Belyagoubi Abdelilah', role: t('contact', 'coFounderCTO'), icon: Shield },
+          ].map((member, i) => (
+            <Card key={i} className="bg-card border border-border rounded-xl shadow-sm">
               <CardContent className="p-4 text-center">
-                <Phone className="mx-auto mb-2 text-destructive animate-pulse-slow" size={24} />
-                <h4 className="font-medium text-destructive mb-1">{t('contact', 'emergencyTitle')}</h4>
-                <p className="text-sm text-muted-foreground mb-3">{t('contact', 'emergencyDesc')}</p>
-                <Button variant="destructive" className="w-full animate-glow-pulse">
-                  <Phone className="mr-2" size={16} />
-                  {t('contact', 'callEmergency')}
-                </Button>
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2">
+                  <member.icon className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="text-xs font-bold">{member.name}</h3>
+                <span className="inline-flex mt-1 bg-primary/10 text-primary rounded-full px-2 py-0.5 text-[10px] font-medium">
+                  {member.role}
+                </span>
               </CardContent>
             </Card>
-          </div>
+          ))}
         </div>
-
-        <section className="mt-16">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">{t('contact', 'teamTitle')}</h2>
-            <p className="text-muted-foreground">{t('contact', 'teamSubtitle')}</p>
-            <div className="mt-3 mx-auto w-24 h-1 rounded-full bg-gradient-to-r from-primary to-secondary" />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {[
-              { name: 'Naimi Abdeldjalil', role: t('contact', 'coFounderDev'), desc: t('contact', 'descNaimi'), icon: Code2 },
-              { name: 'Belyagoubi Abdelilah', role: t('contact', 'coFounderCTO'), desc: t('contact', 'descAbdelilah'), icon: Shield },
-            ].map((member, index) => (
-              <Card key={index} className="glass-card hover-lift rounded-2xl animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                <CardContent className="p-8 text-center">
-                  <div className="w-20 h-20 rounded-full bg-primary/5 ring-2 ring-primary/20 flex items-center justify-center mx-auto">
-                    <member.icon className="text-primary" size={28} />
-                  </div>
-                  <h3 className="text-lg font-bold mt-4">{member.name}</h3>
-                  <span className="inline-flex mt-2 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium">
-                    {member.role}
-                  </span>
-                  <p className="text-sm text-muted-foreground mt-3 max-w-xs mx-auto">{member.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
       </div>
     </div>
   );
