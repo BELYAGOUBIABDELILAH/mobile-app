@@ -7,10 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Loader2, User, ArrowLeft, Mail, Lock, Eye, EyeOff, Heart, MapPin, Shield, CheckCircle2 } from 'lucide-react';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const features = [
   { icon: MapPin, title: 'Trouvez un médecin', desc: 'Localisez les professionnels de santé près de chez vous sur la carte' },

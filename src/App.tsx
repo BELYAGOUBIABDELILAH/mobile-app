@@ -208,6 +208,8 @@ const AppRoutes = () => {
         <Route path="/citizen/register" element={<CitizenRegisterPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/provider/login" element={<ProviderLoginPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
