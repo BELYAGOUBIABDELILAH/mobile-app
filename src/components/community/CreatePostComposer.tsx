@@ -45,22 +45,23 @@ export const CreatePostComposer = ({ onSubmit, isLoading }: Props) => {
   // Guest state — show login prompt
   if (!user) {
     return (
-      <Card className="rounded-2xl border-border/40 shadow-sm">
-        <CardContent className="p-5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-            <User className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm text-muted-foreground">{t('community', 'loginToParticipate')}</p>
-          </div>
-          <Link to="/citizen-login">
-            <Button size="sm" className="gap-2 rounded-full">
+      <>
+        <Card className="rounded-2xl border-border/40 shadow-sm">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+              <User className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground">{t('community', 'loginToParticipate')}</p>
+            </div>
+            <Button size="sm" className="gap-2 rounded-full" onClick={() => requireAuth()}>
               <LogIn className="h-4 w-4" />
               {t('header', 'signin')}
             </Button>
-          </Link>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        <AuthRequiredModal />
+      </>
     );
   }
 
