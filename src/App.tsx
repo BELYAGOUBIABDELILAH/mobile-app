@@ -69,6 +69,7 @@ const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
 const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
 const AuthGatewayPage = lazy(() => import("./pages/AuthGatewayPage"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
@@ -167,7 +168,7 @@ const AppRoutes = () => {
           <Route path="/emergency" element={<EmergencyPage />} />
           <Route path="/blood-donation" element={<BloodDonationPage />} />
           <Route path="/community" element={<CommunityPage />} />
-          <Route path="/notifications" element={<SettingsPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/annonces" element={<AdsPage />} />
           <Route path="/research" element={<ResearchHubPage />} />
           <Route path="/research/:articleId" element={<ArticleDetailPage />} />
