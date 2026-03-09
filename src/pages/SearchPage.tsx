@@ -7,6 +7,7 @@ import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
   Loader2, ShieldCheck, Heart, List, LayoutGrid, ArrowRight,
+  Accessibility, CreditCard, Wrench,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
