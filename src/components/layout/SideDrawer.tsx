@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   Home, Search, Map, Bot, FileText, UserCircle, Phone,
   Handshake, MessageSquare, Megaphone, Code2,
-  ExternalLink, QrCode, LogIn,
+  ExternalLink, QrCode, LogIn, Droplets, BookOpen, CreditCard,
 } from 'lucide-react';
 
 interface SideDrawerProps {
@@ -28,10 +28,12 @@ const appLinks = [
 ];
 
 const platformLinks = [
-  { icon: Handshake, labelKey: 'drawerDonation', path: '/citizen/provide' },
-  { icon: MessageSquare, labelKey: 'drawerFeedback', path: '/community' },
-  { icon: Megaphone, labelKey: 'drawerAds', path: '/annonces' },
-  { icon: Code2, labelKey: 'drawerAPI', path: '/docs' },
+  { icon: Code2, labelKey: 'drawerAPI', path: '/service/api-developer' },
+  { icon: BookOpen, labelKey: 'drawerArticles', path: '/service/articles-recherche' },
+  { icon: Droplets, labelKey: 'drawerBlood', path: '/service/don-de-sang' },
+  { icon: Handshake, labelKey: 'drawerDonation', path: '/service/don-gratuit' },
+  { icon: FileText, labelKey: 'drawerDocs', path: '/service/documents' },
+  { icon: CreditCard, labelKey: 'drawerPricing', path: '/service/tarifs-providers' },
 ];
 
 const drawerLabels: Record<string, Record<string, string>> = {
@@ -45,10 +47,12 @@ const drawerLabels: Record<string, Record<string, string>> = {
     drawerDocuments: 'Documents',
     drawerProfile: 'Profile',
     drawerContact: 'Contactez-nous',
-    drawerDonation: 'Don gratuit',
-    drawerFeedback: 'Avis & Idées',
-    drawerAds: 'Publicitaire',
     drawerAPI: 'API Developer',
+    drawerArticles: 'Articles & Recherche',
+    drawerBlood: 'Don de Sang',
+    drawerDonation: 'Don Gratuit',
+    drawerDocs: 'Documents',
+    drawerPricing: 'Tarifs Providers',
     visitPlatform: 'Visiter notre plateforme',
     guest: 'Visiteur',
     signIn: 'Se connecter',
@@ -64,10 +68,12 @@ const drawerLabels: Record<string, Record<string, string>> = {
     drawerDocuments: 'Documents',
     drawerProfile: 'Profile',
     drawerContact: 'Contact Us',
-    drawerDonation: 'Free Donation',
-    drawerFeedback: 'Reviews & Ideas',
-    drawerAds: 'Advertising',
     drawerAPI: 'API Developer',
+    drawerArticles: 'Articles & Research',
+    drawerBlood: 'Blood Donation',
+    drawerDonation: 'Free Donation',
+    drawerDocs: 'Documents',
+    drawerPricing: 'Provider Pricing',
     visitPlatform: 'Visit our platform',
     guest: 'Visitor',
     signIn: 'Sign in',
@@ -83,10 +89,12 @@ const drawerLabels: Record<string, Record<string, string>> = {
     drawerDocuments: 'الوثائق',
     drawerProfile: 'الملف الشخصي',
     drawerContact: 'اتصل بنا',
-    drawerDonation: 'تبرع مجاني',
-    drawerFeedback: 'آراء وأفكار',
-    drawerAds: 'إعلانات',
     drawerAPI: 'مطوّر API',
+    drawerArticles: 'مقالات وأبحاث',
+    drawerBlood: 'التبرع بالدم',
+    drawerDonation: 'تبرع مجاني',
+    drawerDocs: 'وثائق',
+    drawerPricing: 'تعريفات المزودين',
     visitPlatform: 'زيارة منصتنا',
     guest: 'زائر',
     signIn: 'تسجيل الدخول',
