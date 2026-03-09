@@ -20,7 +20,7 @@ interface SideDrawerProps {
 const appLinks = [
   { icon: Home, labelKey: 'drawerHome', path: '/' },
   { icon: Search, labelKey: 'drawerDoctors', path: '/search' },
-  { icon: Map, labelKey: 'drawerMap', path: '/carte' },
+  { icon: Map, labelKey: 'drawerMap', path: '/map' },
   { icon: Bot, labelKey: 'drawerAI', path: '/medical-assistant' },
   { icon: FileText, labelKey: 'drawerDocuments', path: '/citizen/documents' },
   { icon: UserCircle, labelKey: 'drawerProfile', path: '/profile' },
