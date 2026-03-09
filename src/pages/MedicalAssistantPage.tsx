@@ -222,7 +222,7 @@ export default function MedicalAssistantPage() {
             resetKey={resetKey}
             onMessageSent={handleMessageSent}
             initialMessages={initialMessages}
-            autoSendSymptom={symptomFromUrl}
+            autoSendSymptom={capturedSymptom}
           />
         </div>
 
