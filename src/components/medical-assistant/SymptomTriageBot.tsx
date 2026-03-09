@@ -305,7 +305,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
               <p className="text-[11px] text-center mb-6 text-muted-foreground">{t.welcomeSub}</p>
 
               {/* Premium 2-column symptom grid */}
-              <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
+              <div className="grid grid-cols-2 gap-2.5 w-full max-w-sm">
                 {chips.map((chip) => {
                   const IconComponent = chip.icon;
                   return (
@@ -314,8 +314,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                       onClick={() => sendMessage(chip.query)}
                       className="flex items-center gap-2.5 h-12 px-3.5 rounded-xl bg-card border border-border shadow-sm text-left transition-all hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 active:scale-[0.97] duration-200"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <IconComponent className="w-3.5 h-3.5 text-primary" />
+                      <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center shrink-0", chip.iconBg)}>
+                        <IconComponent className={cn("w-3.5 h-3.5", chip.iconColor)} />
                       </div>
                       <span className="text-[12px] font-medium text-foreground truncate">{chip.label}</span>
                     </button>

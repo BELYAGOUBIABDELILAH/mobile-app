@@ -206,13 +206,18 @@ export default function MedicalAssistantPage() {
         </div>
       </header>
 
-      {/* Professional disclaimer banner */}
-      <div className="shrink-0 flex items-center gap-2 px-4 py-2 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200/60 dark:border-amber-800/40">
-        <div className="w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center shrink-0">
-          <AlertTriangle className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+      {/* Dismissible red disclaimer banner */}
+      {showDisclaimer && (
+        <div className="shrink-0 flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/30 border-b border-red-200/60 dark:border-red-800/40">
+          <div className="w-5 h-5 rounded-full bg-red-100 dark:bg-red-900/50 flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-3 h-3 text-red-600 dark:text-red-400" />
+          </div>
+          <p className="flex-1 text-[11px] font-medium text-red-700 dark:text-red-300">{t.disclaimer}</p>
+          <button onClick={() => setShowDisclaimer(false)} className="p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors">
+            <X className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
+          </button>
         </div>
-        <p className="text-[11px] font-medium text-amber-700 dark:text-amber-300">{t.disclaimer}</p>
-      </div>
+      )}
 
       {/* Chat area */}
       <main className="flex-1 min-h-0 overflow-hidden flex flex-col">
