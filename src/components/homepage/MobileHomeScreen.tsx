@@ -456,15 +456,15 @@ export const MobileHomeScreen = () => {
         </>
       )}
 
-      {/* ── Entraide citoyenne ── */}
-      <SectionHeader label={t('mobileHome', 'solidarity')} title={t('mobileHome', 'citizenAid')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/citizen/provide')} />
-      <motion.div variants={fadeUp} className="-mx-4 px-4">
-        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
-          {entraideItems.map((item, i) => (
+      {/* ── Services ── */}
+      <SectionHeader label="PLATEFORME" title="Services" />
+      <motion.div variants={fadeUp} className="-mx-4 px-4 overflow-hidden">
+        <div className="flex gap-3 animate-marquee w-max">
+          {[...serviceItems, ...serviceItems, ...serviceItems].map((item, i) => (
             <button
               key={i}
               onClick={() => navigate(item.path)}
-              className="flex-shrink-0 w-[140px] snap-start active:scale-[0.97] transition-transform"
+              className="flex-shrink-0 w-[140px] active:scale-[0.97] transition-transform"
               aria-label={item.title}
             >
               <div className="rounded-xl bg-card border border-border shadow-sm p-3.5 h-full flex flex-col justify-between min-h-[120px]">
