@@ -171,9 +171,13 @@ const ProviderCard = memo(({ provider, isGrid, isFavorite, onToggleFavorite }: P
                 loading="lazy"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                <MapPin size={24} className="text-primary/40" />
-              </div>
+              <ProviderAvatar
+                image={null}
+                name={provider.name}
+                type={provider.type}
+                className="h-20 w-20 rounded-2xl"
+                iconSize={28}
+              />
             )}
           </div>
         </div>
