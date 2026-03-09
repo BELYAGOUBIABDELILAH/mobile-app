@@ -18,23 +18,34 @@ interface SideDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const appLinks = [
+interface NavLink {
+  icon: typeof Home;
+  labelKey: string;
+  path: string;
+  external?: boolean;
+}
+
+const appLinks: NavLink[] = [
   { icon: Home, labelKey: 'drawerHome', path: '/' },
   { icon: Search, labelKey: 'drawerDoctors', path: '/search' },
   { icon: Map, labelKey: 'drawerMap', path: '/map' },
   { icon: Bot, labelKey: 'drawerAI', path: '/medical-assistant' },
-  { icon: FileText, labelKey: 'drawerDocuments', path: '/service/documents' },
   { icon: UserCircle, labelKey: 'drawerProfile', path: '/profile' },
   { icon: Phone, labelKey: 'drawerContact', path: '/contact' },
 ];
 
-const platformLinks = [
-  { icon: Code2, labelKey: 'drawerAPI', path: '/service/api-developer' },
-  { icon: BookOpen, labelKey: 'drawerArticles', path: '/service/articles-recherche' },
-  { icon: Droplets, labelKey: 'drawerBlood', path: '/blood-donation' },
-  { icon: Handshake, labelKey: 'drawerDonation', path: '/service/don-gratuit' },
-  { icon: FileText, labelKey: 'drawerDocs', path: '/service/documents' },
-  { icon: CreditCard, labelKey: 'drawerPricing', path: '/service/tarifs-providers' },
+const platformLinks: NavLink[] = [
+  { icon: BookOpen, labelKey: 'drawerArticles', path: 'https://cityhealth-dz.lovable.app/research', external: true },
+  { icon: Droplets, labelKey: 'drawerBlood', path: 'https://cityhealth-dz.lovable.app/blood-donation', external: true },
+  { icon: Handshake, labelKey: 'drawerDonation', path: 'https://cityhealth-dz.lovable.app/citizen/provide', external: true },
+  { icon: FileText, labelKey: 'drawerDocs', path: 'https://cityhealth-dz.lovable.app/docs', external: true },
+  { icon: CreditCard, labelKey: 'drawerPricing', path: 'https://cityhealth-dz.lovable.app/tarifs', external: true },
+];
+
+const legalLinks: NavLink[] = [
+  { icon: HelpCircle, labelKey: 'drawerFAQ', path: 'https://cityhealth-dz.lovable.app/faq', external: true },
+  { icon: Shield, labelKey: 'drawerPrivacy', path: 'https://cityhealth-dz.lovable.app/privacy', external: true },
+  { icon: ScrollText, labelKey: 'drawerTerms', path: 'https://cityhealth-dz.lovable.app/terms', external: true },
 ];
 
 const drawerLabels: Record<string, Record<string, string>> = {
