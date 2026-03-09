@@ -39,7 +39,7 @@ const symptomKeys = ['headache', 'nausea', 'fever', 'fatigue', 'allergy', 'breat
 
 export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.uid);
   const [searchQuery, setSearchQuery] = useState('');
