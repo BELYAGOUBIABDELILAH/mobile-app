@@ -51,21 +51,3 @@ export function useHomepageCommunity() {
   });
 }
 
-export function useHomepageProviderCounts() {
-  return useQuery({
-    queryKey: ['homepage-provider-counts'],
-    queryFn: async () => {
-      const specialties = ['pharmacie', 'cardiologie', 'pédiatrie', 'ophtalmologie'];
-      const counts: Record<string, number> = {};
-      for (const spec of specialties) {
-        const { count } = await supabase
-          .from('providers_public')
-          .select('id', { count: 'exact', head: true })
-          .ilike('specialty', `%${spec}%`);
-        counts[spec] = count ?? 0;
-      }
-      return counts;
-    },
-    staleTime: 10 * 60 * 1000,
-  });
-}

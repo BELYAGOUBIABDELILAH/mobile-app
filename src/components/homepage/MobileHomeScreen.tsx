@@ -109,7 +109,11 @@ export const MobileHomeScreen = () => {
   // Map real data
   const ads = (adsData ?? []).map((ad) => ({
     id: ad.id, title: ad.title, provider: ad.provider_name,
+    shortDescription: ad.short_description,
     tag: ad.is_featured ? '⭐' : t('mobileHome', 'promoTag'), isPrimary: ad.is_featured,
+    isVerified: ad.is_verified_provider,
+    imageUrl: ad.image_url,
+    providerAvatar: ad.provider_avatar,
   }));
 
   const articles = (articlesData ?? []).map((a) => ({
