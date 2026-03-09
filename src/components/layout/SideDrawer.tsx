@@ -210,7 +210,7 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
                 return (
                   <button
                     key={item.path}
-                    onClick={() => go(item.path)}
+                    onClick={() => go(item.path, item.external)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       active
                         ? 'bg-primary/10 text-primary'
@@ -218,7 +218,7 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
                     }`}
                   >
                     <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
-                    {label(item.labelKey)}
+                    <span className="flex-1 text-left">{label(item.labelKey)}</span>
                   </button>
                 );
               })}
@@ -233,23 +233,39 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
               {label('platform')}
             </p>
             <nav className="space-y-0.5">
-              {platformLinks.map((item) => {
-                const active = isActive(item.path);
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => go(item.path)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                      active
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-foreground hover:bg-muted'
-                    }`}
-                  >
-                    <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
-                    {label(item.labelKey)}
-                  </button>
-                );
-              })}
+              {platformLinks.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => go(item.path, item.external)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                  <span className="flex-1 text-left">{label(item.labelKey)}</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <Separator />
+
+          {/* Legal */}
+          <div>
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              {label('legal')}
+            </p>
+            <nav className="space-y-0.5">
+              {legalLinks.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => go(item.path, item.external)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                  <span className="flex-1 text-left">{label(item.labelKey)}</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              ))}
             </nav>
           </div>
         </div>
