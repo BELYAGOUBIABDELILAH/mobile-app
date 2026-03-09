@@ -341,75 +341,86 @@ const SearchPage = () => {
                       Accessibilité fauteuil roulant
                     </span>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <Checkbox
-                      checked={filters.insuranceAccepted}
-                      onCheckedChange={v => setFilters(f => ({ ...f, insuranceAccepted: !!v }))}
-                    />
-                    <span className="flex items-center gap-1.5 text-sm">
-                      <CreditCard className="h-4 w-4 text-primary" />
-                      Assurance acceptée
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <Checkbox
-                      checked={filters.cnasOnly}
-                      onCheckedChange={v => setFilters(f => ({ ...f, cnasOnly: !!v }))}
-                    />
-                    <span className="flex items-center gap-1.5 text-sm">
-                      <Badge variant="secondary" className="text-[10px] py-0 px-1.5">CNAS</Badge>
-                      Remboursable uniquement
-                    </span>
-                  </label>
                 </div>
               </div>
 
-              {/* Localisation & Rayon */}
+              {/* Langues */}
               <div>
-                <Label className="text-sm font-medium mb-2 block">Localisation</Label>
-                <Input
-                  placeholder="Ville ou code postal..."
-                  value={filters.location}
-                  onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
-                  className="mb-3 h-9 text-sm rounded-lg"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                  <span>Rayon</span>
-                  <span className="font-medium text-foreground">{filters.radius} km</span>
+                <Label className="text-sm font-medium mb-2 block flex items-center gap-1.5">
+                  <Globe className="h-4 w-4 text-primary" />
+                  Langues parlées
+                </Label>
+                <div className="flex gap-2 flex-wrap">
+                  {languageOptions.map(lang => (
+                    <button
+                      key={lang.value}
+                      onClick={() => setFilters(f => ({
+                        ...f,
+                        languages: f.languages.includes(lang.value)
+                          ? f.languages.filter(l => l !== lang.value)
+                          : [...f.languages, lang.value],
+                      }))}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        filters.languages.includes(lang.value)
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+                      }`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quartier */}
+              {availableAreas.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">
+                    <MapPin className="h-4 w-4 text-primary inline mr-1.5" />
+                    Quartier
+                  </Label>
+                  <div className="flex gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => setFilters(f => ({ ...f, area: '' }))}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        !filters.area
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+                      }`}
+                    >
+                      Tous
+                    </button>
+                    {availableAreas.map(area => (
+                      <button
+                        key={area}
+                        onClick={() => setFilters(f => ({ ...f, area }))}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                          filters.area === area
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+                        }`}
+                      >
+                        {area}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Distance max */}
+              <div>
+                <div className="flex justify-between text-sm mb-1.5">
+                  <Label className="font-medium">Distance maximale</Label>
+                  <span className="text-xs text-muted-foreground font-medium">{filters.maxDistance} km</span>
                 </div>
                 <Slider
-                  value={[filters.radius]}
-                  onValueChange={v => setFilters(f => ({ ...f, radius: v[0] }))}
+                  value={[filters.maxDistance]}
+                  onValueChange={v => setFilters(f => ({ ...f, maxDistance: v[0] }))}
                   max={50}
                   min={1}
                   step={1}
                   className="w-full"
                 />
-              </div>
-
-              {/* Marques d'équipement */}
-              <div>
-                <Label className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                  <Wrench className="h-4 w-4 text-primary" />
-                  Marques d'équipement
-                </Label>
-                <div className="flex flex-wrap gap-1.5">
-                  {COMMON_EQUIPMENT_BRANDS.map(brand => (
-                    <Badge
-                      key={brand}
-                      variant={filters.equipmentBrands.includes(brand) ? 'default' : 'outline'}
-                      className="cursor-pointer text-[11px] hover:opacity-80 transition-opacity"
-                      onClick={() => {
-                        const newBrands = filters.equipmentBrands.includes(brand)
-                          ? filters.equipmentBrands.filter(b => b !== brand)
-                          : [...filters.equipmentBrands, brand];
-                        setFilters(f => ({ ...f, equipmentBrands: newBrands }));
-                      }}
-                    >
-                      {brand}
-                    </Badge>
-                  ))}
-                </div>
               </div>
             </div>
 

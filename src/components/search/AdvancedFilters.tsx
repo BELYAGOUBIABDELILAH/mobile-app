@@ -1,15 +1,13 @@
 import React from 'react';
-import { X, Stethoscope, Pill, Building, FlaskConical, Star, Check, Accessibility, CreditCard, Wrench } from 'lucide-react';
+import { Stethoscope, Pill, Building, FlaskConical, Star, Accessibility, Globe, MapPin, Baby, Droplets, ScanLine, Wrench } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { FilterState } from '@/pages/SearchPage';
-import { COMMON_EQUIPMENT_BRANDS } from '@/components/provider/registration/types';
 
 interface AdvancedFiltersProps {
   filters: FilterState;
@@ -19,18 +17,26 @@ interface AdvancedFiltersProps {
 
 export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFiltersProps) => {
   const categories = [
-    { id: 'doctors', label: 'General Doctors', icon: Stethoscope },
-    { id: 'specialists', label: 'Specialists', icon: Stethoscope },
-    { id: 'pharmacies', label: 'Pharmacies', icon: Pill },
-    { id: 'laboratories', label: 'Laboratories', icon: FlaskConical },
-    { id: 'clinics', label: 'Clinics', icon: Building }
+    { id: 'doctor', label: 'Médecins', icon: Stethoscope },
+    { id: 'clinic', label: 'Cliniques', icon: Building },
+    { id: 'pharmacy', label: 'Pharmacies', icon: Pill },
+    { id: 'lab', label: 'Laboratoires', icon: FlaskConical },
+    { id: 'hospital', label: 'Hôpitaux', icon: Building },
+    { id: 'birth_hospital', label: 'Maternité', icon: Baby },
+    { id: 'blood_cabin', label: 'Don de sang', icon: Droplets },
+    { id: 'radiology_center', label: 'Radiologie', icon: ScanLine },
+    { id: 'medical_equipment', label: 'Équipement', icon: Wrench },
   ];
 
   const availabilityOptions = [
-    { value: 'any', label: 'Any time' },
-    { value: 'today', label: 'Today' },
-    { value: 'week', label: 'This week' },
-    { value: 'now', label: 'Open now' }
+    { value: 'any', label: 'Tous' },
+    { value: 'now', label: 'Ouvert maintenant' },
+  ];
+
+  const languageOptions = [
+    { value: 'fr', label: 'Français' },
+    { value: 'ar', label: 'العربية' },
+    { value: 'en', label: 'English' },
   ];
 
   const updateFilter = (key: keyof FilterState, value: any) => {
@@ -47,30 +53,27 @@ export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFi
   const clearAllFilters = () => {
     setFilters({
       categories: [],
-      location: '',
-      radius: 25,
       availability: 'any',
       minRating: 0,
       verifiedOnly: false,
       emergencyServices: false,
       wheelchairAccessible: false,
-      insuranceAccepted: false,
-      priceRange: [0, 500],
-      equipmentBrands: [],
-      cnasOnly: false
+      languages: [],
+      area: '',
+      maxDistance: 50,
     });
   };
 
-  const activeFiltersCount = 
+  const activeFiltersCount =
     filters.categories.length +
     (filters.minRating > 0 ? 1 : 0) +
     (filters.verifiedOnly ? 1 : 0) +
     (filters.emergencyServices ? 1 : 0) +
     (filters.wheelchairAccessible ? 1 : 0) +
-    (filters.insuranceAccepted ? 1 : 0) +
     (filters.availability !== 'any' ? 1 : 0) +
-    (filters.equipmentBrands.length > 0 ? 1 : 0) +
-    (filters.cnasOnly ? 1 : 0);
+    (filters.languages.length > 0 ? 1 : 0) +
+    (filters.area ? 1 : 0) +
+    (filters.maxDistance < 50 ? 1 : 0);
 
   if (!showFilters) return null;
 
@@ -79,22 +82,22 @@ export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFi
       <Card className="m-4 shadow-none border-0">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Advanced Filters</CardTitle>
+            <CardTitle className="text-lg">Filtres avancés</CardTitle>
             {activeFiltersCount > 0 && (
               <Badge variant="secondary">{activeFiltersCount}</Badge>
             )}
           </div>
           {activeFiltersCount > 0 && (
             <Button variant="ghost" size="sm" onClick={clearAllFilters} className="justify-start p-0 h-auto">
-              Clear all filters
+              Tout effacer
             </Button>
           )}
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Service Categories */}
+          {/* Catégories */}
           <div>
-            <Label className="text-sm font-medium">Service Categories</Label>
+            <Label className="text-sm font-medium">Catégories</Label>
             <div className="mt-2 space-y-2">
               {categories.map(category => {
                 const IconComponent = category.icon;
@@ -105,10 +108,7 @@ export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFi
                       checked={filters.categories.includes(category.id)}
                       onCheckedChange={() => toggleCategory(category.id)}
                     />
-                    <Label
-                      htmlFor={category.id}
-                      className="flex items-center gap-2 cursor-pointer font-normal"
-                    >
+                    <Label htmlFor={category.id} className="flex items-center gap-2 cursor-pointer font-normal">
                       <IconComponent size={16} className="text-primary" />
                       {category.label}
                     </Label>
@@ -118,35 +118,9 @@ export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFi
             </div>
           </div>
 
-          {/* Location & Distance */}
+          {/* Disponibilité */}
           <div>
-            <Label className="text-sm font-medium">Location & Distance</Label>
-            <div className="mt-2 space-y-3">
-              <Input
-                placeholder="Enter city or postal code"
-                value={filters.location}
-                onChange={(e) => updateFilter('location', e.target.value)}
-              />
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span>Radius</span>
-                  <span>{filters.radius}km</span>
-                </div>
-                <Slider
-                  value={[filters.radius]}
-                  onValueChange={(value) => updateFilter('radius', value[0])}
-                  max={50}
-                  min={1}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Availability */}
-          <div>
-            <Label className="text-sm font-medium">Availability</Label>
+            <Label className="text-sm font-medium">Disponibilité</Label>
             <RadioGroup
               value={filters.availability}
               onValueChange={(value) => updateFilter('availability', value)}
@@ -155,17 +129,15 @@ export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFi
               {availabilityOptions.map(option => (
                 <div key={option.value} className="flex items-center space-x-2">
                   <RadioGroupItem value={option.value} id={option.value} />
-                  <Label htmlFor={option.value} className="font-normal">
-                    {option.label}
-                  </Label>
+                  <Label htmlFor={option.value} className="font-normal">{option.label}</Label>
                 </div>
               ))}
             </RadioGroup>
           </div>
 
-          {/* Rating Filter */}
+          {/* Note minimum */}
           <div>
-            <Label className="text-sm font-medium">Minimum Rating</Label>
+            <Label className="text-sm font-medium">Note minimum</Label>
             <div className="mt-2 flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((rating) => (
                 <button
@@ -175,123 +147,77 @@ export const AdvancedFilters = ({ filters, setFilters, showFilters }: AdvancedFi
                 >
                   <Star
                     size={20}
-                    className={rating <= filters.minRating ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}
+                    className={rating <= filters.minRating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground'}
                   />
                 </button>
               ))}
               <span className="ml-2 text-sm text-muted-foreground">
-                {filters.minRating > 0 ? `${filters.minRating}+ stars` : 'Any rating'}
+                {filters.minRating > 0 ? `${filters.minRating}+ étoiles` : 'Toutes les notes'}
               </span>
             </div>
           </div>
 
-          {/* Special Options */}
+          {/* Options */}
           <div>
-            <Label className="text-sm font-medium">Special Options</Label>
+            <Label className="text-sm font-medium">Options</Label>
             <div className="mt-2 space-y-2">
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="verified"
-                  checked={filters.verifiedOnly}
-                  onCheckedChange={(checked) => updateFilter('verifiedOnly', checked)}
-                />
-                <Label htmlFor="verified" className="flex items-center gap-2 cursor-pointer font-normal">
-                  <Check size={16} className="text-green-500" />
-                  Verified providers only
-                </Label>
+                <Checkbox id="verified" checked={filters.verifiedOnly} onCheckedChange={(checked) => updateFilter('verifiedOnly', checked)} />
+                <Label htmlFor="verified" className="cursor-pointer font-normal">Vérifiés uniquement</Label>
               </div>
-
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="emergency"
-                  checked={filters.emergencyServices}
-                  onCheckedChange={(checked) => updateFilter('emergencyServices', checked)}
-                />
-                <Label htmlFor="emergency" className="cursor-pointer font-normal">
-                  Emergency services available
-                </Label>
+                <Checkbox id="emergency" checked={filters.emergencyServices} onCheckedChange={(checked) => updateFilter('emergencyServices', checked)} />
+                <Label htmlFor="emergency" className="cursor-pointer font-normal">Services d'urgence</Label>
               </div>
-
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="wheelchair"
-                  checked={filters.wheelchairAccessible}
-                  onCheckedChange={(checked) => updateFilter('wheelchairAccessible', checked)}
-                />
+                <Checkbox id="wheelchair" checked={filters.wheelchairAccessible} onCheckedChange={(checked) => updateFilter('wheelchairAccessible', checked)} />
                 <Label htmlFor="wheelchair" className="flex items-center gap-2 cursor-pointer font-normal">
                   <Accessibility size={16} className="text-primary" />
-                  Wheelchair accessible
-                </Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="insurance"
-                  checked={filters.insuranceAccepted}
-                  onCheckedChange={(checked) => updateFilter('insuranceAccepted', checked)}
-                />
-                <Label htmlFor="insurance" className="flex items-center gap-2 cursor-pointer font-normal">
-                  <CreditCard size={16} className="text-primary" />
-                  Insurance accepted
-                </Label>
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="cnas"
-                  checked={filters.cnasOnly}
-                  onCheckedChange={(checked) => updateFilter('cnasOnly', checked)}
-                />
-                <Label htmlFor="cnas" className="flex items-center gap-2 cursor-pointer font-normal">
-                  <Badge variant="secondary" className="text-xs">CNAS</Badge>
-                  Équipement remboursable uniquement
+                  Accessibilité fauteuil roulant
                 </Label>
               </div>
             </div>
           </div>
 
-          {/* Equipment Brand Filter */}
+          {/* Langues */}
           <div>
             <Label className="text-sm font-medium flex items-center gap-2">
-              <Wrench size={16} className="text-primary" />
-              Marques d'équipement
+              <Globe size={16} className="text-primary" />
+              Langues parlées
             </Label>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {COMMON_EQUIPMENT_BRANDS.map(brand => (
+              {languageOptions.map(lang => (
                 <Badge
-                  key={brand}
-                  variant={filters.equipmentBrands.includes(brand) ? 'default' : 'outline'}
+                  key={lang.value}
+                  variant={filters.languages.includes(lang.value) ? 'default' : 'outline'}
                   className="cursor-pointer text-xs"
                   onClick={() => {
-                    const newBrands = filters.equipmentBrands.includes(brand)
-                      ? filters.equipmentBrands.filter(b => b !== brand)
-                      : [...filters.equipmentBrands, brand];
-                    updateFilter('equipmentBrands', newBrands);
+                    const newLangs = filters.languages.includes(lang.value)
+                      ? filters.languages.filter(l => l !== lang.value)
+                      : [...filters.languages, lang.value];
+                    updateFilter('languages', newLangs);
                   }}
                 >
-                  {brand}
+                  {lang.label}
                 </Badge>
               ))}
             </div>
           </div>
 
-          {/* Price Range */}
+          {/* Distance */}
           <div>
-            <Label className="text-sm font-medium">Consultation Price Range</Label>
-            <div className="mt-2">
-              <div className="flex justify-between text-sm mb-2">
-                <span>{filters.priceRange[0]} DA</span>
-                <span>{filters.priceRange[1]} DA</span>
-              </div>
-              <Slider
-                value={filters.priceRange}
-                onValueChange={(value) => updateFilter('priceRange', value as [number, number])}
-                max={500}
-                min={0}
-                step={25}
-                className="w-full"
-              />
+            <div className="flex justify-between text-sm mb-2">
+              <span>Distance max</span>
+              <span>{filters.maxDistance} km</span>
             </div>
+            <Slider
+              value={[filters.maxDistance]}
+              onValueChange={(value) => updateFilter('maxDistance', value[0])}
+              max={50}
+              min={1}
+              step={1}
+              className="w-full"
+            />
           </div>
         </CardContent>
       </Card>
