@@ -244,55 +244,179 @@ const SearchPage = () => {
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="rounded-t-2xl max-h-[70vh]">
+          <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] flex flex-col">
             <SheetHeader>
-              <SheetTitle className="text-base">Filtres avancés</SheetTitle>
+              <div className="flex items-center justify-between">
+                <SheetTitle className="text-base">Filtres avancés</SheetTitle>
+                {activeFiltersCount > 0 && (
+                  <Badge variant="secondary" className="text-xs">{activeFiltersCount} actifs</Badge>
+                )}
+              </div>
             </SheetHeader>
-            <div className="space-y-5 py-4 overflow-y-auto">
-              {/* Rating filter */}
+            <div className="space-y-6 py-4 overflow-y-auto flex-1 pr-1">
+
+              {/* Disponibilité */}
               <div>
-                <Label className="text-sm font-medium mb-2 block">Note minimum</Label>
-                <div className="flex gap-2">
-                  {[0, 3, 3.5, 4, 4.5].map(r => (
+                <Label className="text-sm font-medium mb-2 block">Disponibilité</Label>
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { value: 'any', label: 'Tous' },
+                    { value: 'now', label: 'Ouvert maintenant' },
+                    { value: 'today', label: "Aujourd'hui" },
+                    { value: 'week', label: 'Cette semaine' },
+                  ].map(opt => (
                     <button
-                      key={r}
-                      onClick={() => setFilters(f => ({ ...f, minRating: r }))}
-                      className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                        filters.minRating === r
+                      key={opt.value}
+                      onClick={() => setFilters(f => ({ ...f, availability: opt.value }))}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        filters.availability === opt.value
                           ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted/60 text-muted-foreground'
+                          : 'bg-muted/60 text-muted-foreground hover:bg-muted'
                       }`}
                     >
-                      {r === 0 ? 'Tous' : <><Star className="h-3 w-3 fill-current" /> {r}+</>}
+                      {opt.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Toggle filters */}
-              <div className="space-y-3">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm">Vérifiés uniquement</span>
-                  <Checkbox
-                    checked={filters.verifiedOnly}
-                    onCheckedChange={v => setFilters(f => ({ ...f, verifiedOnly: !!v }))}
-                  />
-                </label>
-                <label className="flex items-center justify-between">
-                  <span className="text-sm">Services d'urgence</span>
-                  <Checkbox
-                    checked={filters.emergencyServices}
-                    onCheckedChange={v => setFilters(f => ({ ...f, emergencyServices: !!v }))}
-                  />
-                </label>
+              {/* Note minimum - étoiles interactives */}
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Note minimum</Label>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map(rating => (
+                    <button
+                      key={rating}
+                      onClick={() => setFilters(f => ({ ...f, minRating: rating === f.minRating ? 0 : rating }))}
+                      className="p-1 transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`h-6 w-6 ${rating <= filters.minRating ? 'fill-amber-400 text-amber-400' : 'text-muted-foreground/40'}`}
+                      />
+                    </button>
+                  ))}
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    {filters.minRating > 0 ? `${filters.minRating}+ étoiles` : 'Toutes les notes'}
+                  </span>
+                </div>
               </div>
 
-              {/* Clear + Apply */}
-              <div className="flex gap-3 pt-2">
-                <Button variant="outline" className="flex-1" onClick={clearAll}>
-                  Réinitialiser
-                </Button>
+              {/* Options spéciales */}
+              <div>
+                <Label className="text-sm font-medium mb-3 block">Options</Label>
+                <div className="space-y-3">
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={filters.verifiedOnly}
+                      onCheckedChange={v => setFilters(f => ({ ...f, verifiedOnly: !!v }))}
+                    />
+                    <span className="flex items-center gap-1.5 text-sm">
+                      <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                      Vérifiés uniquement
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={filters.emergencyServices}
+                      onCheckedChange={v => setFilters(f => ({ ...f, emergencyServices: !!v }))}
+                    />
+                    <span className="flex items-center gap-1.5 text-sm">
+                      <Heart className="h-4 w-4 text-destructive" />
+                      Services d'urgence
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={filters.wheelchairAccessible}
+                      onCheckedChange={v => setFilters(f => ({ ...f, wheelchairAccessible: !!v }))}
+                    />
+                    <span className="flex items-center gap-1.5 text-sm">
+                      <Accessibility className="h-4 w-4 text-primary" />
+                      Accessibilité fauteuil roulant
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={filters.insuranceAccepted}
+                      onCheckedChange={v => setFilters(f => ({ ...f, insuranceAccepted: !!v }))}
+                    />
+                    <span className="flex items-center gap-1.5 text-sm">
+                      <CreditCard className="h-4 w-4 text-primary" />
+                      Assurance acceptée
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <Checkbox
+                      checked={filters.cnasOnly}
+                      onCheckedChange={v => setFilters(f => ({ ...f, cnasOnly: !!v }))}
+                    />
+                    <span className="flex items-center gap-1.5 text-sm">
+                      <Badge variant="secondary" className="text-[10px] py-0 px-1.5">CNAS</Badge>
+                      Remboursable uniquement
+                    </span>
+                  </label>
+                </div>
               </div>
+
+              {/* Localisation & Rayon */}
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Localisation</Label>
+                <Input
+                  placeholder="Ville ou code postal..."
+                  value={filters.location}
+                  onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
+                  className="mb-3 h-9 text-sm rounded-lg"
+                />
+                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+                  <span>Rayon</span>
+                  <span className="font-medium text-foreground">{filters.radius} km</span>
+                </div>
+                <Slider
+                  value={[filters.radius]}
+                  onValueChange={v => setFilters(f => ({ ...f, radius: v[0] }))}
+                  max={50}
+                  min={1}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+
+              {/* Marques d'équipement */}
+              <div>
+                <Label className="text-sm font-medium mb-2 flex items-center gap-1.5">
+                  <Wrench className="h-4 w-4 text-primary" />
+                  Marques d'équipement
+                </Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {COMMON_EQUIPMENT_BRANDS.map(brand => (
+                    <Badge
+                      key={brand}
+                      variant={filters.equipmentBrands.includes(brand) ? 'default' : 'outline'}
+                      className="cursor-pointer text-[11px] hover:opacity-80 transition-opacity"
+                      onClick={() => {
+                        const newBrands = filters.equipmentBrands.includes(brand)
+                          ? filters.equipmentBrands.filter(b => b !== brand)
+                          : [...filters.equipmentBrands, brand];
+                        setFilters(f => ({ ...f, equipmentBrands: newBrands }));
+                      }}
+                    >
+                      {brand}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Sticky footer */}
+            <div className="flex gap-3 pt-3 border-t border-border/50">
+              <Button variant="outline" className="flex-1" onClick={clearAll}>
+                Réinitialiser
+              </Button>
+              <SheetPrimitive.Close asChild>
+                <Button className="flex-1">
+                  Appliquer ({filteredProviders.length})
+                </Button>
+              </SheetPrimitive.Close>
             </div>
           </SheetContent>
         </Sheet>
