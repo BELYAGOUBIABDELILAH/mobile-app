@@ -46,7 +46,7 @@ export const MobileHomeScreen = () => {
   const { data: adsData } = useHomepageAds();
   const { data: articlesData } = useHomepageArticles();
   const { data: communityData } = useHomepageCommunity();
-  const { data: providerCounts } = useHomepageProviderCounts();
+  
 
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || t('mobileHome', 'visitor');
   const isGuest = !user;
