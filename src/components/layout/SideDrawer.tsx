@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import {
   Home, Search, Map, Bot, FileText, UserCircle, Phone,
   Handshake, MessageSquare, Megaphone, Code2,
-  ExternalLink, QrCode, LogIn,
+  ExternalLink, QrCode, LogIn, Droplets, BookOpen, CreditCard,
 } from 'lucide-react';
 
 interface SideDrawerProps {
