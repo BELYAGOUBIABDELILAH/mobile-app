@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useVerifiedProviders } from '@/hooks/useProviders';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -7,7 +7,7 @@ import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
   Loader2, ShieldCheck, Heart, List, LayoutGrid, ArrowRight,
-  Accessibility, CreditCard, Wrench,
+  Accessibility, Baby, Droplets, ScanLine, Wrench, Globe,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { COMMON_EQUIPMENT_BRANDS } from '@/components/provider/registration/types';
 import { VerifiedBadge } from '@/components/trust/VerifiedBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { CityHealthProvider } from '@/data/providers';
@@ -28,26 +26,34 @@ export type SortOption = 'relevance' | 'distance' | 'rating' | 'newest';
 
 export interface FilterState {
   categories: string[];
-  location: string;
-  radius: number;
   availability: string;
   minRating: number;
   verifiedOnly: boolean;
   emergencyServices: boolean;
   wheelchairAccessible: boolean;
-  insuranceAccepted: boolean;
-  priceRange: [number, number];
-  equipmentBrands: string[];
-  cnasOnly: boolean;
+  languages: string[];
+  area: string;
+  maxDistance: number;
 }
 
 export type Provider = CityHealthProvider;
 
 const categories = [
-  { id: 'doctors', label: 'Médecins', icon: Stethoscope, gradient: 'from-teal-500 to-cyan-400' },
-  { id: 'pharmacies', label: 'Pharmacies', icon: Pill, gradient: 'from-emerald-500 to-green-400' },
-  { id: 'laboratories', label: 'Laboratoires', icon: FlaskConical, gradient: 'from-amber-500 to-orange-400' },
-  { id: 'clinics', label: 'Cliniques', icon: Building, gradient: 'from-indigo-500 to-violet-400' },
+  { id: 'doctor', label: 'Médecins', icon: Stethoscope },
+  { id: 'clinic', label: 'Cliniques', icon: Building },
+  { id: 'pharmacy', label: 'Pharmacies', icon: Pill },
+  { id: 'lab', label: 'Laboratoires', icon: FlaskConical },
+  { id: 'hospital', label: 'Hôpitaux', icon: Building },
+  { id: 'birth_hospital', label: 'Maternité', icon: Baby },
+  { id: 'blood_cabin', label: 'Don de sang', icon: Droplets },
+  { id: 'radiology_center', label: 'Radiologie', icon: ScanLine },
+  { id: 'medical_equipment', label: 'Équipement', icon: Wrench },
+];
+
+const languageOptions = [
+  { value: 'fr', label: 'Français' },
+  { value: 'ar', label: 'العربية' },
+  { value: 'en', label: 'English' },
 ];
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -62,25 +68,24 @@ const SearchPage = () => {
   const initialQuery = searchParams.get('q') || '';
   const initialType = searchParams.get('type') || '';
 
-  const getInitialCategories = (type: string): string[] => {
-    const typeMap: Record<string, string> = {
-      doctor: 'doctors', pharmacy: 'pharmacies', lab: 'laboratories', clinic: 'clinics',
-    };
-    return typeMap[type] ? [typeMap[type]] : [];
-  };
-
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [filters, setFilters] = useState<FilterState>({
-    categories: getInitialCategories(initialType),
-    location: '', radius: 25, availability: 'any', minRating: 0,
+    categories: initialType ? [initialType] : [],
+    availability: 'any', minRating: 0,
     verifiedOnly: false, emergencyServices: false, wheelchairAccessible: false,
-    insuranceAccepted: false, priceRange: [0, 500], equipmentBrands: [], cnasOnly: false,
+    languages: [], area: '', maxDistance: 50,
   });
 
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
   const { data: allProviders = [], isLoading, isError, refetch } = useVerifiedProviders();
+
+  // Extract unique areas from providers for the area filter
+  const availableAreas = useMemo(() => {
+    const areas = new Set(allProviders.map(p => p.area).filter(Boolean));
+    return Array.from(areas).sort();
+  }, [allProviders]);
 
   const activeFiltersCount =
     (filters.categories.length > 0 ? 1 : 0) +
@@ -88,11 +93,10 @@ const SearchPage = () => {
     (filters.verifiedOnly ? 1 : 0) +
     (filters.emergencyServices ? 1 : 0) +
     (filters.wheelchairAccessible ? 1 : 0) +
-    (filters.insuranceAccepted ? 1 : 0) +
-    (filters.cnasOnly ? 1 : 0) +
     (filters.availability !== 'any' ? 1 : 0) +
-    (filters.equipmentBrands.length > 0 ? 1 : 0) +
-    (filters.location ? 1 : 0);
+    (filters.languages.length > 0 ? 1 : 0) +
+    (filters.area ? 1 : 0) +
+    (filters.maxDistance < 50 ? 1 : 0);
 
   const toggleCategory = (id: string) => {
     setFilters(f => ({
