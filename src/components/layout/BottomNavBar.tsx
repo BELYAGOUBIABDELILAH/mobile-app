@@ -1,128 +1,119 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, Map, Bot, User } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Home, Search, Map, Bot, Settings, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { useUserLocation } from '@/hooks/useUserLocation';
-import { useAuth } from '@/contexts/AuthContext';
 
-interface NavTab {
+interface NavItem {
   key: string;
   label: string;
-  icon?: React.ElementType;
+  icon: React.ElementType;
   path: string;
-  badge?: 'notification' | 'location';
-  isProfile?: boolean;
 }
 
-const tabs: NavTab[] = [
+const leftTabs: NavItem[] = [
   { key: 'home', label: 'Accueil', icon: Home, path: '/' },
   { key: 'search', label: 'Recherche', icon: Search, path: '/search' },
-  { key: 'map', label: 'Carte', icon: Map, path: '/map', badge: 'location' },
-  { key: 'ai', label: 'IA Chat', icon: Bot, path: '/medical-assistant', badge: 'notification' },
-  { key: 'profile', label: 'Settings', path: '/settings', isProfile: true },
 ];
+
+const rightTabs: NavItem[] = [
+  { key: 'ai', label: 'IA Chat', icon: Bot, path: '/medical-assistant' },
+  { key: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
+];
+
+const centerTab: NavItem = {
+  key: 'map',
+  label: 'Carte',
+  icon: Map,
+  path: '/map',
+};
 
 export const BottomNavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { location: userLocation } = useUserLocation();
-  const { profile, user } = useAuth();
 
-  const isActive = (tab: NavTab) => {
-    if (tab.path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(tab.path);
+  const getActiveKey = (): string => {
+    if (location.pathname === '/') return 'home';
+    if (location.pathname.startsWith('/search')) return 'search';
+    if (location.pathname.startsWith('/map')) return 'map';
+    if (location.pathname.startsWith('/medical-assistant')) return 'ai';
+    if (location.pathname.startsWith('/settings')) return 'settings';
+    return 'home';
   };
 
-  const getInitial = (): string | null => {
-    if (profile?.full_name) return profile.full_name.charAt(0).toUpperCase();
-    if (user?.email) return user.email.charAt(0).toUpperCase();
-    return null;
+  const activeKey = getActiveKey();
+
+  const renderTab = (tab: NavItem) => {
+    const isActive = activeKey === tab.key;
+    const Icon = tab.icon;
+
+    return (
+      <button
+        key={tab.key}
+        onClick={() => navigate(tab.path)}
+        className={cn(
+          'flex flex-col items-center justify-center gap-0.5 flex-1 py-2 relative transition-colors duration-200',
+          isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary/70'
+        )}
+        aria-label={tab.label}
+      >
+        <Icon className="h-5 w-5" strokeWidth={isActive ? 2.2 : 1.6} />
+        <span className={cn(
+          'text-[10px] leading-none',
+          isActive ? 'font-bold' : 'font-medium'
+        )}>
+          {tab.label}
+        </span>
+        {isActive && (
+          <motion.div
+            layoutId="navIndicator"
+            className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-5 h-[3px] rounded-full bg-primary"
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          />
+        )}
+      </button>
+    );
   };
+
+  const isMapActive = activeKey === 'map';
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="mx-auto max-w-[430px] px-4 pb-[env(safe-area-inset-bottom,6px)] mb-2">
-        <div className="bg-background/80 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.10)] rounded-[20px]">
-          <div className="flex items-center justify-around h-14 px-1">
-            {tabs.map((tab) => {
-              const active = isActive(tab);
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.key}
-                  onClick={() => navigate(tab.path)}
-                  className={cn(
-                    'flex flex-col items-center justify-center gap-1 min-w-[48px] min-h-[48px] rounded-2xl transition-colors duration-200 active:scale-90 relative px-2 py-1.5',
-                    active
-                      ? 'text-primary'
-                      : 'text-muted-foreground'
-                  )}
-                  aria-label={tab.label}
-                >
-                  {active && (
-                    <motion.div
-                      layoutId="bottomNavIndicator"
-                      className="absolute top-1 left-1/2 -translate-x-1/2 w-10 h-8 bg-primary/8 rounded-xl"
-                      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                    />
-                  )}
-                  <div className="relative z-10">
-                    {tab.isProfile ? (
-                      <div
-                        className={cn(
-                          'w-6 h-6 rounded-full overflow-hidden transition-all border border-border/60',
-                          active && 'ring-2 ring-primary ring-offset-1 ring-offset-background'
-                        )}
-                      >
-                        {profile?.avatar_url ? (
-                          <img
-                            src={profile.avatar_url}
-                            alt="Avatar"
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-secondary flex items-center justify-center">
-                            {getInitial() ? (
-                              <span className="text-[9px] font-semibold text-secondary-foreground">
-                                {getInitial()}
-                              </span>
-                            ) : (
-                              <User className="w-3 h-3 text-muted-foreground" />
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <>
-                        <motion.div
-                          animate={{ scale: active ? 1.1 : 1 }}
-                          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                        >
-                          <Icon
-                            className="h-6 w-6"
-                            strokeWidth={active ? 2.5 : 1.5}
-                          />
-                        </motion.div>
-                        {tab.badge === 'notification' && (
-                          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-destructive rounded-full" />
-                        )}
-                        {tab.badge === 'location' && userLocation && (
-                          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                        )}
-                      </>
-                    )}
-                  </div>
-                  <span
-                    className={cn(
-                      'leading-none transition-all relative z-10',
-                      active ? 'text-[11px] font-bold text-primary' : 'text-[10px] font-medium'
-                    )}
-                  >
-                    {tab.label}
-                  </span>
-                </button>
-              );
-            })}
+      <div className="mx-auto max-w-[430px] px-3 pb-[env(safe-area-inset-bottom,4px)] mb-1.5">
+        <div className="relative bg-card shadow-[0_-4px_20px_rgba(0,0,0,0.08)] rounded-[22px] h-[64px] flex items-center">
+          {/* Left tabs */}
+          <div className="flex flex-1">
+            {leftTabs.map(renderTab)}
+          </div>
+
+          {/* Center diamond button spacer */}
+          <div className="w-16 flex-shrink-0" />
+
+          {/* Right tabs */}
+          <div className="flex flex-1">
+            {rightTabs.map(renderTab)}
+          </div>
+
+          {/* Center diamond button - positioned to sit within the bar with slight elevation */}
+          <div className="absolute left-1/2 -translate-x-1/2 -top-3 flex flex-col items-center">
+            <motion.button
+              onClick={() => navigate(centerTab.path)}
+              whileTap={{ scale: 0.9 }}
+              className={cn(
+                'w-12 h-12 rounded-[14px] rotate-45 flex items-center justify-center shadow-lg transition-all duration-300',
+                isMapActive
+                  ? 'bg-primary shadow-[0_4px_16px_hsl(var(--primary)/0.4)]'
+                  : 'bg-primary shadow-[0_4px_12px_hsl(var(--primary)/0.3)]'
+              )}
+              aria-label={centerTab.label}
+            >
+              <Plus className="h-6 w-6 text-primary-foreground -rotate-45" strokeWidth={2.5} />
+            </motion.button>
+            <span className={cn(
+              'text-[10px] leading-none mt-1.5',
+              isMapActive ? 'font-bold text-primary' : 'font-medium text-muted-foreground'
+            )}>
+              {centerTab.label}
+            </span>
           </div>
         </div>
       </div>
