@@ -166,14 +166,16 @@ export default function MedicalAssistantPage() {
       language === "ar" && "rtl"
     )}>
       {/* Clean header */}
-      <header className="shrink-0 h-14 border-b border-border bg-background">
+      <header className="shrink-0 h-14 border-b border-border bg-gradient-to-r from-primary/10 via-background to-cyan-500/10">
         <div className="h-full px-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Bot className="w-5 h-5 text-primary" />
+            <div className="w-8 h-8 rounded-xl bg-primary/15 flex items-center justify-center">
+              <Bot className="w-4.5 h-4.5 text-primary" />
+            </div>
             <div className="leading-tight">
               <h1 className="font-semibold text-sm text-foreground">{t.title}</h1>
               <div className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[11px] text-muted-foreground">{t.online}</span>
               </div>
             </div>
