@@ -308,13 +308,13 @@ const ProviderProfilePage = () => {
       {/* Pharmacie de Garde Pulsing Banner */}
       {resolvedType === 'pharmacy' && provider.isPharmacieDeGarde && (
         <div className="mx-4 max-w-6xl lg:mx-auto mt-2 mb-0">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white p-4 shadow-[0_0_30px_rgba(34,197,94,0.4)] animate-pulse">
-            <div className="flex items-center justify-center gap-3">
-              <span className="w-3 h-3 rounded-full bg-white animate-ping" />
-              <Pill className="h-6 w-6" />
-              <span className="text-lg font-bold tracking-wide">PHARMACIE DE GARDE — Ouverte maintenant</span>
-              <Pill className="h-6 w-6" />
-              <span className="w-3 h-3 rounded-full bg-white animate-ping" />
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white p-3 md:p-4 shadow-[0_0_30px_rgba(34,197,94,0.4)] animate-pulse">
+            <div className="flex items-center justify-center gap-2 md:gap-3 flex-wrap">
+              <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping flex-shrink-0" />
+              <Pill className="h-5 w-5 flex-shrink-0" />
+              <span className="text-sm md:text-lg font-bold tracking-wide text-center">PHARMACIE DE GARDE — Ouverte maintenant</span>
+              <Pill className="h-5 w-5 flex-shrink-0 hidden md:block" />
+              <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping flex-shrink-0 hidden md:block" />
             </div>
           </div>
         </div>
