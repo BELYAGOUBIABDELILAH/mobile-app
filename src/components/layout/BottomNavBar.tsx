@@ -106,7 +106,7 @@ export const BottomNavBar = () => {
               )}
               aria-label={centerTab.label}
             >
-              <Plus className="h-6 w-6 text-primary-foreground -rotate-45" strokeWidth={2.5} />
+              <Map className="h-6 w-6 text-primary-foreground -rotate-45" strokeWidth={2.5} />
             </motion.button>
             <span className={cn(
               'text-[10px] leading-none mt-1.5',
