@@ -97,12 +97,6 @@ export const MobileHomeScreen = () => {
     { icon: UserCircle, label: t('mobileHome', 'myProfile'), path: '/profile' },
   ];
 
-  const healthServices = [
-    { title: t('mobileHome', 'pharmacyOnDuty'), subtitle: t('mobileHome', 'openNow'), icon: Pill, path: '/search?type=pharmacy' },
-    { title: t('mobileHome', 'cardiology'), subtitle: `${providerCounts?.cardiologie ?? 0} ${t('mobileHome', 'specialists')}`, icon: Activity, path: '/search?specialty=cardiologie' },
-    { title: t('mobileHome', 'pediatrics'), subtitle: `${providerCounts?.pédiatrie ?? 0} ${t('mobileHome', 'doctors')}`, icon: Stethoscope, path: '/search?specialty=pédiatrie' },
-    { title: t('mobileHome', 'ophthalmology'), subtitle: `${providerCounts?.ophtalmologie ?? 0} ${t('mobileHome', 'doctors')}`, icon: Star, path: '/search?specialty=ophtalmologie' },
-  ];
 
   const entraideItems = [
     { icon: Handshake, title: t('mobileHome', 'medications'), subtitle: t('mobileHome', 'donationsAvailable'), path: '/citizen/provide' },
