@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
 import { getProviders } from '@/data/providers';
+import { SideDrawer } from '@/components/layout/SideDrawer';
 
 const stagger = {
   hidden: {},
@@ -42,6 +43,7 @@ export const MobileHomeScreen = () => {
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.uid);
   const [searchQuery, setSearchQuery] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { data: adsData } = useHomepageAds();
   const { data: articlesData } = useHomepageArticles();
@@ -137,7 +139,7 @@ export const MobileHomeScreen = () => {
         {/* Top row: settings + avatar */}
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => navigate('/settings')}
+            onClick={() => setDrawerOpen(true)}
             className="p-2 rounded-full hover:bg-primary-foreground/10 transition-colors"
             aria-label={t('mobileHome', 'settings')}
           >
@@ -514,6 +516,7 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
+      <SideDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
     </motion.div>
   );
 };
