@@ -516,6 +516,7 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
+      <SideDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
     </motion.div>
   );
 };
