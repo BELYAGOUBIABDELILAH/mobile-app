@@ -331,6 +331,7 @@ export const MobileHomeScreen = () => {
       )}
 
       {/* ── Urgent banner ── */}
+      <SectionHeader label={t('mobileHome', 'healthLabel')} title={t('mobileHome', 'bloodDonation')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/blood-donation')} />
       <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-s-4 border-s-destructive shadow-sm p-4 space-y-3">
         <button
           onClick={() => navigate('/blood-donation')}
