@@ -139,7 +139,7 @@ export const MobileHomeScreen = () => {
         {/* Top row: settings + avatar */}
         <div className="flex items-center justify-between mb-4">
           <button
-            onClick={() => navigate('/settings')}
+            onClick={() => setDrawerOpen(true)}
             className="p-2 rounded-full hover:bg-primary-foreground/10 transition-colors"
             aria-label={t('mobileHome', 'settings')}
           >
