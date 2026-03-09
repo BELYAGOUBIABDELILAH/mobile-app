@@ -75,6 +75,7 @@ const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLandingPage"));
 const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
+const ServiceLandingPage = lazy(() => import("./pages/ServiceLandingPage"));
 const queryClient = new QueryClient();
 
 // Loading fallback component
@@ -174,6 +175,7 @@ const AppRoutes = () => {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/service/:serviceId" element={<ServiceLandingPage />} />
         </Route>
 
         {/* ============================================ */}
