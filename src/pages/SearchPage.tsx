@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useVerifiedProviders } from '@/hooks/useProviders';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -7,7 +7,7 @@ import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
   Loader2, ShieldCheck, Heart, List, LayoutGrid, ArrowRight,
-  Accessibility, CreditCard, Wrench,
+  Accessibility, Baby, Droplets, ScanLine, Wrench, Globe,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,8 +17,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { COMMON_EQUIPMENT_BRANDS } from '@/components/provider/registration/types';
 import { VerifiedBadge } from '@/components/trust/VerifiedBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { CityHealthProvider } from '@/data/providers';
@@ -28,26 +26,34 @@ export type SortOption = 'relevance' | 'distance' | 'rating' | 'newest';
 
 export interface FilterState {
   categories: string[];
-  location: string;
-  radius: number;
   availability: string;
   minRating: number;
   verifiedOnly: boolean;
   emergencyServices: boolean;
   wheelchairAccessible: boolean;
-  insuranceAccepted: boolean;
-  priceRange: [number, number];
-  equipmentBrands: string[];
-  cnasOnly: boolean;
+  languages: string[];
+  area: string;
+  maxDistance: number;
 }
 
 export type Provider = CityHealthProvider;
 
 const categories = [
-  { id: 'doctors', label: 'Médecins', icon: Stethoscope, gradient: 'from-teal-500 to-cyan-400' },
-  { id: 'pharmacies', label: 'Pharmacies', icon: Pill, gradient: 'from-emerald-500 to-green-400' },
-  { id: 'laboratories', label: 'Laboratoires', icon: FlaskConical, gradient: 'from-amber-500 to-orange-400' },
-  { id: 'clinics', label: 'Cliniques', icon: Building, gradient: 'from-indigo-500 to-violet-400' },
+  { id: 'doctor', label: 'Médecins', icon: Stethoscope },
+  { id: 'clinic', label: 'Cliniques', icon: Building },
+  { id: 'pharmacy', label: 'Pharmacies', icon: Pill },
+  { id: 'lab', label: 'Laboratoires', icon: FlaskConical },
+  { id: 'hospital', label: 'Hôpitaux', icon: Building },
+  { id: 'birth_hospital', label: 'Maternité', icon: Baby },
+  { id: 'blood_cabin', label: 'Don de sang', icon: Droplets },
+  { id: 'radiology_center', label: 'Radiologie', icon: ScanLine },
+  { id: 'medical_equipment', label: 'Équipement', icon: Wrench },
+];
+
+const languageOptions = [
+  { value: 'fr', label: 'Français' },
+  { value: 'ar', label: 'العربية' },
+  { value: 'en', label: 'English' },
 ];
 
 const sortOptions: { value: SortOption; label: string }[] = [
@@ -62,25 +68,24 @@ const SearchPage = () => {
   const initialQuery = searchParams.get('q') || '';
   const initialType = searchParams.get('type') || '';
 
-  const getInitialCategories = (type: string): string[] => {
-    const typeMap: Record<string, string> = {
-      doctor: 'doctors', pharmacy: 'pharmacies', lab: 'laboratories', clinic: 'clinics',
-    };
-    return typeMap[type] ? [typeMap[type]] : [];
-  };
-
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [filters, setFilters] = useState<FilterState>({
-    categories: getInitialCategories(initialType),
-    location: '', radius: 25, availability: 'any', minRating: 0,
+    categories: initialType ? [initialType] : [],
+    availability: 'any', minRating: 0,
     verifiedOnly: false, emergencyServices: false, wheelchairAccessible: false,
-    insuranceAccepted: false, priceRange: [0, 500], equipmentBrands: [], cnasOnly: false,
+    languages: [], area: '', maxDistance: 50,
   });
 
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
   const { data: allProviders = [], isLoading, isError, refetch } = useVerifiedProviders();
+
+  // Extract unique areas from providers for the area filter
+  const availableAreas = useMemo(() => {
+    const areas = new Set(allProviders.map(p => p.area).filter(Boolean));
+    return Array.from(areas).sort();
+  }, [allProviders]);
 
   const activeFiltersCount =
     (filters.categories.length > 0 ? 1 : 0) +
@@ -88,11 +93,10 @@ const SearchPage = () => {
     (filters.verifiedOnly ? 1 : 0) +
     (filters.emergencyServices ? 1 : 0) +
     (filters.wheelchairAccessible ? 1 : 0) +
-    (filters.insuranceAccepted ? 1 : 0) +
-    (filters.cnasOnly ? 1 : 0) +
     (filters.availability !== 'any' ? 1 : 0) +
-    (filters.equipmentBrands.length > 0 ? 1 : 0) +
-    (filters.location ? 1 : 0);
+    (filters.languages.length > 0 ? 1 : 0) +
+    (filters.area ? 1 : 0) +
+    (filters.maxDistance < 50 ? 1 : 0);
 
   const toggleCategory = (id: string) => {
     setFilters(f => ({
@@ -117,16 +121,7 @@ const SearchPage = () => {
     }
 
     if (filters.categories.length > 0) {
-      results = results.filter(p =>
-        filters.categories.some(cat => {
-          const t = p.type.toLowerCase();
-          if (cat === 'doctors') return t.includes('doctor') || t.includes('specialist');
-          if (cat === 'pharmacies') return t.includes('pharmacy');
-          if (cat === 'laboratories') return t.includes('lab');
-          if (cat === 'clinics') return t.includes('clinic') || t.includes('hospital');
-          return false;
-        })
-      );
+      results = results.filter(p => filters.categories.includes(p.type));
     }
 
     if (filters.minRating > 0) results = results.filter(p => p.rating >= filters.minRating);
@@ -134,6 +129,17 @@ const SearchPage = () => {
     if (filters.emergencyServices) results = results.filter(p => p.emergency);
     if (filters.wheelchairAccessible) results = results.filter(p => p.accessible);
     if (filters.availability === 'now') results = results.filter(p => p.isOpen);
+    if (filters.languages.length > 0) {
+      results = results.filter(p =>
+        filters.languages.some(lang => p.languages?.includes(lang as any))
+      );
+    }
+    if (filters.area) {
+      results = results.filter(p => p.area === filters.area);
+    }
+    if (filters.maxDistance < 50) {
+      results = results.filter(p => (p.distance || 0) <= filters.maxDistance);
+    }
 
     const sorted = [...results];
     if (sortBy === 'rating') sorted.sort((a, b) => b.rating - a.rating);
@@ -144,9 +150,9 @@ const SearchPage = () => {
   }, [allProviders, debouncedQuery, filters, sortBy]);
 
   const clearAll = () => setFilters({
-    categories: [], location: '', radius: 25, availability: 'any', minRating: 0,
+    categories: [], availability: 'any', minRating: 0,
     verifiedOnly: false, emergencyServices: false, wheelchairAccessible: false,
-    insuranceAccepted: false, priceRange: [0, 500], equipmentBrands: [], cnasOnly: false,
+    languages: [], area: '', maxDistance: 50,
   });
 
   return (
@@ -335,75 +341,86 @@ const SearchPage = () => {
                       Accessibilité fauteuil roulant
                     </span>
                   </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <Checkbox
-                      checked={filters.insuranceAccepted}
-                      onCheckedChange={v => setFilters(f => ({ ...f, insuranceAccepted: !!v }))}
-                    />
-                    <span className="flex items-center gap-1.5 text-sm">
-                      <CreditCard className="h-4 w-4 text-primary" />
-                      Assurance acceptée
-                    </span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <Checkbox
-                      checked={filters.cnasOnly}
-                      onCheckedChange={v => setFilters(f => ({ ...f, cnasOnly: !!v }))}
-                    />
-                    <span className="flex items-center gap-1.5 text-sm">
-                      <Badge variant="secondary" className="text-[10px] py-0 px-1.5">CNAS</Badge>
-                      Remboursable uniquement
-                    </span>
-                  </label>
                 </div>
               </div>
 
-              {/* Localisation & Rayon */}
+              {/* Langues */}
               <div>
-                <Label className="text-sm font-medium mb-2 block">Localisation</Label>
-                <Input
-                  placeholder="Ville ou code postal..."
-                  value={filters.location}
-                  onChange={e => setFilters(f => ({ ...f, location: e.target.value }))}
-                  className="mb-3 h-9 text-sm rounded-lg"
-                />
-                <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-                  <span>Rayon</span>
-                  <span className="font-medium text-foreground">{filters.radius} km</span>
+                <Label className="text-sm font-medium mb-2 block flex items-center gap-1.5">
+                  <Globe className="h-4 w-4 text-primary" />
+                  Langues parlées
+                </Label>
+                <div className="flex gap-2 flex-wrap">
+                  {languageOptions.map(lang => (
+                    <button
+                      key={lang.value}
+                      onClick={() => setFilters(f => ({
+                        ...f,
+                        languages: f.languages.includes(lang.value)
+                          ? f.languages.filter(l => l !== lang.value)
+                          : [...f.languages, lang.value],
+                      }))}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        filters.languages.includes(lang.value)
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+                      }`}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Quartier */}
+              {availableAreas.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium mb-2 block">
+                    <MapPin className="h-4 w-4 text-primary inline mr-1.5" />
+                    Quartier
+                  </Label>
+                  <div className="flex gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => setFilters(f => ({ ...f, area: '' }))}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        !filters.area
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+                      }`}
+                    >
+                      Tous
+                    </button>
+                    {availableAreas.map(area => (
+                      <button
+                        key={area}
+                        onClick={() => setFilters(f => ({ ...f, area }))}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                          filters.area === area
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted/60 text-muted-foreground hover:bg-muted'
+                        }`}
+                      >
+                        {area}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Distance max */}
+              <div>
+                <div className="flex justify-between text-sm mb-1.5">
+                  <Label className="font-medium">Distance maximale</Label>
+                  <span className="text-xs text-muted-foreground font-medium">{filters.maxDistance} km</span>
                 </div>
                 <Slider
-                  value={[filters.radius]}
-                  onValueChange={v => setFilters(f => ({ ...f, radius: v[0] }))}
+                  value={[filters.maxDistance]}
+                  onValueChange={v => setFilters(f => ({ ...f, maxDistance: v[0] }))}
                   max={50}
                   min={1}
                   step={1}
                   className="w-full"
                 />
-              </div>
-
-              {/* Marques d'équipement */}
-              <div>
-                <Label className="text-sm font-medium mb-2 flex items-center gap-1.5">
-                  <Wrench className="h-4 w-4 text-primary" />
-                  Marques d'équipement
-                </Label>
-                <div className="flex flex-wrap gap-1.5">
-                  {COMMON_EQUIPMENT_BRANDS.map(brand => (
-                    <Badge
-                      key={brand}
-                      variant={filters.equipmentBrands.includes(brand) ? 'default' : 'outline'}
-                      className="cursor-pointer text-[11px] hover:opacity-80 transition-opacity"
-                      onClick={() => {
-                        const newBrands = filters.equipmentBrands.includes(brand)
-                          ? filters.equipmentBrands.filter(b => b !== brand)
-                          : [...filters.equipmentBrands, brand];
-                        setFilters(f => ({ ...f, equipmentBrands: newBrands }));
-                      }}
-                    >
-                      {brand}
-                    </Badge>
-                  ))}
-                </div>
               </div>
             </div>
 
