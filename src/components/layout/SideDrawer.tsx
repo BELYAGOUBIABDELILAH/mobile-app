@@ -8,8 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import {
   Home, Search, Map, Bot, FileText, UserCircle, Phone,
-  Handshake, MessageSquare, Megaphone, Code2,
+  Handshake, Code2,
   ExternalLink, QrCode, LogIn, Droplets, BookOpen, CreditCard,
+  HelpCircle, Shield, ScrollText,
 } from 'lucide-react';
 
 interface SideDrawerProps {
