@@ -34,48 +34,35 @@ interface SymptomChipData {
   query: string;
 }
 
-const SYMPTOM_CHIPS: Record<string, SymptomChipData[]> = {
+interface SymptomChipDataWithColor extends SymptomChipData {
+  iconBg: string;
+  iconColor: string;
+}
+
+const SYMPTOM_CHIPS: Record<string, SymptomChipDataWithColor[]> = {
   fr: [
-    { icon: Thermometer, label: "Fièvre", query: "J'ai de la fièvre, que dois-je faire ?" },
-    { icon: Heart, label: "Douleur thoracique", query: "J'ai une douleur dans la poitrine" },
-    { icon: Brain, label: "Maux de tête", query: "J'ai des maux de tête fréquents et intenses" },
-    { icon: AlertCircle, label: "Nausées", query: "J'ai des nausées et vomissements" },
-    { icon: Wind, label: "Difficultés resp.", query: "J'ai des difficultés à respirer" },
-    { icon: Pill, label: "Médicaments", query: "J'ai un problème avec mon médicament" },
-    { icon: Eye, label: "Problème vision", query: "Ma vue a baissé récemment" },
-    { icon: Smile, label: "Santé mentale", query: "Je souffre de stress et d'anxiété" },
-    { icon: Baby, label: "Suivi grossesse", query: "Je cherche un suivi de grossesse" },
-    { icon: Droplets, label: "Don de sang", query: "Je souhaite faire un don de sang" },
-    { icon: MapPin, label: "Trouver médecin", query: "Aidez-moi à trouver un médecin" },
-    { icon: FileText, label: "Résultats d'analyse", query: "J'ai besoin d'aide pour comprendre mes résultats d'analyse" },
+    { icon: Thermometer, label: "Fièvre", query: "J'ai de la fièvre, que dois-je faire ?", iconBg: "bg-red-100 dark:bg-red-900/40", iconColor: "text-red-600 dark:text-red-400" },
+    { icon: Heart, label: "Douleur thoracique", query: "J'ai une douleur dans la poitrine", iconBg: "bg-rose-100 dark:bg-rose-900/40", iconColor: "text-rose-600 dark:text-rose-400" },
+    { icon: Brain, label: "Maux de tête", query: "J'ai des maux de tête fréquents et intenses", iconBg: "bg-violet-100 dark:bg-violet-900/40", iconColor: "text-violet-600 dark:text-violet-400" },
+    { icon: Wind, label: "Difficultés resp.", query: "J'ai des difficultés à respirer", iconBg: "bg-sky-100 dark:bg-sky-900/40", iconColor: "text-sky-600 dark:text-sky-400" },
+    { icon: Smile, label: "Santé mentale", query: "Je souffre de stress et d'anxiété", iconBg: "bg-emerald-100 dark:bg-emerald-900/40", iconColor: "text-emerald-600 dark:text-emerald-400" },
+    { icon: MapPin, label: "Trouver médecin", query: "Aidez-moi à trouver un médecin", iconBg: "bg-amber-100 dark:bg-amber-900/40", iconColor: "text-amber-600 dark:text-amber-400" },
   ],
   ar: [
-    { icon: Thermometer, label: "حمى", query: "لدي حمى، ماذا أفعل؟" },
-    { icon: Heart, label: "ألم الصدر", query: "لدي ألم في الصدر" },
-    { icon: Brain, label: "صداع", query: "أعاني من صداع متكرر وشديد" },
-    { icon: AlertCircle, label: "غثيان", query: "أعاني من غثيان وقيء" },
-    { icon: Wind, label: "صعوبة تنفس", query: "أعاني من صعوبة في التنفس" },
-    { icon: Pill, label: "أدوية", query: "لدي مشكلة مع دوائي" },
-    { icon: Eye, label: "مشكلة نظر", query: "تراجعت رؤيتي مؤخراً" },
-    { icon: Smile, label: "صحة نفسية", query: "أعاني من التوتر والقلق" },
-    { icon: Baby, label: "متابعة حمل", query: "أبحث عن متابعة الحمل" },
-    { icon: Droplets, label: "تبرع بالدم", query: "أريد التبرع بالدم" },
-    { icon: MapPin, label: "إيجاد طبيب", query: "ساعدني في إيجاد طبيب" },
-    { icon: FileText, label: "نتائج تحاليل", query: "أحتاج مساعدة لفهم نتائج تحاليلي" },
+    { icon: Thermometer, label: "حمى", query: "لدي حمى، ماذا أفعل؟", iconBg: "bg-red-100 dark:bg-red-900/40", iconColor: "text-red-600 dark:text-red-400" },
+    { icon: Heart, label: "ألم الصدر", query: "لدي ألم في الصدر", iconBg: "bg-rose-100 dark:bg-rose-900/40", iconColor: "text-rose-600 dark:text-rose-400" },
+    { icon: Brain, label: "صداع", query: "أعاني من صداع متكرر وشديد", iconBg: "bg-violet-100 dark:bg-violet-900/40", iconColor: "text-violet-600 dark:text-violet-400" },
+    { icon: Wind, label: "صعوبة تنفس", query: "أعاني من صعوبة في التنفس", iconBg: "bg-sky-100 dark:bg-sky-900/40", iconColor: "text-sky-600 dark:text-sky-400" },
+    { icon: Smile, label: "صحة نفسية", query: "أعاني من التوتر والقلق", iconBg: "bg-emerald-100 dark:bg-emerald-900/40", iconColor: "text-emerald-600 dark:text-emerald-400" },
+    { icon: MapPin, label: "إيجاد طبيب", query: "ساعدني في إيجاد طبيب", iconBg: "bg-amber-100 dark:bg-amber-900/40", iconColor: "text-amber-600 dark:text-amber-400" },
   ],
   en: [
-    { icon: Thermometer, label: "Fever", query: "I have a fever, what should I do?" },
-    { icon: Heart, label: "Chest pain", query: "I have chest pain" },
-    { icon: Brain, label: "Headache", query: "I have frequent and intense headaches" },
-    { icon: AlertCircle, label: "Nausea", query: "I have nausea and vomiting" },
-    { icon: Wind, label: "Breathing issues", query: "I have difficulty breathing" },
-    { icon: Pill, label: "Medication", query: "I have a problem with my medication" },
-    { icon: Eye, label: "Vision problem", query: "My vision has decreased recently" },
-    { icon: Smile, label: "Mental health", query: "I suffer from stress and anxiety" },
-    { icon: Baby, label: "Pregnancy care", query: "I'm looking for pregnancy follow-up" },
-    { icon: Droplets, label: "Blood donation", query: "I would like to donate blood" },
-    { icon: MapPin, label: "Find a doctor", query: "Help me find a doctor" },
-    { icon: FileText, label: "Test results", query: "I need help understanding my test results" },
+    { icon: Thermometer, label: "Fever", query: "I have a fever, what should I do?", iconBg: "bg-red-100 dark:bg-red-900/40", iconColor: "text-red-600 dark:text-red-400" },
+    { icon: Heart, label: "Chest pain", query: "I have chest pain", iconBg: "bg-rose-100 dark:bg-rose-900/40", iconColor: "text-rose-600 dark:text-rose-400" },
+    { icon: Brain, label: "Headache", query: "I have frequent and intense headaches", iconBg: "bg-violet-100 dark:bg-violet-900/40", iconColor: "text-violet-600 dark:text-violet-400" },
+    { icon: Wind, label: "Breathing issues", query: "I have difficulty breathing", iconBg: "bg-sky-100 dark:bg-sky-900/40", iconColor: "text-sky-600 dark:text-sky-400" },
+    { icon: Smile, label: "Mental health", query: "I suffer from stress and anxiety", iconBg: "bg-emerald-100 dark:bg-emerald-900/40", iconColor: "text-emerald-600 dark:text-emerald-400" },
+    { icon: MapPin, label: "Find a doctor", query: "Help me find a doctor", iconBg: "bg-amber-100 dark:bg-amber-900/40", iconColor: "text-amber-600 dark:text-amber-400" },
   ],
 };
 
@@ -308,7 +295,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
   return (
     <div className="h-full flex flex-col w-full">
       {/* Messages area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="px-4 py-4" style={{ minHeight: "100%" }}>
           {/* Welcome state — clean & minimal */}
           {!hasConversation && (
@@ -318,7 +305,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
               <p className="text-[11px] text-center mb-6 text-muted-foreground">{t.welcomeSub}</p>
 
               {/* Premium 2-column symptom grid */}
-              <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
+              <div className="grid grid-cols-2 gap-2.5 w-full max-w-sm">
                 {chips.map((chip) => {
                   const IconComponent = chip.icon;
                   return (
@@ -327,8 +314,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                       onClick={() => sendMessage(chip.query)}
                       className="flex items-center gap-2.5 h-12 px-3.5 rounded-xl bg-card border border-border shadow-sm text-left transition-all hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 active:scale-[0.97] duration-200"
                     >
-                      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <IconComponent className="w-3.5 h-3.5 text-primary" />
+                      <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center shrink-0", chip.iconBg)}>
+                        <IconComponent className={cn("w-3.5 h-3.5", chip.iconColor)} />
                       </div>
                       <span className="text-[12px] font-medium text-foreground truncate">{chip.label}</span>
                     </button>
