@@ -412,11 +412,11 @@ const SearchPage = () => {
               <Button variant="outline" className="flex-1" onClick={clearAll}>
                 Réinitialiser
               </Button>
-              <SheetPrimitive.Close asChild>
+              <SheetClose asChild>
                 <Button className="flex-1">
                   Appliquer ({filteredProviders.length})
                 </Button>
-              </SheetPrimitive.Close>
+              </SheetClose>
             </div>
           </SheetContent>
         </Sheet>
