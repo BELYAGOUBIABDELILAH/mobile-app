@@ -154,14 +154,22 @@ const UnifiedMapChild = () => {
   // Distances
   const { distances, sortedProviders } = useProviderDistances(activeProviders, geolocation.latitude, geolocation.longitude);
 
-  // Feed sidebar context
+  // Feed sidebar context — use refs to avoid infinite re-render loops
+  const sortedProvidersRef = useRef(sortedProviders);
+  const distancesRef = useRef(distances);
+  sortedProvidersRef.current = sortedProviders;
+  distancesRef.current = distances;
+
   useEffect(() => {
     const labels: Record<UnifiedMode, string> = { all: '', emergency: 'Urgences', blood: 'Don de sang' };
     setSidebarLabel(labels[mode]);
     setSidebarLoading(isLoading);
-    setSidebarProviders(sortedProviders);
-    setSidebarDistances(distances);
-  }, [mode, sortedProviders, distances, isLoading, setSidebarProviders, setSidebarDistances, setSidebarLoading, setSidebarLabel]);
+  }, [mode, isLoading, setSidebarLoading, setSidebarLabel]);
+
+  useEffect(() => {
+    setSidebarProviders(sortedProvidersRef.current);
+    setSidebarDistances(distancesRef.current);
+  }, [sortedProviders.length, mode, setSidebarProviders, setSidebarDistances]);
 
   const handleProviderClick = useCallback((provider: CityHealthProvider) => {
     setSelectedProvider(provider);
