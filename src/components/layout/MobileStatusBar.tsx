@@ -1,39 +1,30 @@
-import { useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { Wifi, Battery, Signal } from 'lucide-react';
 
-const routeTitles: Record<string, string> = {
-  '/': 'CityHealth',
-  '/search': 'Recherche',
-  '/map': 'Carte',
-  '/medical-assistant': 'Assistant IA',
-  '/profile': 'Mon Profil',
-  '/favorites': 'Favoris',
-  '/citizen/dashboard': 'Tableau de bord',
-  '/citizen/appointments': 'Rendez-vous',
-  '/community': 'Communauté',
-  '/contact': 'Contact',
-  '/blood-donation': 'Don de sang',
-  '/annonces': 'Annonces',
-  '/research': 'Recherche médicale',
-  '/privacy': 'Confidentialité',
-  '/terms': 'Conditions',
-  '/faq': 'FAQ',
-};
-
 export const MobileStatusBar = () => {
-  const location = useLocation();
+  const [time, setTime] = useState('');
 
-  const title = Object.entries(routeTitles).find(([path]) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(path);
-  })?.[1] || 'CityHealth';
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
+    };
+    update();
+    const interval = setInterval(update, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full">
-      {/* Safe area top */}
-      <div className="h-[env(safe-area-inset-top,0px)] bg-background/90 backdrop-blur-xl" />
-
-      {/* Title bar removed */}
+      <div className="h-[env(safe-area-inset-top,0px)] bg-primary" />
+      <div className="bg-primary text-primary-foreground px-4 py-1.5 flex items-center justify-between text-xs font-medium">
+        <span>{time}</span>
+        <div className="flex items-center gap-1.5">
+          <Signal className="w-3.5 h-3.5" />
+          <Wifi className="w-3.5 h-3.5" />
+          <Battery className="w-4 h-4" />
+        </div>
+      </div>
     </header>
   );
 };
