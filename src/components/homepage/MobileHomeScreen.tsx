@@ -71,13 +71,19 @@ export const MobileHomeScreen = () => {
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
 
-  // Top providers — always use real providers from data
-  const allProviders = getProviders();
-  const topProviders = allProviders
-    .filter(p => p.name) // safety: skip providers without name
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3)
-    .map(p => ({ ...p, isPremium: p.planType === 'premium' || p.rating >= 4.5 }));
+  // Top providers — from premium providers in database
+  const { data: premiumProvidersData = [] } = usePremiumProviders();
+  const topProviders = premiumProvidersData.map(p => ({
+    id: p.id,
+    name: p.name,
+    type: p.type,
+    specialty: p.specialty || p.type,
+    rating: p.rating || 0,
+    reviewsCount: p.reviews_count || 0,
+    image: p.image_url || '',
+    city: p.city || '',
+    isPremium: true,
+  }));
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
