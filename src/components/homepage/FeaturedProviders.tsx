@@ -1,11 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Star, ArrowRight, ArrowLeft, ChevronLeft, ChevronRight, MapPin, Shield, Stethoscope, Building2, Pill, FlaskConical, Hospital, Baby, Droplets, RadioTower, Wrench } from 'lucide-react';
-import { ProviderAvatar } from '@/components/ui/ProviderAvatar';
+import { Star, ArrowRight, ChevronLeft, ChevronRight, MapPin, Shield, Crown, Stethoscope, Building2, Pill, FlaskConical, Hospital, Baby, Droplets, RadioTower, Wrench } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
-import { useVerifiedProviders } from '@/hooks/useProviders';
-import { isProviderVerified } from '@/utils/verificationUtils';
+import { usePremiumProviders } from '@/hooks/useHomepageData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
@@ -34,15 +32,6 @@ const typeIcons: Record<string, typeof Stethoscope> = {
   medical_equipment: Wrench,
 };
 
-const filterTabs = [
-  { key: 'all', label: 'Tous' },
-  { key: 'doctor', label: 'Médecins' },
-  { key: 'pharmacy', label: 'Pharmacies' },
-  { key: 'clinic', label: 'Cliniques' },
-  { key: 'hospital', label: 'Hôpitaux' },
-  { key: 'lab', label: 'Laboratoires' },
-];
-
 const SkeletonCard = () => (
   <div className="min-w-[260px] max-w-[260px] p-4 bg-card border border-border rounded-2xl space-y-3 flex-shrink-0">
     <Skeleton className="w-full h-24 rounded-xl" />
@@ -54,37 +43,35 @@ const SkeletonCard = () => (
   </div>
 );
 
+const DEFAULT_IMAGES: Record<string, string> = {
+  doctor: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&h=300&fit=crop',
+  clinic: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=300&fit=crop',
+  pharmacy: 'https://images.unsplash.com/photo-1585435557343-3b092031a831?w=400&h=300&fit=crop',
+  hospital: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=400&h=300&fit=crop',
+  lab: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=400&h=300&fit=crop',
+};
+
 export const FeaturedProviders = () => {
-  const { data: verifiedProviders = [], isLoading } = useVerifiedProviders();
+  const { data: premiumProviders = [], isLoading } = usePremiumProviders();
   const { t } = useLanguage();
-  const [activeFilter, setActiveFilter] = useState('all');
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const allProviders = useMemo(() => {
-    return verifiedProviders
-      .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-      .slice(0, 20)
-      .map(p => ({
-        id: p.id,
-        name: p.name,
-        type: p.type,
-        specialty: p.specialty || p.type,
-        rating: p.rating || 0,
-        reviewCount: p.reviewsCount || 0,
-        isVerified: isProviderVerified(p),
-        image: p.image || '',
-        city: p.city || '',
-      }));
-  }, [verifiedProviders]);
-
-  const filteredProviders = useMemo(() => {
-    if (activeFilter === 'all') return allProviders;
-    return allProviders.filter(p => p.type === activeFilter);
-  }, [allProviders, activeFilter]);
+  const providers: DisplayProvider[] = useMemo(() => {
+    return premiumProviders.map(p => ({
+      id: p.id,
+      name: p.name,
+      type: p.type,
+      specialty: p.specialty || p.type,
+      rating: p.rating || 0,
+      reviewCount: p.reviews_count || 0,
+      isVerified: p.is_verified,
+      image: p.image_url || DEFAULT_IMAGES[p.type] || '',
+      city: p.city || '',
+    }));
+  }, [premiumProviders]);
 
   const TypeIcon = (type: string) => typeIcons[type] || Stethoscope;
 
-  // Scroll state
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -101,16 +88,15 @@ export const FeaturedProviders = () => {
     updateScrollState();
     el.addEventListener('scroll', updateScrollState, { passive: true });
     return () => el.removeEventListener('scroll', updateScrollState);
-  }, [filteredProviders, updateScrollState]);
+  }, [providers, updateScrollState]);
 
   const scroll = useCallback((dir: 'left' | 'right') => {
     const el = scrollRef.current;
     if (!el) return;
-    const amount = 280;
-    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+    el.scrollBy({ left: dir === 'left' ? -280 : 280, behavior: 'smooth' });
   }, []);
 
-  // Auto-scroll with requestAnimationFrame
+  // Auto-scroll
   const isPausedRef = useRef(false);
   const [isPaused, setIsPaused] = useState(false);
   isPausedRef.current = isPaused;
@@ -118,16 +104,13 @@ export const FeaturedProviders = () => {
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-
     let rafId: number;
     let lastTime = 0;
-    const speed = 0.5; // pixels per frame at 60fps
-
+    const speed = 0.5;
     const step = (timestamp: number) => {
       if (!isPausedRef.current && el) {
         const delta = lastTime ? (timestamp - lastTime) / 16.67 : 1;
-        const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 2;
-        if (atEnd) {
+        if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 2) {
           el.scrollLeft = 0;
         } else {
           el.scrollLeft += speed * delta;
@@ -136,10 +119,9 @@ export const FeaturedProviders = () => {
       lastTime = timestamp;
       rafId = requestAnimationFrame(step);
     };
-
     rafId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafId);
-  }, [filteredProviders]);
+  }, [providers]);
 
   return (
     <section className="py-20 px-4 bg-background relative overflow-hidden">
@@ -153,8 +135,9 @@ export const FeaturedProviders = () => {
           className="flex items-end justify-between mb-8"
         >
           <div>
-            <span className="inline-block px-3 py-1 text-xs font-medium text-muted-foreground bg-muted border border-border rounded-full mb-3">
-              {t('featuredProviders', 'topPractitioners')}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-full mb-3">
+              <Crown className="h-3.5 w-3.5" />
+              Premium
             </span>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
               {t('featuredProviders', 'healthProfessionals')}
@@ -168,38 +151,12 @@ export const FeaturedProviders = () => {
           </Button>
         </motion.div>
 
-        {/* Filter Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide"
-        >
-          {filterTabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveFilter(tab.key)}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200",
-                activeFilter === tab.key
-                  ? "bg-foreground text-background shadow-sm"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-              )}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* Horizontally Scrolling Cards */}
+        {/* Cards */}
         {isLoading ? (
           <div className="flex gap-4 overflow-hidden">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+            {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
-        ) : filteredProviders.length === 0 ? (
+        ) : providers.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -216,80 +173,44 @@ export const FeaturedProviders = () => {
           </motion.div>
         ) : (
           <div className="relative group/carousel" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
-            {/* Left arrow */}
             {canScrollLeft && (
-              <button
-                onClick={() => scroll('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 hidden md:flex w-9 h-9 items-center justify-center rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-                aria-label="Scroll left"
-              >
+              <button onClick={() => scroll('left')} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 hidden md:flex w-9 h-9 items-center justify-center rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:scale-105 transition-all" aria-label="Scroll left">
                 <ChevronLeft className="h-4 w-4 text-foreground" />
               </button>
             )}
-
-            {/* Right arrow */}
             {canScrollRight && (
-              <button
-                onClick={() => scroll('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 hidden md:flex w-9 h-9 items-center justify-center rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
-                aria-label="Scroll right"
-              >
+              <button onClick={() => scroll('right')} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 hidden md:flex w-9 h-9 items-center justify-center rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:scale-105 transition-all" aria-label="Scroll right">
                 <ChevronRight className="h-4 w-4 text-foreground" />
               </button>
             )}
+            {canScrollLeft && <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-background to-transparent z-[5] pointer-events-none hidden md:block" />}
+            {canScrollRight && <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent z-[5] pointer-events-none hidden md:block" />}
 
-            {/* Fade edges */}
-            {canScrollLeft && (
-              <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-background to-transparent z-[5] pointer-events-none hidden md:block" />
-            )}
-            {canScrollRight && (
-              <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent z-[5] pointer-events-none hidden md:block" />
-            )}
-
-            <div
-              ref={scrollRef}
-              className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
+            <div ref={scrollRef} className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <AnimatePresence mode="popLayout">
-                {filteredProviders.map((provider, index) => {
+                {providers.map((provider, index) => {
                   const Icon = TypeIcon(provider.type);
                   return (
-                    <motion.div
-                      key={provider.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.35, delay: index * 0.04 }}
-                      className="snap-start flex-shrink-0"
-                    >
-                      <Link
-                        to={`/provider/${provider.id}`}
-                        className="group relative block w-[260px] bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-foreground/10 transition-all duration-300"
-                      >
-                        {/* Top visual area */}
+                    <motion.div key={provider.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.35, delay: index * 0.04 }} className="snap-start flex-shrink-0">
+                      <Link to={`/provider/${provider.id}`} className="group relative block w-[260px] bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-foreground/10 transition-all duration-300">
+                        {/* Top visual */}
                         <div className="relative h-28 bg-muted/50 flex items-center justify-center overflow-hidden">
-                          {provider.image && provider.image !== '/placeholder.svg' && provider.image !== '' ? (
-                            <img
-                              src={provider.image}
-                              alt={provider.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
+                          {provider.image && provider.image !== '/placeholder.svg' ? (
+                            <img src={provider.image} alt={provider.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           ) : (
                             <Icon className="h-10 w-10 text-muted-foreground/40" />
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
 
+                          {/* Premium badge */}
+                          <div className="absolute top-3 left-3 inline-flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-500 to-yellow-400 text-white text-[10px] font-bold rounded-full shadow-sm">
+                            <Crown className="h-3 w-3" />
+                            Premium
+                          </div>
+
                           {provider.isVerified && (
                             <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-sm">
                               <Shield className="w-3 h-3 text-primary-foreground" />
-                            </div>
-                          )}
-
-                          {index < 3 && activeFilter === 'all' && (
-                            <div className="absolute top-3 left-3 px-2 py-0.5 bg-foreground/90 text-background text-[10px] font-bold rounded-full">
-                              #{index + 1}
                             </div>
                           )}
                         </div>
@@ -329,12 +250,7 @@ export const FeaturedProviders = () => {
         )}
 
         {/* Mobile CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="sm:hidden mt-6 text-center"
-        >
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="sm:hidden mt-6 text-center">
           <Button asChild variant="outline" size="sm">
             <Link to="/search" className="flex items-center gap-2">
               {t('featuredProviders', 'viewAllPractitioners')}

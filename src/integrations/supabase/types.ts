@@ -940,6 +940,7 @@ export type Database = {
           image_url: string | null
           is_24h: boolean
           is_open: boolean
+          is_premium: boolean
           is_verified: boolean
           languages: string[] | null
           lat: number | null
@@ -962,6 +963,7 @@ export type Database = {
           image_url?: string | null
           is_24h?: boolean
           is_open?: boolean
+          is_premium?: boolean
           is_verified?: boolean
           languages?: string[] | null
           lat?: number | null
@@ -984,6 +986,7 @@ export type Database = {
           image_url?: string | null
           is_24h?: boolean
           is_open?: boolean
+          is_premium?: boolean
           is_verified?: boolean
           languages?: string[] | null
           lat?: number | null
