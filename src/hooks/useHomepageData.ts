@@ -1,6 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+export function usePremiumProviders() {
+  return useQuery({
+    queryKey: ['premium-providers'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('providers_public')
+        .select('*')
+        .eq('is_premium', true)
+        .eq('is_verified', true)
+        .order('rating', { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useHomepageAds() {
   return useQuery({
     queryKey: ['homepage-ads'],
