@@ -17,8 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
-import { getProviders } from '@/data/providers';
+import { useHomepageAds, useHomepageArticles, useHomepageCommunity, usePremiumProviders } from '@/hooks/useHomepageData';
 import { SideDrawer } from '@/components/layout/SideDrawer';
 
 const stagger = {
@@ -72,13 +71,19 @@ export const MobileHomeScreen = () => {
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
 
-  // Top providers — always use real providers from data
-  const allProviders = getProviders();
-  const topProviders = allProviders
-    .filter(p => p.name) // safety: skip providers without name
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3)
-    .map(p => ({ ...p, isPremium: p.planType === 'premium' || p.rating >= 4.5 }));
+  // Top providers — from premium providers in database
+  const { data: premiumProvidersData = [] } = usePremiumProviders();
+  const topProviders = premiumProvidersData.map(p => ({
+    id: p.id,
+    name: p.name,
+    type: p.type,
+    specialty: p.specialty || p.type,
+    rating: p.rating || 0,
+    reviewsCount: p.reviews_count || 0,
+    image: p.image_url || '',
+    city: p.city || '',
+    isPremium: true,
+  }));
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -251,7 +256,7 @@ export const MobileHomeScreen = () => {
           {topProviders.map((doc) => (
             <button
               key={doc.id}
-              onClick={() => navigate(`/provider/${doc.id}`)}
+              onClick={() => navigate(`/search?q=${encodeURIComponent(doc.name)}`)}
               className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-start active:scale-[0.98] transition-transform"
             >
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
