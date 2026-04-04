@@ -192,7 +192,7 @@ export const FeaturedProviders = () => {
                   const Icon = TypeIcon(provider.type);
                   return (
                     <motion.div key={provider.id} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.35, delay: index * 0.04 }} className="snap-start flex-shrink-0">
-                      <Link to={`/search?q=${encodeURIComponent(provider.name)}`} className="group relative block w-[260px] bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-foreground/10 transition-all duration-300">
+                      <Link to={`/provider/${provider.id}`} className="group relative block w-[260px] bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-foreground/10 transition-all duration-300">
                         {/* Top visual */}
                         <div className="relative h-28 bg-muted/50 flex items-center justify-center overflow-hidden">
                           {provider.image && provider.image !== '/placeholder.svg' ? (
